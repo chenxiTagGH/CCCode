@@ -8,6 +8,7 @@ DONE_WITH_CONCERNS
 
 - `f338c2d4` — `chore(site): remove featured upstream listings`
 - `ee2d8a4d` — `test(settings): use isolated upstream logo fixture`
+- Pending commit below — align fixture host used by the widget.
 
 ## Files changed
 
@@ -16,7 +17,7 @@ DONE_WITH_CONCERNS
 - Deleted `/Users/tangchenxi/Desktop/Chenxi/vibeCoding/CCCode/site/featured/ymeng.png`.
 - Deleted `/Users/tangchenxi/Desktop/Chenxi/vibeCoding/CCCode/site/featured/ifruit.png`.
 - Modified `/Users/tangchenxi/Desktop/Chenxi/vibeCoding/CCCode/test/models/upstream_import_test.dart` with regression assertions that `ymeng` and `ifruit` are absent from the website-served list.
-- Modified `/Users/tangchenxi/Desktop/Chenxi/vibeCoding/CCCode/test/settings/upstream_import_test.dart` to use the existing isolated fixture `/Users/tangchenxi/Desktop/Chenxi/vibeCoding/CCCode/test/fixtures/icons/tall.png` instead of the deleted featured logo.
+- Modified `/Users/tangchenxi/Desktop/Chenxi/vibeCoding/CCCode/test/settings/upstream_import_test.dart` to use the existing isolated fixture `/Users/tangchenxi/Desktop/Chenxi/vibeCoding/CCCode/test/fixtures/icons/tall.png` instead of the deleted featured logo, with the widget site host aligned to `api.fixture.example.com`.
 
 ## Tests and commands
 

@@ -406,7 +406,7 @@ void main() {
           children: [
             ProviderIconView(
               icon: null,
-              site: Uri.https('api.ymeng.cc'),
+              site: Uri.https('api.fixture.example.com'),
               size: 16,
             ),
             ProviderIconView(
