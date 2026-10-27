@@ -22,6 +22,14 @@ void main() {
     expect(detectCcApiProtocol(modelId: 'claude-sonnet-4-5'), ProviderProtocol.anthropic);
     expect(detectCcApiProtocol(modelId: 'gpt-5.6-terra'), ProviderProtocol.openaiResponses);
     expect(detectCcApiProtocol(modelId: 'gemini-2.5-pro'), ProviderProtocol.openaiChat);
+    expect(
+      detectCcApiProtocol(modelId: 'openai-responses/gpt-5'),
+      ProviderProtocol.openaiResponses,
+    );
+    expect(
+      detectCcApiProtocol(platform: 'vendor', modelId: 'openai-chat/model'),
+      ProviderProtocol.openaiChat,
+    );
     expect(detectCcApiProtocol(modelId: 'vendor-model'), ProviderProtocol.anthropic);
     expect(
       detectCcApiProtocol(modelId: 'legitimate-gptlike-vendor'),

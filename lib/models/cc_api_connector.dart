@@ -66,7 +66,7 @@ ProviderProtocol detectCcApiProtocol({
 }
 
 bool _hasToken(String value, String token) => RegExp(
-  '(^|[-_./:])${RegExp.escape(token)}(?=\\u0024|[-_./:])',
+  '(^|[-_./:\\s])${RegExp.escape(token)}(?=\\u0024|[-_./:\\s])',
 ).hasMatch(value);
 
 /// Synchronizes a CC API account and its Anthropic-compatible models.
