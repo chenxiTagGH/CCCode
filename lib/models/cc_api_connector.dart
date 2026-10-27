@@ -366,6 +366,20 @@ class CcApiConnector {
     }
       _status = CcApiConnectionStatus.connected;
       return true;
+    } on _CcApiSelectionCancelled {
+      rethrow;
+    } on Object {
+      // Refresh may rotate and invalidate the prior session before a later
+      // profile/key/model request fails. Keep the rotated credential when
+      // this is a genuine synchronization failure; cancellation is excluded.
+      if (!committed && rotatedSession != null) {
+        try {
+          await store.writeSession(rotatedSession);
+        } catch (_) {
+          // Preserve the original synchronization error.
+        }
+      }
+      rethrow;
     } finally {
       if (!committed) {
         try {

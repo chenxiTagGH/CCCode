@@ -42,7 +42,9 @@ class _CcApiCardState extends State<CcApiCard> {
     setState(() => _working = true);
     try {
       await connector.connect(
-        chooseKey: (keys) => showCcApiKeyPicker(context, keys),
+        chooseKey: (keys) => mounted
+            ? showCcApiKeyPicker(context, keys)
+            : Future<AccountKey?>.value(null),
       );
     } finally {
       if (mounted && identical(widget.connector, connector)) {
@@ -58,7 +60,9 @@ class _CcApiCardState extends State<CcApiCard> {
     setState(() => _working = true);
     try {
       await connector.refresh(
-        chooseKey: (keys) => showCcApiKeyPicker(context, keys),
+        chooseKey: (keys) => mounted
+            ? showCcApiKeyPicker(context, keys)
+            : Future<AccountKey?>.value(null),
       );
     } finally {
       if (mounted && identical(widget.connector, connector)) {
