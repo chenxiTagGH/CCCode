@@ -42,7 +42,6 @@ void main(List<String> arguments) async {
             : const [
                 '-Wall',
                 '-fvisibility=hidden',
-                '-Wno-deprecated-non-prototype',
               ],
       ).run(input: input, output: output);
     }

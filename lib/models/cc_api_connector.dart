@@ -119,7 +119,10 @@ class CcApiConnector {
   Future<String?> _login() async {
     final window = openWindow();
     try {
-      await window.open(site.loginUrl, title: providerName);
+      await window.open(
+        site.url.replace(path: '/login'),
+        title: providerName,
+      );
       var closed = false;
       unawaited(window.closed.then((_) => closed = true));
       while (!closed) {
