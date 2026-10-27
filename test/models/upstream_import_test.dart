@@ -216,6 +216,8 @@ void main() {
       );
       expect(list, hasLength(raw.length));
       expect(list.map((u) => u.id).toSet(), hasLength(list.length));
+      expect(list.map((u) => u.id), isNot(contains('ymeng')));
+      expect(list.map((u) => u.id), isNot(contains('ifruit')));
       for (final upstream in list) {
         if (upstream.logo case final logo?) {
           expect(File(logo).existsSync(), isTrue, reason: logo);
