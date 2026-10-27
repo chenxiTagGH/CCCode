@@ -526,6 +526,19 @@ void main() {
     expect(workspace.preferredEditor, Editor.fastIde);
   });
 
+  testWidgets('Xcode is only available on macOS', (tester) async {
+    expect(Editor.xcode.available, isTrue);
+  }, variant: TargetPlatformVariant.only(TargetPlatform.macOS));
+
+  testWidgets('Xcode is excluded on Linux', (tester) async {
+    expect(Editor.xcode.available, isFalse);
+    expect(Editor.availableEditors, isNot(contains(Editor.xcode)));
+  }, variant: TargetPlatformVariant.only(TargetPlatform.linux));
+
+  testWidgets('Xcode is excluded on Windows', (tester) async {
+    expect(Editor.xcode.available, isFalse);
+  }, variant: TargetPlatformVariant.only(TargetPlatform.windows));
+
   test('IntelliJ IDEA has the desktop launcher metadata', () {
     expect(Editor.intellijIdea.macApp, 'IntelliJ IDEA');
     expect(Editor.intellijIdea.command, 'idea');

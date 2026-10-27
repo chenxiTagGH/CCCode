@@ -18,6 +18,10 @@ void main() {
   test('detects CC API protocols from platform and model identity', () {
     expect(detectCcApiProtocol(platform: 'anthropic'), ProviderProtocol.anthropic);
     expect(detectCcApiProtocol(platform: 'openai'), ProviderProtocol.openaiChat);
+    expect(
+      detectCcApiProtocol(platform: 'openai', modelId: 'gpt-5.6-terra'),
+      ProviderProtocol.openaiResponses,
+    );
     expect(detectCcApiProtocol(platform: 'gemini'), ProviderProtocol.openaiChat);
     expect(detectCcApiProtocol(modelId: 'claude-sonnet-4-5'), ProviderProtocol.anthropic);
     expect(detectCcApiProtocol(modelId: 'gpt-5.6-terra'), ProviderProtocol.openaiResponses);

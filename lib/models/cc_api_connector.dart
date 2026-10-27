@@ -54,13 +54,10 @@ ProviderProtocol detectCcApiProtocol({
   if (platformValue == 'anthropic' || _hasToken(modelValue, 'claude')) {
     return ProviderProtocol.anthropic;
   }
-  if (platformValue == 'openai' ||
-      _hasToken(modelValue, 'gpt') ||
-      RegExp(r'\b(?:o1|o3|o4)-').hasMatch(modelValue)) {
-    return platformValue == 'openai'
-        ? ProviderProtocol.openaiChat
-        : ProviderProtocol.openaiResponses;
-  }
+  final modelFamily = _hasToken(modelValue, 'gpt') ||
+      RegExp(r'\b(?:o1|o3|o4)-').hasMatch(modelValue);
+  if (modelFamily) return ProviderProtocol.openaiResponses;
+  if (platformValue == 'openai') return ProviderProtocol.openaiChat;
   if (platformValue == 'gemini' || _hasToken(modelValue, 'gemini')) {
     return ProviderProtocol.openaiChat;
   }

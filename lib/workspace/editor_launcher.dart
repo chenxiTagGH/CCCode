@@ -101,7 +101,7 @@ enum Editor {
 
   /// Whether the platform has it at all.
   bool get available =>
-      (!macOSOnly || !AppPlatform.isWindows) &&
+      (!macOSOnly || AppPlatform.isMacOS) &&
       (!linuxUnsupported || !AppPlatform.isLinux);
 
   /// The apps this platform can open a project in, in the order of the
