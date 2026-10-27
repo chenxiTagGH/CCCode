@@ -367,13 +367,8 @@ class CcApiConnector {
       _status = CcApiConnectionStatus.connected;
       return true;
     } on _CcApiSelectionCancelled {
-      if (rotatedSession != null) {
-        try {
-          await store.writeSession(rotatedSession);
-        } catch (_) {
-          // Preserve cancellation; the rotated token is best effort.
-        }
-      }
+      // Selection cancellation is strictly non-committing: storage and
+      // provider state remain unchanged, including any deferred rotation.
       rethrow;
     } on Object {
       // A first login must remain usable after a genuine sync failure. A
