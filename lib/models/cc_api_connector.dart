@@ -45,10 +45,12 @@ ProviderProtocol detectCcApiProtocol({
   final platformValue = platform?.trim().toLowerCase() ?? '';
   final modelValue = modelId?.trim().toLowerCase() ?? '';
   final value = '$platformValue $modelValue';
-  if (_hasToken(value, 'openai-responses')) {
+  if (_hasExplicitProtocolMarker(value, 'openai-responses')) {
     return ProviderProtocol.openaiResponses;
   }
-  if (_hasToken(value, 'openai-chat')) return ProviderProtocol.openaiChat;
+  if (_hasExplicitProtocolMarker(value, 'openai-chat')) {
+    return ProviderProtocol.openaiChat;
+  }
   if (platformValue == 'anthropic' || _hasToken(modelValue, 'claude')) {
     return ProviderProtocol.anthropic;
   }
@@ -64,6 +66,10 @@ ProviderProtocol detectCcApiProtocol({
   }
   return fallback;
 }
+
+bool _hasExplicitProtocolMarker(String value, String marker) => RegExp(
+  '(^|\\s)${RegExp.escape(marker)}(?=/|\\s|\\u0024)',
+).hasMatch(value);
 
 bool _hasToken(String value, String token) => RegExp(
   '(^|[-_./:\\s])${RegExp.escape(token)}(?=\\u0024|[-_./:\\s])',

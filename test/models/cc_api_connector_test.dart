@@ -43,6 +43,10 @@ void main() {
       detectCcApiProtocol(modelId: 'vendor-openai-chat-model'),
       ProviderProtocol.anthropic,
     );
+    expect(
+      detectCcApiProtocol(platform: 'vendor', modelId: 'openai-chat/model'),
+      ProviderProtocol.openaiChat,
+    );
   });
 
   test('parses and merges explicit model protocol metadata', () {
