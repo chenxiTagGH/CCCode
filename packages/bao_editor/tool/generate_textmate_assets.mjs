@@ -45,7 +45,7 @@ const themeExtensions = [
 ];
 // Contributed themes left out of the manifest: Light (Visual Studio), Light+,
 // Dark (Visual Studio), Dark 2026 and Light 2026. Their files are still
-// copied, as Light Modern, Dark+ and the Bao themes include them.
+// copied, as Light Modern, Dark+ and the CC themes include them.
 const excludedThemes = ['Visual Studio Light', 'Light+', 'Visual Studio Dark', 'Dark 2026', 'Light 2026'];
 
 const installedExtensions = [
@@ -310,8 +310,8 @@ for (const extension of themeExtensions) {
 // CCCode's own themes, kept in tool/textmate_themes/<extension>/: each includes
 // a bundled theme (`../../theme-defaults/...`) and sets its colors over it.
 const localThemes = [
-  { extension: 'theme-bao', id: 'Bao Dark', label: 'Bao Dark', uiTheme: 'vs-dark', path: 'themes/bao-dark-color-theme.json' },
-  { extension: 'theme-bao', id: 'Bao Light', label: 'Bao Light', uiTheme: 'vs', path: 'themes/bao-light-color-theme.json' },
+  { extension: 'theme-bao', id: 'CC Dark', label: 'CC Dark', uiTheme: 'vs-dark', path: 'themes/bao-dark-color-theme.json' },
+  { extension: 'theme-bao', id: 'CC Light', label: 'CC Light', uiTheme: 'vs', path: 'themes/bao-light-color-theme.json' },
 ];
 for (const theme of localThemes) {
   const assetPath = `themes/${theme.extension}/${theme.path}`;

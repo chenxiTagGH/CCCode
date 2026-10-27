@@ -1,6 +1,6 @@
 {
 	"$schema": "vscode://schemas/color-theme",
-	"name": "Bao Light",
+	"name": "CC Light",
 	"include": "../../theme-defaults/themes/2026-light.json",
 	"type": "light",
 	"colors": {

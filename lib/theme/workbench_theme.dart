@@ -22,7 +22,7 @@
 // restyles the whole workbench upstream.
 
 import 'dart:async';
-import 'dart:convert' show jsonEncode;
+import 'dart:convert' show jsonDecode, jsonEncode;
 import 'dart:io' show File;
 import 'dart:ui' as ui;
 
@@ -367,7 +367,16 @@ class WorkbenchThemeService extends ChangeNotifier
       _setting = migrateThemeSettingsId(setting);
     }
     var theme = ColorThemeData.fromStorageData(data);
-    if (theme != null && theme.settingsId != _setting) theme = null;
+    if (theme != null) {
+      final migrated = migrateThemeSettingsId(theme.settingsId);
+      if (migrated != _setting) {
+        theme = null;
+      } else if (migrated != theme.settingsId) {
+        final stored = jsonDecode(theme.toStorage()) as Map<String, Object?>;
+        stored['settingsId'] = migrated;
+        theme = ColorThemeData.fromStorageData(jsonEncode(stored));
+      }
+    }
     theme ??= ColorThemeData.createUnloadedThemeForThemeType(
       ColorScheme.dark,
       switch (_setting) {

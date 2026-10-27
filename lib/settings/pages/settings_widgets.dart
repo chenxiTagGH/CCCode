@@ -479,6 +479,7 @@ class SettingsTextField extends StatefulWidget {
     required this.value,
     required this.semanticLabel,
     required this.onSubmitted,
+    this.validator,
     this.hint,
     this.width = 220,
   });
@@ -486,6 +487,7 @@ class SettingsTextField extends StatefulWidget {
   final String value;
   final String semanticLabel;
   final ValueChanged<String> onSubmitted;
+  final String? Function(String value)? validator;
   final String? hint;
   final double width;
 
@@ -496,6 +498,7 @@ class SettingsTextField extends StatefulWidget {
 class _SettingsTextFieldState extends State<SettingsTextField> {
   late final _controller = TextEditingController(text: widget.value);
   final _focus = FocusNode();
+  String? _error;
 
   @override
   void initState() {
@@ -527,6 +530,12 @@ class _SettingsTextFieldState extends State<SettingsTextField> {
   void _submit(String text) {
     final typed = text.trim();
     if (typed == widget.value) return;
+    final error = widget.validator?.call(typed);
+    if (error != null && error.isNotEmpty) {
+      setState(() => _error = error);
+      return;
+    }
+    setState(() => _error = null);
     widget.onSubmitted(typed);
   }
 
@@ -564,6 +573,7 @@ class _SettingsTextFieldState extends State<SettingsTextField> {
             focusedBorder: border.copyWith(
               borderSide: BorderSide(color: AppColors.accent),
             ),
+            errorText: _error,
           ),
         ),
       ),

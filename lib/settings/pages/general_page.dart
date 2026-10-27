@@ -71,10 +71,12 @@ class GeneralSettingsPage extends StatelessWidget {
   static String _attributionDetail(
     BuildContext context,
     CommitAttribution value,
+    Map<String, Object?> settings,
   ) {
     final l10n = context.l10n;
     return switch (value) {
-      CommitAttribution.cccode => CommitAttribution.baoCodeCommit,
+      CommitAttribution.cccode =>
+        CommitAttribution.commitTrailer(settings),
       CommitAttribution.agent => l10n.generalSettingsAttributionAgentDetail,
       CommitAttribution.none => l10n.generalSettingsAttributionNoneDetail,
     };
@@ -278,7 +280,7 @@ class GeneralSettingsPage extends StatelessWidget {
           settings?[CommitAttribution.settingKey],
         );
         final name = attributionName(context, current);
-        final detail = _attributionDetail(context, current);
+        final detail = _attributionDetail(context, current, settings?.values ?? const {});
         final mainWindow = MainWindow.parse(settings?[MainWindow.settingKey]);
         final mainWindowShown = mainWindowName(context, mainWindow);
         return SettingsPage(
@@ -355,6 +357,9 @@ class GeneralSettingsPage extends StatelessWidget {
                         },
                         semanticLabel: l10n.generalSettingsAttributionEmail,
                         hint: l10n.generalSettingsAttributionEmailHint,
+                        validator: (value) => validAttributionEmail(value)
+                            ? null
+                            : l10n.generalSettingsAttributionEmailInvalid,
                         onSubmitted: (value) {
                           if (validAttributionEmail(value)) {
                             _write(
@@ -364,6 +369,16 @@ class GeneralSettingsPage extends StatelessWidget {
                           }
                         },
                       ),
+                      if (settings?[CommitAttribution.emailSettingKey]
+                              case final String email
+                              when email.trim().isNotEmpty &&
+                                  !validAttributionEmail(email))
+                        Text(
+                          l10n.generalSettingsAttributionEmailInvalid,
+                          style: SettingsText.description.copyWith(
+                            color: themeColors['errorForeground'],
+                          ),
+                        ),
                     ],
                   ],
                   trailing: SettingsDropdown(

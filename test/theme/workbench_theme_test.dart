@@ -159,7 +159,7 @@ void main() {
     expect(themes.colorTheme.settingsId, 'CC Dark');
   });
 
-  test('with no theme kept, Bao Dark is the default', () async {
+  test('with no theme kept, CC Dark is the default', () async {
     final themes = WorkbenchThemeService()..restore();
     expect(themes.colorThemeId, 'CC Dark');
     await themes.initialize();

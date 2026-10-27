@@ -182,18 +182,18 @@ void main() {
     test('themes', () {
       // VS Code's but Light (Visual Studio), Light+, Dark (Visual Studio),
       // Dark 2026, Light 2026, Monokai, Abyss and Quiet Light, which the
-      // assets leave out, and CCCode's own Bao Dark and Bao Light.
+      // assets leave out, and CCCode's own CC Dark and CC Light.
       expect(manifest.themes, hasLength(13));
-      final baoDark = manifest.themeById('Bao Dark')!;
-      expect(baoDark.uiTheme, 'vs-dark');
+      final ccDark = manifest.themeById('CC Dark')!;
+      expect(ccDark.uiTheme, 'vs-dark');
       expect(
-        baoDark.assetPath,
+        ccDark.assetPath,
         'themes/theme-bao/themes/bao-dark-color-theme.json',
       );
-      final baoLight = manifest.themeById('Bao Light')!;
-      expect(baoLight.uiTheme, 'vs');
+      final ccLight = manifest.themeById('CC Light')!;
+      expect(ccLight.uiTheme, 'vs');
       expect(
-        baoLight.assetPath,
+        ccLight.assetPath,
         'themes/theme-bao/themes/bao-light-color-theme.json',
       );
       expect(manifest.themeById('Visual Studio Light'), isNull);

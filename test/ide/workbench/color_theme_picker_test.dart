@@ -27,7 +27,7 @@ const _themes = [
     label: 'Light High Contrast',
     type: ColorScheme.highContrastLight,
   ),
-  IdeColorThemeEntry(id: 'Bao Dark', label: 'Bao Dark', type: ColorScheme.dark),
+  IdeColorThemeEntry(id: 'CC Dark', label: 'CC Dark', type: ColorScheme.dark),
   IdeColorThemeEntry(
     id: 'Light Modern',
     label: 'Light Modern',
@@ -54,8 +54,8 @@ const _themes = [
     type: ColorScheme.dark,
   ),
   IdeColorThemeEntry(
-    id: 'Bao Light',
-    label: 'Bao Light',
+    id: 'CC Light',
+    label: 'CC Light',
     type: ColorScheme.light,
   ),
   IdeColorThemeEntry(
@@ -174,11 +174,11 @@ void main() {
       ],
       [
         '-- light themes',
-        'Bao Light (Default Light)',
+        'CC Light (Default Light)',
         'Light Modern',
         'Solarized Light',
         '-- dark themes',
-        'Bao Dark (Default Dark)',
+        'CC Dark (Default Dark)',
         'Dark Modern',
         'Dark+',
         'Kimbie Dark',
@@ -235,11 +235,11 @@ void main() {
     );
     // All the rows fit.
     expect(_rows(tester), [
-      'Bao Light  Default Light',
+      'CC Light  Default Light',
       'light themes',
       'Light Modern',
       'Solarized Light',
-      'Bao Dark  Default Dark',
+      'CC Dark  Default Dark',
       'dark themes',
       'Dark Modern',
       'Dark+',
@@ -353,14 +353,14 @@ void main() {
     expect(_active(tester), 'Light High Contrast');
     await tester.pump(const Duration(milliseconds: 200));
     await _key(tester, LogicalKeyboardKey.pageUp);
-    expect(_active(tester), 'Bao Light');
+    expect(_active(tester), 'CC Light');
     await tester.pump(const Duration(milliseconds: 200));
     expect(themes.calls, [
       'preview Dark Modern',
       'preview Kimbie Dark',
       'preview Dark+',
       'preview Default High Contrast Light',
-      'preview Bao Light',
+      'preview CC Light',
     ]);
 
     // Enter applies at once, dropping the pending preview.
@@ -419,7 +419,7 @@ void main() {
       ),
       findsOneWidget,
     );
-    expect(themes.calls, ['preview Bao Dark', 'apply Dark Modern']);
+    expect(themes.calls, ['preview CC Dark', 'apply Dark Modern']);
     await _key(tester, LogicalKeyboardKey.escape);
     await tester.pump(const Duration(seconds: 1));
     expect(themes.calls, hasLength(2));
@@ -438,7 +438,7 @@ void main() {
       'Dark+',
       'Dark Modern',
       'Dark High Contrast  Default High Contrast',
-      'Bao Dark  Default Dark',
+      'CC Dark  Default Dark',
       'Kimbie Dark',
       'Solarized Dark',
     ]);
@@ -463,8 +463,8 @@ void main() {
     await tester.enterText(_input, 'default');
     await tester.pump();
     expect(_rows(tester), [
-      'Bao Light  Default Light',
-      'Bao Dark  Default Dark',
+      'CC Light  Default Light',
+      'CC Dark  Default Dark',
       'Dark High Contrast  Default High Contrast',
       'Light High Contrast  Default High Contrast Light',
     ]);
@@ -493,7 +493,7 @@ void main() {
     await tester.enterText(_input, '');
     await tester.pump();
     expect(_rows(tester), contains('dark themes'));
-    expect(_active(tester), 'Bao Light');
+    expect(_active(tester), 'CC Light');
     await _key(tester, LogicalKeyboardKey.escape);
     await tester.pump(const Duration(seconds: 1));
   });
@@ -586,7 +586,7 @@ void main() {
     }
 
     await _openPicker(tester);
-    expect(_active(tester), 'Bao Dark');
+    expect(_active(tester), 'CC Dark');
     await _key(tester, LogicalKeyboardKey.arrowUp);
     expect(_active(tester), 'Solarized Light');
     await settle();
@@ -595,7 +595,7 @@ void main() {
     expect(storage.kept, isEmpty, reason: 'a preview is not kept');
     await _key(tester, LogicalKeyboardKey.escape);
     await settle();
-    expect(themes.colorThemeId, 'Bao Dark');
+    expect(themes.colorThemeId, 'CC Dark');
 
     await _openPicker(tester);
     await _key(tester, LogicalKeyboardKey.arrowDown);

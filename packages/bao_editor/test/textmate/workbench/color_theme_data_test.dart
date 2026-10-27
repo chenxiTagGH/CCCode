@@ -108,7 +108,7 @@ void main() {
     }
 
     test('Dark 2026 follows its include chain', () async {
-      // Not listed in the manifest, but kept as Bao Dark's include base.
+      // Not listed in the manifest, but kept as CC Dark's include base.
       final theme = ColorThemeData.fromExtensionTheme(
         const IThemeExtensionPoint(
           id: 'Dark 2026',
@@ -135,8 +135,8 @@ void main() {
       expect(theme.semanticTokenColors.length, 4 + 4);
     });
 
-    test('Bao Dark sets its colors over Dark 2026', () async {
-      final theme = await bundled('Bao Dark');
+    test('CC Dark sets its colors over Dark 2026', () async {
+      final theme = await bundled('CC Dark');
       expect(theme.type, ColorScheme.dark);
       expect(theme.semanticHighlighting, isTrue);
       expect(theme.colors['editor.background'], '#292925');
@@ -150,8 +150,8 @@ void main() {
       expect(theme.semanticTokenColors.length, 4 + 4 + 4);
     });
 
-    test('Bao Light sets its colors over Light 2026', () async {
-      final theme = await bundled('Bao Light');
+    test('CC Light sets its colors over Light 2026', () async {
+      final theme = await bundled('CC Light');
       expect(theme.type, ColorScheme.light);
       expect(theme.semanticHighlighting, isTrue);
       expect(theme.colors['editor.background'], '#FDFCF8');

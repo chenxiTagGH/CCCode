@@ -70,6 +70,23 @@ Task 1 theme renaming and customizable commit attribution are implemented and co
    - Working tree is clean after commit.
    - Commit: `cc27acf6eb3fcd8f474d7950c1f856ea585ff06c`
 
+## Review follow-up
+
+Addressed review findings after the initial commit:
+
+- Stored theme snapshots now migrate their legacy `settingsId` from `Bao Dark`/`Bao Light` to `CC Dark`/`CC Light` before compatibility matching, preserving stored colors and token data.
+- Updated the TextMate asset generator theme entries and source theme metadata JSON, plus related manifest/color-theme/semantic-token tests.
+- General settings now renders the normalized saved CCCode name/email in the attribution detail.
+- Invalid attribution emails are rejected by the field validator, shown with localized error text, and are not persisted.
+
+## Static checks after review fixes
+
+- `grep -R "Bao Dark\\|Bao Light" -n lib packages/bao_editor test | head -100` — only intentional migration compatibility assertions and migration cases remain; no stale generator/source theme labels remain.
+- `jq empty packages/bao_editor/tool/textmate_themes/theme-bao/themes/bao-dark-color-theme.json packages/bao_editor/tool/textmate_themes/theme-bao/themes/bao-light-color-theme.json packages/bao_editor/assets/textmate/manifest.json` — passed with no output.
+- `node --check packages/bao_editor/tool/generate_textmate_assets.mjs` — passed with no output.
+- `git diff --check` — passed with no output.
+- Flutter/Dart remain unavailable: `flutter ...` fails with `(eval):1: command not found: flutter`; `dart format ...` fails with `(eval):1: command not found: dart`.
+
 ## Concerns
 
 - Focused Flutter tests were not executable because Flutter is unavailable. No test pass is claimed.
