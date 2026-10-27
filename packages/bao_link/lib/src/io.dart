@@ -32,7 +32,7 @@ class WebSocketLinkSocket implements LinkSocket {
 }
 
 /// The path a desktop takes phones' WebSockets at.
-const linkPath = '/baocode-link';
+const linkPath = '/cccode-link';
 
 /// A desktop's listening end: takes phones' WebSockets on [port], on all of
 /// its addresses (IPv4 and IPv6).
@@ -66,7 +66,7 @@ class LinkServer {
           !WebSocketTransformer.isUpgradeRequest(request)) {
         request.response
           ..statusCode = HttpStatus.notFound
-          ..write('BaoCode');
+          ..write('CCCode');
         unawaited(request.response.close());
         continue;
       }
@@ -146,7 +146,7 @@ abstract final class LinkConnector {
 }
 
 /// This machine's addresses others may reach it at, on [port]: those on
-/// the LAN (private IPv4, IPv6 of the site), then public IPv6 ones (often
+/// the LAN (private IPv4, IPv6 of the website), then public IPv6 ones (often
 /// reachable from the internet as they are). Not loopback, nor link-local.
 Future<List<DirectEndpoint>> localEndpoints(int port) async {
   final List<NetworkInterface> interfaces;

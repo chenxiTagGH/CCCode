@@ -17,7 +17,7 @@ class ApiConfig {
     this.environment = const {},
     this.maxRetries = 10,
     this.idleTimeout = const Duration(minutes: 5),
-    this.userAgent = 'baocode-agent',
+    this.userAgent = 'cccode-agent',
     this.userId,
   });
 

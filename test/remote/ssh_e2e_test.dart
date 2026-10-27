@@ -1,9 +1,9 @@
 // Connecting for real: the system's ssh to sshd containers, the server built
 // from the sources and put there. tool/ssh_e2e.sh starts them and runs this,
-// BAOCODE_SSH_E2E naming its folder (the test key) and
-// BAOCODE_REMOTE_SERVER_DIR the server it built. None of the user's
+// CCCODE_SSH_E2E naming its folder (the test key) and
+// CCCODE_REMOTE_SERVER_DIR the server it built. None of the user's
 // known_hosts is touched: the hosts' keys go to a file of each test's.
-// From another machine (Windows, say): BAOCODE_SSH_E2E_HOST the address of
+// From another machine (Windows, say): CCCODE_SSH_E2E_HOST the address of
 // the one the containers are on (`tool/ssh_e2e.sh --up`).
 @Tags(['ssh-e2e'])
 library;
@@ -19,13 +19,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 
 void main() {
-  final setup = Platform.environment['BAOCODE_SSH_E2E'];
+  final setup = Platform.environment['CCCODE_SSH_E2E'];
   if (setup == null) {
-    test('ssh end to end', () {}, skip: 'BAOCODE_SSH_E2E is not set');
+    test('ssh end to end', () {}, skip: 'CCCODE_SSH_E2E is not set');
     return;
   }
   final key = p.join(setup, 'testkey');
-  final address = Platform.environment['BAOCODE_SSH_E2E_HOST'] ?? '127.0.0.1';
+  final address = Platform.environment['CCCODE_SSH_E2E_HOST'] ?? '127.0.0.1';
   final noFile = Platform.isWindows ? 'NUL' : '/dev/null';
 
   late Directory dir;

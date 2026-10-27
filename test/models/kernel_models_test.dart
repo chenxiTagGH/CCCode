@@ -174,7 +174,7 @@ void main() {
     kernel.dispose();
   });
 
-  test('on BaoCode\'s own core, the machine\'s Claude Code is not offered: '
+  test('on CCCode\'s own core, the machine\'s Claude Code is not offered: '
       'a model of none (one of its own, picked on the CLI) is the first '
       'upstream\'s', () async {
     ClaudeCore.current = () => ClaudeCore.builtin;
@@ -196,7 +196,7 @@ void main() {
     kernel.dispose();
   });
 
-  test('on BaoCode\'s own core with no upstream, nothing is picked', () async {
+  test('on CCCode\'s own core with no upstream, nothing is picked', () async {
     ClaudeCore.current = () => ClaudeCore.builtin;
     final (:kernel, launches: _, clis: _, environments: _) = start(
       ModelProviders.memory(),

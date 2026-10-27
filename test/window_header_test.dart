@@ -31,7 +31,7 @@ import 'package:baocode/update/version.dart';
 import 'ide/terminal/fake_pty.dart';
 import 'ide/terminal/fake_terminal.dart';
 
-const _window = MethodChannel('baocode/window');
+const _window = MethodChannel('cccode/window');
 
 /// The app with the header Windows draws, and what it tells the window.
 Future<(Workspace, List<MethodCall>)> pumpWindowsApp(
@@ -56,7 +56,7 @@ Future<(Workspace, List<MethodCall>)> pumpWindowsApp(
   );
   final workspace = Workspace.mock();
   await tester.pumpWidget(
-    BaoCodeApp(workspace: workspace, terminalBackend: terminalBackend),
+    CCCodeApp(workspace: workspace, terminalBackend: terminalBackend),
   );
   await tester.pump();
   return (workspace, calls);
@@ -654,7 +654,7 @@ void main() {
     tester.view.physicalSize = const Size(1400, 900);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
-    await tester.pumpWidget(BaoCodeApp(workspace: Workspace.mock()));
+    await tester.pumpWidget(CCCodeApp(workspace: Workspace.mock()));
     await tester.pump();
     Rect rectOf(Type type) => tester.getRect(
       find.descendant(of: find.byType(ChatScreen), matching: find.byType(type)),
@@ -682,7 +682,7 @@ void main() {
         theme: buildAppTheme(),
         home: Builder(
           builder: (context) => TextButton(
-            onPressed: () => showAboutBaoCode(context),
+            onPressed: () => showAboutCCCode(context),
             child: const Text('About'),
           ),
         ),

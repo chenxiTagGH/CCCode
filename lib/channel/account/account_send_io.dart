@@ -18,7 +18,7 @@ Future<AccountResponse> sendToAccountSite(
   final client = HttpClient()
     ..connectionTimeout = _timeout
     ..findProxy = route.findProxy
-    ..userAgent = 'BaoCode/$currentAppVersion (${Platform.operatingSystem})';
+    ..userAgent = 'CCCode/$currentAppVersion (${Platform.operatingSystem})';
   try {
     final request = await client.openUrl(method, url).timeout(_timeout);
     request.followRedirects = false;
@@ -36,7 +36,7 @@ Future<AccountResponse> sendToAccountSite(
     } on FormatException {
       decoded = null;
     }
-    // A page, not the site's JSON: its firewall's (Cloudflare's "you have
+    // A page, not the website's JSON: its firewall's (Cloudflare's "you have
     // been blocked"), which would otherwise read as signed out.
     if (response.statusCode == HttpStatus.forbidden && decoded is! Map) {
       throw AccountBlocked(method, url);

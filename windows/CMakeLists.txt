@@ -1,10 +1,10 @@
 # Project-level configuration.
 cmake_minimum_required(VERSION 3.14)
-project(baocode LANGUAGES CXX)
+project(cccode LANGUAGES CXX)
 
 # The name of the executable created for the application. Change this to change
 # the on-disk name of your application.
-set(BINARY_NAME "baocode")
+set(BINARY_NAME "cccode")
 
 # Explicitly opt in to modern CMake behaviors to avoid warnings with recent
 # versions of CMake.
@@ -84,9 +84,9 @@ install(TARGETS ${BINARY_NAME} RUNTIME DESTINATION "${CMAKE_INSTALL_PREFIX}"
   COMPONENT Runtime)
 
 # The browsers' native messaging host and its manifest, beside the app.
-install(TARGETS baocode-browser-host RUNTIME
+install(TARGETS cccode-browser-host RUNTIME
   DESTINATION "${CMAKE_INSTALL_PREFIX}" COMPONENT Runtime)
-install(FILES "BrowserBridge/dev.baocode.browser.json"
+install(FILES "BrowserBridge/vip.cchub.cccode.browser.json"
   DESTINATION "${CMAKE_INSTALL_PREFIX}" COMPONENT Runtime)
 
 install(FILES "${FLUTTER_ICU_DATA_FILE}" DESTINATION "${INSTALL_BUNDLE_DATA_DIR}"

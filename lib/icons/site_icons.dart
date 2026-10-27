@@ -11,7 +11,7 @@ typedef SiteIconFetch = Future<IconImage?> Function(
   Future<IconImage> Function(Uint8List bytes) take,
 );
 
-/// The icons of the sites of upstreams of models that show no other:
+/// The icons of the websites of upstreams of models that show no other:
 /// fetched the first time one is asked for, in the background, and kept
 /// (by host) in a library of their own, not among the pictures the user
 /// uploaded. Tells its listeners as one comes.
@@ -35,7 +35,7 @@ class SiteIcons extends ChangeNotifier {
   final Set<String> _asked = {};
 
   /// [site]'s icon, kept from before or fetched since; null while it is
-  /// not there (it is fetched then, once), or when the site has none.
+  /// not there (it is fetched then, once), or when the website has none.
   IconImage? of(Uri site) {
     final host = site.host.toLowerCase();
     if (host.isEmpty) return null;

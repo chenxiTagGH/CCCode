@@ -12,7 +12,7 @@ import 'pairing.dart';
 /// it gets nowhere.
 abstract final class LinkDiscovery {
   /// The DNS-SD service type.
-  static const type = '_baocode._tcp';
+  static const type = '_cccode._tcp';
 
   static const version = '1';
 }
@@ -29,7 +29,7 @@ class LinkAdvert {
   });
 
   /// The advert found as [name] at [port], with [attributes]; null for
-  /// one of another version, or not one of BaoCode's.
+  /// one of another version, or not one of CCCode's.
   static LinkAdvert? parse({
     required String name,
     required int port,

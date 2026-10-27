@@ -17,7 +17,7 @@ namespace {
 constexpr wchar_t kWindowClassName[] = L"FLUTTER_RUNNER_WIN32_WINDOW";
 
 // The property MarkOpenRequestWindow puts on the window.
-constexpr wchar_t kOpenRequestProperty[] = L"BaoCode.OpenRequests";
+constexpr wchar_t kOpenRequestProperty[] = L"CCCode.OpenRequests";
 
 // How long a second copy of the app waits for the first's window while that
 // is still starting, and how often it looks.
@@ -42,6 +42,36 @@ HWND RunningWindow() {
 
 // |path| made absolute from the current folder, as the system resolves it;
 // empty when it cannot be.
+bool IsCCCodeLink(const wchar_t* link) {
+  constexpr wchar_t kPrefix[] = L"cccode://";
+  constexpr size_t kPrefixLength = sizeof(kPrefix) / sizeof(wchar_t) - 1;
+  if (link == nullptr || wcsncmp(link, kPrefix, kPrefixLength) != 0) {
+    return false;
+  }
+  const wchar_t* suffix = link + kPrefixLength;
+  constexpr wchar_t kProviderPath[] = L"provider/import?";
+  constexpr wchar_t kActivatePath[] = L"activate?";
+  constexpr size_t kProviderPathLength =
+      sizeof(kProviderPath) / sizeof(wchar_t) - 1;
+  constexpr size_t kActivatePathLength =
+      sizeof(kActivatePath) / sizeof(wchar_t) - 1;
+  const bool provider =
+      wcsncmp(suffix, kProviderPath, kProviderPathLength) == 0 &&
+      suffix[kProviderPathLength] != L'\0';
+  const bool activate =
+      wcsncmp(suffix, kActivatePath, kActivatePathLength) == 0 &&
+      suffix[kActivatePathLength] != L'\0';
+  if (!provider && !activate) {
+    return false;
+  }
+  for (const wchar_t* character = link; *character != L'\0'; character++) {
+    if (*character <= L' ' || *character == L'\\' || *character == L'#') {
+      return false;
+    }
+  }
+  return true;
+}
+
 std::wstring FullPath(const wchar_t* path) {
   // Asked with no room, it answers the room needed, the terminator counted;
   // given it, the length written, without.
@@ -99,10 +129,12 @@ bool IsRequest(const std::vector<std::string>& paths) {
 
 OpenRequests::OpenRequests(flutter::BinaryMessenger* messenger,
                            std::vector<std::string> pending)
-    : pending_(std::move(pending)),
-      channel_(std::make_unique<flutter::MethodChannel<flutter::EncodableValue>>(
-          messenger, "baocode/open",
+    : channel_(std::make_unique<flutter::MethodChannel<flutter::EncodableValue>>(
+          messenger, "cccode/open",
           &flutter::StandardMethodCodec::GetInstance())) {
+  if (!pending.empty()) {
+    pending_.push_back(std::move(pending));
+  }
   channel_->SetMethodCallHandler(
       [this](const flutter::MethodCall<flutter::EncodableValue>& call,
              std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>>
@@ -110,14 +142,16 @@ OpenRequests::OpenRequests(flutter::BinaryMessenger* messenger,
         const std::string& method = call.method_name();
         if (method == "takePending") {
           flutter::EncodableList paths;
-          for (const std::string& path : pending_) {
-            paths.push_back(flutter::EncodableValue(path));
-          }
-          for (std::vector<std::string>& request : pending_requests_) {
-            AddRequest(paths, std::move(request));
+          for (std::vector<std::string>& request : pending_) {
+            if (IsRequest(request)) {
+              AddRequest(paths, std::move(request));
+            } else {
+              for (std::string& path : request) {
+                paths.push_back(flutter::EncodableValue(std::move(path)));
+              }
+            }
           }
           pending_.clear();
-          pending_requests_.clear();
           ready_ = true;
           result->Success(flutter::EncodableValue(std::move(paths)));
           return;
@@ -138,11 +172,7 @@ OpenRequests::~OpenRequests() {
 void OpenRequests::Deliver(std::vector<std::string> paths) {
   const bool request = IsRequest(paths);
   if (!ready_) {
-    if (request) {
-      pending_requests_.push_back(std::move(paths));
-    } else {
-      pending_.insert(pending_.end(), paths.begin(), paths.end());
-    }
+    pending_.push_back(std::move(paths));
     return;
   }
   if (paths.empty()) {
@@ -180,18 +210,17 @@ std::vector<std::string> OpenPathsFromCommandLine() {
     ::LocalFree(arguments);
     return paths;
   }
-  // From a baocode: link, its flag first, then the link as it came (not a
+  // From a cccode: link, its flag first, then the link as it came (not a
   // path to make absolute).
-  if (count > 2 && Utf8FromUtf16(arguments[1]) == kLinkRequestFlag) {
-    std::string link = Utf8FromUtf16(arguments[2]);
-    if (!link.empty()) {
+  if (count > 1 && Utf8FromUtf16(arguments[1]) == kLinkRequestFlag) {
+    if (count == 3 && IsCCCodeLink(arguments[2])) {
       paths.push_back(kLinkRequestFlag);
-      paths.push_back(std::move(link));
+      paths.push_back(Utf8FromUtf16(arguments[2]));
     }
     ::LocalFree(arguments);
     return paths;
   }
-  // From Open with BaoCode, its flag first: the paths, as below, go to an
+  // From Open with CCCode, its flag first: the paths, as below, go to an
   // agent.
   const bool agent =
       count > 1 && Utf8FromUtf16(arguments[1]) == kAgentRequestFlag;

@@ -87,7 +87,7 @@ class McpServer {
 class McpManager {
   McpManager(this.session)
     : oauth = McpOAuth(
-        storeFile: p.join(session.paths.configDir, '.baocode-mcp-oauth.json'),
+        storeFile: p.join(session.paths.configDir, '.cccode-mcp-oauth.json'),
         environment: session.environment,
       );
 
@@ -238,7 +238,7 @@ class McpManager {
           'roots': {'listChanged': true},
           'elicitation': <String, Object?>{},
         },
-        'clientInfo': {'name': 'baocode-agent', 'version': '1.0.0'},
+        'clientInfo': {'name': 'cccode-agent', 'version': '1.0.0'},
       }, _timeout(env, 'MCP_TIMEOUT', 30000));
       if (transport case final StreamableHttpTransport http) {
         http.protocolVersion =

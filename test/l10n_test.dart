@@ -121,6 +121,72 @@ void main() {
         expect((value! as String).trim(), isNotEmpty, reason: key);
       }
     });
+
+    test('CC API messages use the required copy', () {
+      final en = _arb('app_en.arb');
+      final zh = _arb('app_zh.arb');
+      expect(en['modelsCcApiName'], 'CC API');
+      expect(zh['modelsCcApiName'], 'CC API');
+      expect(
+        en['modelsCcApiDescription'],
+        'One-click access to Claude, GPT and Gemini',
+      );
+      expect(zh['modelsCcApiDescription'], 'Claude、GPT、Gemini 一键接入');
+      for (final key in [
+        'modelsCcApiName',
+        'modelsCcApiDescription',
+        'modelsCcApiSignIn',
+        'modelsCcApiConnecting',
+        'modelsCcApiConnected',
+        'modelsCcApiNeedsLogin',
+        'modelsCcApiRefreshFailed',
+        'modelsCcApiUnavailable',
+      ]) {
+        expect(en, contains(key));
+        expect(zh, contains(key));
+      }
+    });
+
+    test('CCCode icon resources and references exist', () {
+      final pubspec = File('pubspec.yaml').readAsStringSync();
+      final logo = File('assets/branding/cccode_logo.svg').readAsStringSync();
+      expect(pubspec, contains('    - assets/branding/'));
+      expect(pubspec, isNot(contains('assets/branding/cccode_logo.svg')));
+      expect(pubspec, isNot(contains('assets/branding/cccode_icon.png')));
+      expect(pubspec, isNot(contains('assets/branding/cccode_icon.icns')));
+      expect(File('assets/branding/cccode_logo.svg').existsSync(), isTrue);
+      expect(File('assets/branding/cccode_icon.png').existsSync(), isTrue);
+      expect(File('assets/branding/cccode_icon.icns').existsSync(), isTrue);
+      for (final color in [
+        '#FFFFFF',
+        '#0B132B',
+        '#18CDE2',
+        '#4A69FF',
+        '#FFBF3F',
+      ]) {
+        expect(logo, contains(color), reason: color);
+      }
+      for (final path in [
+        'macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_1024.png',
+        'web/icons/Icon-192.png',
+        'web/icons/Icon-512.png',
+        'web/icons/Icon-maskable-192.png',
+        'web/icons/Icon-maskable-512.png',
+        'web/favicon.png',
+        'windows/runner/resources/app_icon.ico',
+      ]) {
+        expect(File(path).existsSync(), isTrue, reason: path);
+      }
+      expect(
+        File('lib/workspace/window_header/about_dialog.dart')
+            .readAsStringSync(),
+        contains("assets/branding/cccode_icon.png"),
+      );
+      final linuxPackager = File('tool/package_linux_deb.sh').readAsStringSync();
+      expect(linuxPackager, contains('assets/branding/cccode_icon.png'));
+      expect(linuxPackager, contains('Icon=cccode'));
+      expect(linuxPackager, isNot(contains('Icon=baocode')));
+    });
   });
 
   group('AppLocale', () {
@@ -252,7 +318,7 @@ void main() {
     ) async {
       final locale = AppLocale(storage: MemoryLocaleStorage('en'));
       await tester.pumpWidget(
-        BaoCodeApp(workspace: Workspace.mock(), appLocale: locale),
+        CCCodeApp(workspace: Workspace.mock(), appLocale: locale),
       );
       await tester.pump();
       expect(find.text('New Chat'), findsWidgets);

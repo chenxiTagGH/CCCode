@@ -8,7 +8,7 @@
 #
 #   sh tool/package_linux_deb.sh            the standard build
 #   sh tool/package_linux_deb.sh --channel  the channel build (built with
-#                                           BAOCODE_CHANNEL=true in the
+#                                           CCCODE_CHANNEL=true in the
 #                                           environment and as a dart-define):
 #                                           its files end in -channel, and it
 #                                           depends on WebKitGTK, for its
@@ -33,7 +33,7 @@ case "$(uname -m)" in
 esac
 bundle="$root/build/linux/$arch/release/bundle"
 
-if [ ! -x "$bundle/baocode" ]; then
+if [ ! -x "$bundle/cccode" ]; then
   echo "No bundle at $bundle. Run: flutter build linux --release" >&2
   exit 1
 fi
@@ -47,52 +47,53 @@ fi
 stage=$(mktemp -d)
 trap 'rm -rf "$stage"' EXIT
 
-mkdir -p "$stage/opt/baocode" \
+mkdir -p "$stage/opt/cccode" \
   "$stage/usr/bin" \
   "$stage/usr/share/applications" \
   "$stage/usr/share/icons/hicolor/128x128/apps" \
   "$stage/DEBIAN"
 
-cp -a "$bundle/." "$stage/opt/baocode/"
-cp "$root/assets/branding/app_icon.png" \
-  "$stage/usr/share/icons/hicolor/128x128/apps/baocode.png"
+cp -a "$bundle/." "$stage/opt/cccode/"
+cp "$root/assets/branding/cccode_icon.png" \
+  "$stage/usr/share/icons/hicolor/128x128/apps/cccode.png"
 
-cat > "$stage/usr/bin/baocode" << 'EOF'
+cat > "$stage/usr/bin/cccode" << 'EOF'
 #!/bin/sh
-exec /opt/baocode/baocode "$@"
+exec /opt/cccode/cccode "$@"
 EOF
-chmod 755 "$stage/usr/bin/baocode"
+chmod 755 "$stage/usr/bin/cccode"
 
-cat > "$stage/usr/share/applications/baocode.desktop" << 'EOF'
+cat > "$stage/usr/share/applications/cccode.desktop" << 'EOF'
 [Desktop Entry]
-Name=BaoCode
+Name=CCCode
 Comment=Desktop app for Claude Code
-Exec=baocode %U
-Icon=baocode
+Exec=cccode --cccode-link %u
+Icon=cccode
 Terminal=false
 Type=Application
 Categories=Development;
-StartupWMClass=dev.baocode.desktop
+MimeType=x-scheme-handler/cccode;
+StartupWMClass=vip.cchub.cccode
 EOF
 
 # libgtk-3-0 is what the engine links. libblkid1 and liblzma5 are the
 # extra libraries Flutter's Linux bundle expects on the system.
 cat > "$stage/DEBIAN/control" << EOF
-Package: baocode
+Package: cccode
 Version: ${marketing}
 Section: devel
 Priority: optional
 Architecture: ${package_arch}
 Depends: libgtk-3-0, libblkid1, liblzma5${webkit}
-Maintainer: BaoCode <noreply@baocode.dev>
+Maintainer: CCCode <noreply@baocode.dev>
 Homepage: https://baocode.dev
-Description: BaoCode desktop for Linux
+Description: CCCode desktop for Linux
  A desktop UI for Claude Code, with a fast IDE built in.
 EOF
 
 out="$root/build/installers"
 mkdir -p "$out"
-name="BaoCode-${marketing}-linux-${package_arch}${edition}"
+name="CCCode-${marketing}-linux-${package_arch}${edition}"
 dpkg-deb --build --root-owner-group "$stage" "$out/$name.deb"
 tar -C "$bundle" -czf "$out/$name.tar.gz" .
 echo "Wrote $out/$name.deb"

@@ -13,7 +13,7 @@ import '../update/version.dart';
 import 'diagnostics_bundle.dart';
 
 /// Where to upload instead, to try a server.
-const diagnosticsUrlVariable = 'BAOCODE_DIAGNOSTICS_URL';
+const diagnosticsUrlVariable = 'CCCODE_DIAGNOSTICS_URL';
 
 /// Why an upload did not get through.
 enum DiagnosticsFailure {
@@ -147,7 +147,7 @@ class DiagnosticsUploader {
       home: home,
       windows: windows,
     );
-    final boundary = 'BaoCode${_randomToken()}';
+    final boundary = 'CCCode${_randomToken()}';
     final body = multipartBody(boundary, {
       'v': schema,
       'version': version,
@@ -161,7 +161,7 @@ class DiagnosticsUploader {
     }, bundle.bytes);
     final client = _sending = _client()
       ..connectionTimeout = timeout
-      ..userAgent = 'BaoCode/$version ($os)';
+      ..userAgent = 'CCCode/$version ($os)';
     try {
       final request = await client.postUrl(url).timeout(timeout);
       request.headers.contentType = ContentType(

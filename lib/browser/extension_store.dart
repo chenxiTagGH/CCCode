@@ -9,10 +9,10 @@ import '../platform/data_dir.dart';
 import '../workspace/editor_launcher.dart' show openExternal;
 import 'browser_bridge.dart';
 
-/// Where BaoCode's extension is got. The store's page is the site's to say
-/// (`store` in dl.baocode.dev's releases/extension/latest.json, which
+/// Where CCCode's extension is got. The store's page is the website's to say
+/// (`store` in the website's releases/extension/latest.json, which
 /// .github/workflows/extension.yml writes): fetched once a run, kept in
-/// the cache for when the site does not answer, and before the first
+/// the cache for when the website does not answer, and before the first
 /// answer the page the extension's id makes.
 abstract final class ExtensionStore {
   static final manifest = Uri.https(
@@ -26,7 +26,7 @@ abstract final class ExtensionStore {
     '/detail/${BrowserBridge.extensionIds.first}',
   );
 
-  /// The zip to load unpacked: baocode.dev sends it to the newest.
+  /// The zip to load unpacked: the website sends it to the newest.
   static final zip = Uri.https('baocode.dev', '/dl/browser-extension');
 
   /// The store's page as last known: fetched, or kept; [fallback] before.
@@ -43,7 +43,7 @@ abstract final class ExtensionStore {
   }) => _fetched ??= _fetch(from ?? manifest, cacheDir);
 
   /// [fetch]'s page, waiting for it [patience] at most: a click opens the
-  /// page then, the one known so far if the site is slow.
+  /// page then, the one known so far if the website is slow.
   static Future<Uri> resolve({
     Duration patience = const Duration(seconds: 2),
   }) => fetch().timeout(patience, onTimeout: () => page);

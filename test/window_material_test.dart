@@ -19,7 +19,7 @@ Future<void> pumpMacApp(WidgetTester tester, {double width = 1400}) async {
   tester.view.physicalSize = Size(width, 900);
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
-  await tester.pumpWidget(BaoCodeApp(workspace: Workspace.mock()));
+  await tester.pumpWidget(CCCodeApp(workspace: Workspace.mock()));
   await tester.pump();
 }
 
@@ -110,7 +110,7 @@ void main() {
     await tester.pumpWidget(
       RepaintBoundary(
         key: _app,
-        child: BaoCodeApp(workspace: Workspace.mock()),
+        child: CCCodeApp(workspace: Workspace.mock()),
       ),
     );
     await tester.pump();
@@ -187,7 +187,7 @@ void main() {
     tester.view.physicalSize = const Size(1400, 900);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
-    await tester.pumpWidget(BaoCodeApp(workspace: Workspace.mock()));
+    await tester.pumpWidget(CCCodeApp(workspace: Workspace.mock()));
     await tester.pump();
     expect(colorsUnder(tester, find.byType(Sidebar)).first.a, 1);
     expect(sidebarColor(tester).a, 1);

@@ -281,7 +281,7 @@ void main() {
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
     final workspace = Workspace.mock();
-    await tester.pumpWidget(BaoCodeApp(workspace: workspace));
+    await tester.pumpWidget(CCCodeApp(workspace: workspace));
     await tester.pump();
     await tester.tap(
       find.descendant(
@@ -661,7 +661,7 @@ void main() {
     // editor's build, and the input turned into a grey box until the app
     // restarted.
     const suggestion =
-        r'Run release\win-unpacked\BaoCode.exe'
+        r'Run release\win-unpacked\CCCode.exe'
         '\n'
         r'then open "C:\Users"';
     final (:session, :cli) = await pumpScripted(tester);
@@ -675,7 +675,7 @@ void main() {
       find.descendant(
         of: find.byType(ChatComposer),
         matching: find.text(
-          r'Run release\win-unpacked\BaoCode.exe then open "C:\Users"    Tab',
+          r'Run release\win-unpacked\CCCode.exe then open "C:\Users"    Tab',
           findRichText: true,
         ),
       ),
@@ -1395,7 +1395,7 @@ void main() {
       kernels: [claude],
       projects: const [Project('app', '/tmp/app')],
     );
-    await tester.pumpWidget(BaoCodeApp(workspace: workspace));
+    await tester.pumpWidget(CCCodeApp(workspace: workspace));
     await tester.pump();
     final thread = workspace.create();
     await tester.pump();

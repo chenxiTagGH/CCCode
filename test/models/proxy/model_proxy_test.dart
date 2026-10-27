@@ -534,7 +534,7 @@ void main() {
       final key = promptCacheKey(
         request(jsonEncode({'device_id': 'd', 'session_id': session})),
       );
-      expect(key, matches(RegExp(r'^baocode-[0-9a-f]{32}$')));
+      expect(key, matches(RegExp(r'^cccode-[0-9a-f]{32}$')));
       expect(key, isNot(contains(session)));
       // The older form names the same session.
       expect(

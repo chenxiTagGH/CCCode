@@ -15,7 +15,7 @@ void main() {
   final long = DateTime.now().subtract(const Duration(days: 60));
 
   setUp(() async {
-    temp = await Directory.systemTemp.createTemp('baocode_tidy_');
+    temp = await Directory.systemTemp.createTemp('cccode_tidy_');
     final resolved = await temp.resolveSymbolicLinks();
     root = p.join(resolved, 'project');
     checkpoints = p.join(resolved, 'checkpoints');

@@ -37,7 +37,7 @@ void main() {
       gitRefRecord(
         'refs/heads/feature/ide',
         feature,
-        subject: 'refactor: rename monad to BaoCode',
+        subject: 'refactor: rename monad to CCCode',
         time: ago(const Duration(hours: 1)),
         track: '[ahead 2, behind 1]',
       ),
@@ -116,7 +116,7 @@ void main() {
       'branches',
       'leoaaaaaaafeat: add a commit attribution setting',
       'feature/ide  1↓ 2↑1 hour ago',
-      'Adabbbbbbbrefactor: rename monad to BaoCode',
+      'Adabbbbbbbrefactor: rename monad to CCCode',
       'origin/topic  3 days ago',
       'remote branches',
       'AdacccccccChange',

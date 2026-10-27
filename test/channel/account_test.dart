@@ -101,7 +101,7 @@ void main() {
     });
 
     test('makes a key, unlimited and never ending', () async {
-      final made = await adapter.create('BaoCode');
+      final made = await adapter.create('CCCode');
       expect(made.id, '8');
       final create = site.sent.firstWhere(
         (s) => s.method == 'POST' && s.url.path == '/api/token/',
@@ -110,7 +110,7 @@ void main() {
       expect(create.json, containsPair('expired_time', -1));
     });
 
-    test('signs out on the site too, and forgets', () async {
+    test('signs out on the website too, and forgets', () async {
       await adapter.profile();
       await adapter.signOut();
       final logout = site.sent.last;
@@ -121,7 +121,7 @@ void main() {
       expect(kept.last, isNull);
     });
 
-    test('a session ended on the site is signed out', () async {
+    test('a session ended on the website is signed out', () async {
       adapter.credential = 'revoked';
       await expectLater(adapter.profile(), throwsA(isA<AccountSignedOut>()));
       expect(adapter.credential, isNull);
@@ -158,6 +158,86 @@ void main() {
       expect(profile.name, 'sub@example.com');
     });
 
+    test('reports refresh-token rotation through the callback', () async {
+      final kept = <String?>[];
+      adapter = Sub2ApiAdapter(
+        site: _sub2api,
+        send: site.send,
+        credential: 'rt0',
+        onCredential: kept.add,
+      );
+
+      await adapter.profile();
+
+      expect(kept, ['rt1']);
+      expect(adapter.credential, 'rt1');
+    });
+
+    test('clears its credential after a confirmed second 401', () async {
+      var refreshes = 0;
+      site.routes['POST /api/v1/auth/refresh'] = (_) {
+        refreshes++;
+        return sub({
+          'access_token': 'a$refreshes',
+          'refresh_token': 'rt$refreshes',
+          'expires_in': 3600,
+        });
+      };
+      site.routes['GET /api/v1/auth/me'] = (_) =>
+          const AccountResponse(401, {'code': 401, 'message': 'unauthorized'});
+      final kept = <String?>[];
+      adapter = Sub2ApiAdapter(
+        site: _sub2api,
+        send: site.send,
+        credential: 'rt0',
+        onCredential: kept.add,
+      );
+
+      await expectLater(adapter.profile(), throwsA(isA<AccountSignedOut>()));
+
+      expect(adapter.credential, isNull);
+      expect(kept, ['rt1', null]);
+    });
+
+    test('JSON 403 clears authentication but firewall 403 is AccountBlocked', () async {
+      site.routes['GET /api/v1/auth/me'] = (_) =>
+          const AccountResponse(403, {'code': 403, 'message': 'forbidden'});
+      await expectLater(adapter.profile(), throwsA(isA<AccountSignedOut>()));
+      expect(adapter.credential, isNull);
+
+      site = sub2apiSite();
+      site.routes['GET /api/v1/auth/me'] = (sent) =>
+          throw AccountBlocked(sent.method, sent.url);
+      adapter = Sub2ApiAdapter(
+        site: _sub2api,
+        send: site.send,
+        credential: 'rt0',
+      );
+      await expectLater(adapter.profile(), throwsA(isA<AccountBlocked>()));
+      expect(adapter.credential, 'rt1');
+    });
+
+    test('does not expose an API key in server error text', () async {
+      site.routes['GET /api/v1/keys'] = (_) => const AccountResponse(
+        400,
+        {
+          'code': 400,
+          'message': 'invalid key sk-secret-value',
+        },
+      );
+
+      await expectLater(
+        adapter.keys(),
+        throwsA(
+          isA<AccountError>().having(
+            (error) => error.message,
+            'message',
+            isNot(contains('sk-secret-value')),
+          ),
+        ),
+      );
+    });
+
     test('speaks to a key as its group\'s platform does', () async {
       final key = (await adapter.keys()).single;
       expect(key.platform, 'openai');
@@ -169,11 +249,11 @@ void main() {
     test(
       'makes a key in an Anthropic group, with an idempotency key',
       () async {
-        await adapter.create('BaoCode');
+        await adapter.create('CCCode');
         final create = site.sent.firstWhere(
           (s) => s.method == 'POST' && s.url.path == '/api/v1/keys',
         );
-        expect(create.json, {'name': 'BaoCode', 'group_id': 5});
+        expect(create.json, {'name': 'CCCode', 'group_id': 5});
         expect(create.headers['Idempotency-Key'], hasLength(32));
       },
     );
@@ -406,7 +486,7 @@ void main() {
       },
     );
 
-    test('goes by what was kept when the site cannot be read', () async {
+    test('goes by what was kept when the website cannot be read', () async {
       accountStore.entry = (id: 'example', json: listed['example'], logo: null);
       offline = true;
       final gate = gateOf();
@@ -560,7 +640,7 @@ void main() {
       (s) => s.method == 'POST' && s.url.path == '/api/token/',
     );
     expect(create.json, containsPair('group', 'vip'));
-    expect(create.json, containsPair('name', 'BaoCode'));
+    expect(create.json, containsPair('name', 'CCCode'));
     expect(find.text('分组'), findsNothing);
     expect(tester.takeException(), isNull);
   });

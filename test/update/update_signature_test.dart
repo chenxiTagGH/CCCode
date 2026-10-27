@@ -17,7 +17,7 @@ void main() {
     test('signs the version, platform, size and digest', () {
       expect(
         utf8.decode(payload),
-        'baocode-update-v1\n1.2.0+12\nwindows-x64\n1234\n${'ab' * 32}\n',
+        'cccode-update-v1\n1.2.0+12\nwindows-x64\n1234\n${'ab' * 32}\n',
       );
     });
 

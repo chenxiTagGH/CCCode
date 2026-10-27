@@ -36,7 +36,7 @@ void main() {
   }
 
   setUp(() async {
-    temp = await Directory.systemTemp.createTemp('baocode_git_');
+    temp = await Directory.systemTemp.createTemp('cccode_git_');
     root = p.normalize((await temp.resolveSymbolicLinks()));
     await git(['init', '-q', '-b', 'main']);
     final hooks = await Directory(p.join(root, '.no-hooks')).create();
@@ -178,7 +178,7 @@ void main() {
   }, skip: hasGit ? false : 'Git is not installed');
 
   test('outside a repository there is no status', () async {
-    final outside = await Directory.systemTemp.createTemp('baocode_nogit_');
+    final outside = await Directory.systemTemp.createTemp('cccode_nogit_');
     addTearDown(() => outside.delete(recursive: true));
     final service = IdeGitService(outside.path);
     expect(await service.status(), isNull);

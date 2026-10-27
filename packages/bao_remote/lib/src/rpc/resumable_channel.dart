@@ -65,7 +65,7 @@ class ResumableChannel {
   final int maxUnlinked;
 
   /// The bridge's word that it found no session to resume.
-  static const goneLine = 'BAOCODE-GONE';
+  static const goneLine = 'CCCODE-GONE';
 
   /// How many messages may come in before they are acknowledged, beside
   /// [heartbeat].

@@ -307,12 +307,12 @@ Future<bool> _build(String repo) async {
 
 String _appPath(String repo) {
   if (Platform.isMacOS) {
-    return '$repo/build/macos/Build/Products/Profile/BaoCode.app/Contents/MacOS/BaoCode';
+    return '$repo/build/macos/Build/Products/Profile/CCCode.app/Contents/MacOS/CCCode';
   }
   if (Platform.isWindows) {
-    return '$repo\\build\\windows\\x64\\runner\\Profile\\baocode.exe';
+    return '$repo\\build\\windows\\x64\\runner\\Profile\\cccode.exe';
   }
-  return '$repo/build/linux/${_linuxArch()}/profile/bundle/baocode';
+  return '$repo/build/linux/${_linuxArch()}/profile/bundle/cccode';
 }
 
 /// The environment macOS gives the app as it is opened (its Info.plist's
@@ -356,21 +356,21 @@ Future<Map<String, Object?>?> _runOnce(
     const [],
     environment: {
       ..._launchEnvironment(app),
-      'BAOCODE_PERF_SCENARIOS': scenario,
-      'BAOCODE_PERF_OUT': out,
-      'BAOCODE_PERF_REPO': repo,
-      'BAOCODE_PERF_TRACE': ?trace,
-      if (traceDetail) 'BAOCODE_PERF_TRACE_DETAIL': '1',
+      'CCCODE_PERF_SCENARIOS': scenario,
+      'CCCODE_PERF_OUT': out,
+      'CCCODE_PERF_REPO': repo,
+      'CCCODE_PERF_TRACE': ?trace,
+      if (traceDetail) 'CCCODE_PERF_TRACE_DETAIL': '1',
       // The whole phase, not the last moments a ring buffer keeps (the
       // engine reads its switches from here outside release builds).
       if (trace != null) ...{
         'FLUTTER_ENGINE_SWITCHES': '1',
         'FLUTTER_ENGINE_SWITCH_1': 'endless-trace-buffer',
       },
-      'BAOCODE_PERF_SHOTS': ?shots,
-      'BAOCODE_PERF_SIZE': ?size,
-      'BAOCODE_PERF_RECORD': ?record,
-      'BAOCODE_PERF_HANDS': ?hands,
+      'CCCODE_PERF_SHOTS': ?shots,
+      'CCCODE_PERF_SIZE': ?size,
+      'CCCODE_PERF_RECORD': ?record,
+      'CCCODE_PERF_HANDS': ?hands,
     },
   );
   process.stdout.listen(log.add);
@@ -639,7 +639,7 @@ class _Report {
   }
 
   String markdown() {
-    final out = StringBuffer('# BaoCode perf\n\n');
+    final out = StringBuffer('# CCCode perf\n\n');
     final app = summary['app'] as Map?;
     if (app != null) {
       out.writeln(

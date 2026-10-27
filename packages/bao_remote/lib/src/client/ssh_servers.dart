@@ -17,10 +17,10 @@ enum SshAuth {
 
 /// What runs Claude Code on a server saved in the app.
 enum SshCore {
-  /// The host's Claude Code CLI where it has one, else BaoCode's own core.
+  /// The host's Claude Code CLI where it has one, else CCCode's own core.
   auto,
 
-  /// BaoCode's own core (the server's): on the upstreams of the app alone.
+  /// CCCode's own core (the server's): on the upstreams of the app alone.
   builtin,
 
   /// The host's Claude Code CLI, installed there when it has none.
@@ -129,7 +129,7 @@ class SshServer {
 String sshServerAlias(String host) {
   final readable = host.replaceAll(RegExp(r'[^A-Za-z0-9.-]+'), '-');
   final hash = '${crypto.sha1.convert(utf8.encode(host))}'.substring(0, 8);
-  return 'baocode-$readable-$hash';
+  return 'cccode-$readable-$hash';
 }
 
 /// The ssh config of [servers], by the host the app knows each as: a `Host`
@@ -149,7 +149,7 @@ String sshServersConfig(
   bool windows = false,
 }) {
   final out = StringBuffer()
-    ..writeln('# Written by BaoCode for the servers saved in it: edits are')
+    ..writeln('# Written by CCCode for the servers saved in it: edits are')
     ..writeln('# lost. Your own ~/.ssh/config is included at the end.')
     ..writeln();
   for (final MapEntry(key: host, value: server) in servers.entries) {

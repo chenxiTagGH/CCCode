@@ -149,13 +149,13 @@ class _Clipboard {
       return null;
     });
     messenger.setMockMethodCallHandler(
-      const MethodChannel('baocode/window'),
+      const MethodChannel('cccode/window'),
       (call) async => null,
     );
     addTearDown(() {
       messenger.setMockMethodCallHandler(SystemChannels.platform, null);
       messenger.setMockMethodCallHandler(
-        const MethodChannel('baocode/window'),
+        const MethodChannel('cccode/window'),
         null,
       );
     });

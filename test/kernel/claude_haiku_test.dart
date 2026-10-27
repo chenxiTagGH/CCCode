@@ -64,7 +64,7 @@ void main() {
   test('with tools, those alone, some turns, and the folders it may read', () {
     const tools = ClaudeHaikuTools(
       directory: '/work/app',
-      readable: ['/Users/me/BaoCode/Stash'],
+      readable: ['/Users/me/CCCode/Stash'],
       maxTurns: 16,
     );
     final arguments = claudeHaikuArguments('Be brief.', tools: tools);
@@ -78,7 +78,7 @@ void main() {
     expect(arguments.join(' '), contains('--max-turns 16'));
     expect(tools.settings, {
       'permissions': {
-        'allow': ['Read(//Users/me/BaoCode/Stash/**)'],
+        'allow': ['Read(//Users/me/CCCode/Stash/**)'],
       },
     });
     expect(const ClaudeHaikuTools().settings, isEmpty);
@@ -107,13 +107,13 @@ void main() {
     );
   });
 
-  group('on BaoCode\'s own core', () {
+  group('on CCCode\'s own core', () {
     late FakeApi api;
     late Directory root;
     final previous = ModelProviders.current;
 
     setUp(() async {
-      root = Directory.systemTemp.createTempSync('baocode-haiku-');
+      root = Directory.systemTemp.createTempSync('cccode-haiku-');
       api = await FakeApi.start(errands: (_) => Reply.text('Short answer'));
       // The machine's own setup: a key and a Haiku of its own.
       ClaudeEnvironment.use({

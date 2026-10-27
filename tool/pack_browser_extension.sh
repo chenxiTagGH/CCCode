@@ -1,19 +1,19 @@
 #!/usr/bin/env bash
-# Packs browser_extension/ (BaoCode's extension, see its background.js) in
+# Packs browser_extension/ (CCCode's extension, see its background.js) in
 # two zips, in build/browser_extension/:
 #
-#   BaoCode-browser-<version>.zip         to load unpacked (developer mode):
+#   CCCode-browser-<version>.zip         to load unpacked (developer mode):
 #                                         its manifest keeps "key", so it
 #                                         has the store's id, the one
-#                                         BaoCode lets in
-#   BaoCode-browser-<version>-store.zip   for the Chrome Web Store, which
+#                                         CCCode lets in
+#   CCCode-browser-<version>-store.zip   for the Chrome Web Store, which
 #                                         takes no "key"
 #
 #   tool/pack_browser_extension.sh
 #   tool/pack_browser_extension.sh --first-upload
 #                                         the store's zip with key.pem too,
 #                                         the private key the id comes from
-#                                         (~/.baocode-signing/
+#                                         (~/.cccode-signing/
 #                                         browser-extension.pem): the store
 #                                         keeps the id of the first upload's
 #                                         key.pem. Never for another upload,
@@ -45,7 +45,7 @@ for dir in unpacked store; do
 done
 jq 'del(.key)' "$source/manifest.json" > "$out/store/manifest.json"
 if $first_upload; then
-  key=${BAOCODE_EXTENSION_KEY:-$HOME/.baocode-signing/browser-extension.pem}
+  key=${CCCODE_EXTENSION_KEY:-$HOME/.cccode-signing/browser-extension.pem}
   # PKCS#8, as Chrome writes it (BEGIN PRIVATE KEY): the store cannot read
   # an RSA one (BEGIN RSA PRIVATE KEY). The same key, the id the same.
   openssl pkcs8 -topk8 -nocrypt -in "$key" -out "$out/store/key.pem"
@@ -57,9 +57,9 @@ pack() {
   find "$dir" -exec touch -t 202001010000 {} +
   (cd "$dir" && find . -type f | LC_ALL=C sort | sed 's|^\./||' | zip -qX -@ "$zip")
 }
-pack "$out/unpacked" "$out/BaoCode-browser-$version.zip"
-pack "$out/store" "$out/BaoCode-browser-$version-store.zip"
+pack "$out/unpacked" "$out/CCCode-browser-$version.zip"
+pack "$out/store" "$out/CCCode-browser-$version-store.zip"
 rm -rf "$out/unpacked" "$out/store"
 
-echo "$out/BaoCode-browser-$version.zip"
-echo "$out/BaoCode-browser-$version-store.zip"
+echo "$out/CCCode-browser-$version.zip"
+echo "$out/CCCode-browser-$version-store.zip"

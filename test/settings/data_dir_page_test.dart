@@ -13,7 +13,7 @@ class _FakeService extends DataDirectoryService {
     super.environment = const {'HOME': '/home/me'},
     this.targets = const {},
   }) : super(
-         current: DataDirectory('/data/baocode', source: source),
+         current: DataDirectory('/data/cccode', source: source),
          home: '/home/me',
        );
 
@@ -83,13 +83,13 @@ void main() {
     tester,
   ) async {
     final (:revealed, quits: _) = await pumpPage(tester, _FakeService());
-    expect(find.text('/data/baocode'), findsOneWidget);
+    expect(find.text('/data/cccode'), findsOneWidget);
     expect(
-      find.text('Set in /home/me/.baocode/config-dir.json.'),
+      find.text('Set in /home/me/.cccode/config-dir.json.'),
       findsOneWidget,
     );
     await tester.tap(find.text('Reveal in Finder'));
-    expect(revealed, ['/data/baocode']);
+    expect(revealed, ['/data/cccode']);
   }, variant: TargetPlatformVariant.only(TargetPlatform.macOS));
 
   testWidgets('Change shows the folder picked; Save copies the data there, '
@@ -98,32 +98,32 @@ void main() {
     final (revealed: _, :quits) = await pumpPage(
       tester,
       service,
-      picks: ['/Volumes/D/BaoCode'],
+      picks: ['/Volumes/D/CCCode'],
     );
     await tester.tap(find.text('Change…'));
     await tester.pumpAndSettle();
     expect(find.text('New folder'), findsOneWidget);
-    expect(find.text('/Volumes/D/BaoCode'), findsOneWidget);
+    expect(find.text('/Volumes/D/CCCode'), findsOneWidget);
     expect(find.text('Change…'), findsNothing);
     expect(service.migrated, isEmpty);
     await tester.tap(find.text('Save'));
     await tester.pumpAndSettle();
-    expect(service.migrated, ['/Volumes/D/BaoCode']);
+    expect(service.migrated, ['/Volumes/D/CCCode']);
     expect(
-      find.text('Restart BaoCode to use the new data folder'),
+      find.text('Restart CCCode to use the new data folder'),
       findsOneWidget,
     );
     await tester.tap(find.text('Quit Now').last);
     await tester.pumpAndSettle();
     expect(quits, ['quit']);
-    expect(find.text('After a restart: /Volumes/D/BaoCode'), findsOneWidget);
+    expect(find.text('After a restart: /Volumes/D/CCCode'), findsOneWidget);
   });
 
   testWidgets('on Windows, Quit Now quits as the tray icon\'s Quit does '
       '(the close button hides the window to it)', (tester) async {
     final calls = <MethodCall>[];
     tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
-      const MethodChannel('baocode/attention'),
+      const MethodChannel('cccode/attention'),
       (call) async {
         calls.add(call);
         return null;
@@ -133,7 +133,7 @@ void main() {
       MaterialApp(
         home: Material(
           child: DataDirectoryPage(
-            service: _FakeService()..pending = '/Volumes/D/BaoCode',
+            service: _FakeService()..pending = '/Volumes/D/CCCode',
           ),
         ),
       ),
@@ -145,13 +145,13 @@ void main() {
     expect(calls.map((call) => call.method), ['quit']);
   }, variant: TargetPlatformVariant.only(TargetPlatform.windows));
 
-  testWidgets('a folder with BaoCode data is used as it is; Later keeps '
+  testWidgets('a folder with CCCode data is used as it is; Later keeps '
       'running', (tester) async {
     final service = _FakeService(
       targets: {
         '/other': const DataDirectoryTarget(
           '/other',
-          contents: DataDirectoryContents.baocodeData,
+          contents: DataDirectoryContents.cccodeData,
         ),
       },
     );
@@ -193,7 +193,7 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('Cancel'));
     await tester.pumpAndSettle();
-    expect(find.text('/data/baocode'), findsOneWidget);
+    expect(find.text('/data/cccode'), findsOneWidget);
     expect(find.text('/empty'), findsNothing);
     // A picker closed without a folder.
     await tester.tap(find.text('Change…'));
@@ -216,20 +216,20 @@ void main() {
     expect(service.migrated, [service.defaultPath]);
   });
 
-  testWidgets('set by BAOCODE_DATA_DIR: nothing to change here', (
+  testWidgets('set by CCCODE_DATA_DIR: nothing to change here', (
     tester,
   ) async {
     await pumpPage(
       tester,
       _FakeService(
         source: DataDirectorySource.environment,
-        environment: const {'HOME': '/home/me', 'BAOCODE_DATA_DIR': '/env'},
+        environment: const {'HOME': '/home/me', 'CCCODE_DATA_DIR': '/env'},
       ),
     );
     expect(button(tester, 'Change…').onPressed, isNull);
     expect(button(tester, 'Reset to Default').onPressed, isNull);
     expect(
-      find.text('Set by the BAOCODE_DATA_DIR environment variable.'),
+      find.text('Set by the CCCODE_DATA_DIR environment variable.'),
       findsOneWidget,
     );
   });

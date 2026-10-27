@@ -10,7 +10,7 @@ class ClaudeUnavailable implements Exception {
   String toString() => message;
 }
 
-/// Claude Code is not on the machine: neither the user's nor one BaoCode
+/// Claude Code is not on the machine: neither the user's nor one CCCode
 /// installed.
 class ClaudeNotInstalled extends ClaudeUnavailable {
   const ClaudeNotInstalled(super.message, {super.detail});
@@ -21,7 +21,7 @@ class ClaudeDownloadFailed extends ClaudeUnavailable {
   const ClaudeDownloadFailed(super.message, {super.detail});
 }
 
-/// BaoCode's own core has no model to run on: no upstream turned on.
+/// CCCode's own core has no model to run on: no upstream turned on.
 class ClaudeNoModel extends ClaudeUnavailable {
   const ClaudeNoModel(super.message);
 }

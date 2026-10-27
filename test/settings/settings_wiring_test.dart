@@ -40,7 +40,7 @@ void main() {
   late AppSettings settings;
 
   setUp(() async {
-    data = await Directory.systemTemp.createTemp('baocode-settings-wiring');
+    data = await Directory.systemTemp.createTemp('cccode-settings-wiring');
     home = await createFakeHome();
     KeybindingService.instance = KeybindingService()
       ..debugPlatform = KeybindingPlatform.mac;
@@ -90,7 +90,7 @@ void main() {
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
     await tester.pumpWidget(
-      BaoCodeApp(workspace: workspace ?? Workspace.mock(), settings: settings),
+      CCCodeApp(workspace: workspace ?? Workspace.mock(), settings: settings),
     );
     await tester.pump();
   }
@@ -170,7 +170,7 @@ void main() {
     }))!;
     expect(keymap.builtIn, isTrue);
     expect(service.keymapName, 'Atom');
-    expect(files.settings['baocode.keymap'], 'ms-vscode.atom-keybindings');
+    expect(files.settings['cccode.keymap'], 'ms-vscode.atom-keybindings');
 
     Navigator.of(tester.element(dialog)).pop();
     await tester.pumpAndSettle();
@@ -269,7 +269,7 @@ void main() {
     await tester.runAsync(() async {
       await write(
         DataDirectory(data.path).settingsFile,
-        '{ "baocode.keymap": "ms-vscode.atom-keybindings" }',
+        '{ "cccode.keymap": "ms-vscode.atom-keybindings" }',
       );
       await start();
     });
@@ -308,7 +308,7 @@ void main() {
     expect(find.byType(GeneralSettingsPage), findsOneWidget);
     // The main window's comes first.
     final dropdown = find.byType(SettingsDropdown).at(1);
-    expect(tester.widget<SettingsDropdown>(dropdown).current, 'BaoCode');
+    expect(tester.widget<SettingsDropdown>(dropdown).current, 'CCCode');
     expect(find.text(CommitAttribution.baoCodeCommit), findsOneWidget);
 
     Future<void> choose(String label) async {
@@ -331,13 +331,13 @@ void main() {
       contains('"chat.commitAttribution": "none"'),
     );
 
-    await choose('BaoCode');
+    await choose('CCCode');
     await settle(
       tester,
       () => !files.settings.values.containsKey(CommitAttribution.settingKey),
     );
     await tester.pump();
-    expect(tester.widget<SettingsDropdown>(dropdown).current, 'BaoCode');
+    expect(tester.widget<SettingsDropdown>(dropdown).current, 'CCCode');
   }, variant: TargetPlatformVariant.only(TargetPlatform.macOS));
 
   testWidgets('the main window is kept in settings.json, the default '

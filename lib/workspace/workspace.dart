@@ -541,10 +541,10 @@ class Workspace extends ChangeNotifier implements ColorThemeStorage {
   /// Sample projects and agents at various ages and states, on the
   /// registered kernels (mock ones under test).
   factory Workspace.mock() {
-    const baocode = Project('baocode', '~/code/baocode');
+    const cccode = Project('cccode', '~/code/cccode');
     const docs = Project('cursor-docs', '~/code/cursor-docs');
     const gateway = Project('api-gateway', '~/work/api-gateway');
-    final workspace = Workspace(projects: const [baocode, docs, gateway]);
+    final workspace = Workspace(projects: const [cccode, docs, gateway]);
     final claude = workspace.kernels.first;
     final codex = workspace.kernels.lastOrNull ?? claude;
     final now = DateTime.now();
@@ -586,13 +586,13 @@ class Workspace extends ChangeNotifier implements ColorThemeStorage {
     }
 
     add(
-      baocode,
+      cccode,
       'Optimize virtual list scrolling',
       const Duration(minutes: 2),
       history: MockConversation.itemCount,
     );
     add(
-      baocode,
+      cccode,
       'Sticky user message on scroll',
       const Duration(minutes: 38),
       unread: true,
@@ -606,18 +606,18 @@ class Workspace extends ChangeNotifier implements ColorThemeStorage {
       ],
     );
     add(
-      baocode,
+      cccode,
       'Fix selection jitter in streaming thoughts',
       const Duration(hours: 3),
       history: 24,
     );
     add(
-      baocode,
+      cccode,
       'Floating layer for composer popovers',
       const Duration(days: 1, hours: 2),
       pinned: true,
     );
-    add(baocode, 'Edit sent messages in history', const Duration(days: 4));
+    add(cccode, 'Edit sent messages in history', const Duration(days: 4));
     add(
       docs,
       'Rewrite the agents quickstart',
@@ -756,7 +756,7 @@ class Workspace extends ChangeNotifier implements ColorThemeStorage {
   }
 
   /// The agents shown each in a window of its own (Explorer's Open with
-  /// BaoCode; see AppWindows.openAgent): what [isShown] counts too.
+  /// CCCode; see AppWindows.openAgent): what [isShown] counts too.
   Set<AgentThread> _windowAgents = const {};
 
   void showAgentWindows(Iterable<AgentThread> threads) {

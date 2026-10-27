@@ -1,9 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:baocode/platform/open_requests.dart';
 import 'package:baocode/window/code_args.dart';
 
-const _open = MethodChannel('baocode/open');
+const _open = MethodChannel('cccode/open');
 
 /// What the system asks the app to open comes to the one listener: first
 /// what the window kept, then each as the window sends it.
@@ -63,6 +65,17 @@ void main() {
     expect(opened, isEmpty);
   });
 
+  test('drops malformed import requests before listening', () async {
+    OpenRequests.deliver(const [
+      CodeArgs.importRequestMarker,
+      'cccode://provider/import',
+    ]);
+    final opened = <List<String>>[];
+    OpenRequests.listen(opened.add);
+    await pumpEventQueue();
+    expect(opened, isEmpty);
+  });
+
   test('passes over what is not an absolute path', () async {
     final opened = <List<String>>[];
     OpenRequests.listen(opened.add);
@@ -101,7 +114,7 @@ void main() {
     expect(opened.last, [marker, r'C:\work', '-g', 'a.dart:3']);
   });
 
-  test('Open with BaoCode goes as a request of its own, beside those of '
+  test('Open with CCCode goes as a request of its own, beside those of '
       'the `code` command', () async {
     const code = OpenRequests.codeRequestMarker;
     const agent = CodeArgs.agentRequestMarker;
@@ -116,9 +129,9 @@ void main() {
     ]);
   });
 
-  test("a site's import goes as a request of its own, the link as it "
+  test("a site's valid import goes as a request of its own, the link as it "
       'came', () async {
-    const link = 'baocode://provider/import?v=1&url=https%3A%2F%2Fapi.x.com';
+    const link = 'cccode://provider/import?v=1&url=https%3A%2F%2Fapi.x.com';
     pending = [r'C:\a.txt', CodeArgs.importRequestMarker, link];
     final opened = <List<String>>[];
     OpenRequests.listen(opened.add);
@@ -129,7 +142,70 @@ void main() {
     ]);
   });
 
-  test('stopped, it delivers nothing and tells the window', () async {
+  test('drops malformed queued marker payloads', () async {
+    pending = [
+      CodeArgs.importRequestMarker,
+      'cccode://provider/import?url=%',
+      CodeArgs.importRequestMarker,
+      'cccode://provider/import?url=https%3A%2F%2Fapi.x.com',
+    ];
+    final opened = <List<String>>[];
+    OpenRequests.listen(opened.add);
+    await pumpEventQueue();
+    expect(opened, [
+      [
+        CodeArgs.importRequestMarker,
+        'cccode://provider/import?url=https%3A%2F%2Fapi.x.com',
+      ],
+    ]);
+  });
+
+  test('delivers multiple queued requests in order', () async {
+    const first = 'cccode://provider/import?url=https%3A%2F%2Ffirst.example';
+    const second = 'cccode://activate?i=install&s=channel';
+    pending = [
+      CodeArgs.importRequestMarker,
+      first,
+      CodeArgs.importRequestMarker,
+      second,
+    ];
+    final opened = <List<String>>[];
+    OpenRequests.listen(opened.add);
+    await pumpEventQueue();
+    expect(opened, [
+      [CodeArgs.importRequestMarker, first],
+      [CodeArgs.importRequestMarker, second],
+    ]);
+  });
+
+  test('drops malformed live import links', () async {
+    final opened = <List<String>>[];
+    OpenRequests.listen(opened.add);
+    await pumpEventQueue();
+    await send(['cccode://provider/import']);
+    await send(['cccode://provider/import?url=%']);
+    expect(opened, isEmpty);
+  });
+
+  test('forwards activate links as link requests', () async {
+    final opened = <List<String>>[];
+    OpenRequests.listen(opened.add);
+    await pumpEventQueue();
+    const link = 'cccode://activate?i=install&s=channel';
+    await send([link]);
+    expect(opened, [[CodeArgs.importRequestMarker, link]]);
+  });
+
+  test('delivers valid live import links', () async {
+    final opened = <List<String>>[];
+    OpenRequests.listen(opened.add);
+    await pumpEventQueue();
+    const link = 'cccode://provider/import?url=https%3A%2F%2Fapi.x.com';
+    await send([link]);
+    expect(opened, [[CodeArgs.importRequestMarker, link]]);
+  });
+
+  test('stopped, it retains requests for the next listener', () async {
     final opened = <List<String>>[];
     OpenRequests.listen(opened.add);
     await pumpEventQueue();
@@ -138,6 +214,50 @@ void main() {
     expect(calls, ['takePending', 'stop']);
     await send(['/abs/file']);
     expect(opened, isEmpty);
+
+    final resumed = <List<String>>[];
+    OpenRequests.listen(resumed.add);
+    await pumpEventQueue();
+    expect(resumed, [['/abs/file']]);
+  });
+
+  test('requeues later snapshot requests when listener stops during drain', () async {
+    pending = ['/first', '/second'];
+    final opened = <List<String>>[];
+    OpenRequests.listen((request) {
+      opened.add(request);
+      OpenRequests.stop();
+    });
+    await pumpEventQueue();
+    expect(opened, [['/first']]);
+
+    final resumed = <List<String>>[];
+    OpenRequests.listen(resumed.add);
+    await pumpEventQueue();
+    expect(resumed, [['/second']]);
+  });
+
+  test('queues takePending result when stopped while invocation is in flight', () async {
+    final result = Completer<Object?>();
+    var takePendingCalls = 0;
+    messenger.setMockMethodCallHandler(_open, (call) async {
+      calls.add(call.method);
+      if (call.method == 'takePending' && takePendingCalls++ == 0) {
+        return result.future;
+      }
+      return <Object?>[];
+    });
+    final first = <List<String>>[];
+    OpenRequests.listen(first.add);
+    OpenRequests.stop();
+    result.complete(['/arrived-during-take']);
+    await pumpEventQueue();
+    expect(first, isEmpty);
+
+    final resumed = <List<String>>[];
+    OpenRequests.listen(resumed.add);
+    await pumpEventQueue();
+    expect(resumed, [['/arrived-during-take']]);
   });
 
   test('a host without the channel is no error', () async {
@@ -148,7 +268,7 @@ void main() {
   });
 
   test('what the macOS app was launched for, as the window says (Finder\'s '
-      'Open with BaoCode, an agent; anything else, the IDE)', () async {
+      'Open with CCCode, an agent; anything else, the IDE)', () async {
     for (final (answer, request) in [
       ('agent', LaunchRequest.agent),
       ('ide', LaunchRequest.ide),

@@ -1,10 +1,10 @@
-# Builds the remote server (baocode-server, the app's side on an SSH host)
+# Builds the remote server (cccode-server, the app's side on an SSH host)
 # for Linux and macOS, x64 and arm64, and runs it on each. docs/ssh-remote.md
 # (9.3) has where the builds go and how the app finds them.
 #
 #   git tag server-foo && git push origin server-foo
 #                                      build, and publish the builds at
-#                                      dl.baocode.dev/releases/remote/
+#                                      https://dl.baocode.dev/releases/remote/
 #                                      <VERSION>/, latest.json there naming
 #                                      them: for apps packaged locally with
 #                                      --remote-release (tool/build_*.dart)
@@ -76,7 +76,7 @@ jobs:
           if-no-files-found: error
           path: |
             build/remote/VERSION
-            build/remote/baocode-server-linux-*
+            build/remote/cccode-server-linux-*
             !build/remote/*.gz
 
   linux:
@@ -95,11 +95,11 @@ jobs:
       - name: Run it on Linux distributions, in Docker
         run: |
           # Artifacts keep no modes.
-          chmod 755 build/remote/baocode-server-linux-*
+          chmod 755 build/remote/cccode-server-linux-*
           tool/test_remote_server.sh build/remote
 
   publish:
-    name: Publish to dl.baocode.dev/releases/remote/
+    name: Publish to https://dl.baocode.dev/releases/remote/
     needs: [build, linux]
     # Its own server-* tag only: called by Release, the release publishes.
     if: github.event_name == 'push' && startsWith(github.ref_name, 'server-')

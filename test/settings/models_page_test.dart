@@ -8,6 +8,9 @@ import 'package:baocode/kernel/claude_code/claude_core_setting.dart';
 import 'package:baocode/kernel/claude_code/claude_haiku.dart';
 import 'package:baocode/models/codex/codex_service.dart';
 import 'package:baocode/models/codex/codex_usage.dart';
+import 'package:baocode/models/cc_api_connector.dart';
+import 'package:baocode/models/cc_api_store.dart';
+import 'package:baocode/models/featured_upstreams.dart';
 import 'package:baocode/models/model_provider.dart';
 import 'package:baocode/models/model_providers.dart';
 import 'package:baocode/models/secret_store.dart';
@@ -81,6 +84,57 @@ class _FakeCodex extends CodexService {
   }
 }
 
+class _FakeCcApiConnector extends CcApiConnector {
+  _FakeCcApiConnector({required super.providers, required this.current})
+      : super(
+          store: _FakeCcApiStore(),
+          openWindow: () => throw UnimplementedError(),
+          send: (_, _, {json, headers}) => throw UnimplementedError(),
+          listModels: (_, _) async => const [],
+        );
+
+  CcApiConnectionStatus current;
+  Object? failure;
+  int connects = 0;
+  int refreshes = 0;
+  Completer<bool>? pending;
+  bool failRefresh = false;
+
+  @override
+  CcApiConnectionStatus get status => current;
+  @override
+  Object? get error => failure;
+  @override
+  Future<bool> connect() async {
+    connects++;
+    if (pending != null) return pending!.future;
+    return true;
+  }
+  @override
+  Future<bool> refresh() async {
+    refreshes++;
+    if (pending != null) return pending!.future;
+    if (failRefresh) {
+      failure = StateError('secret must not render');
+      current = CcApiConnectionStatus.failed;
+      return false;
+    }
+    return true;
+  }
+}
+
+class _FakeCcApiStore implements CcApiStore {
+  String? session;
+  @override
+  Future<String?> readSession() async => session;
+  @override
+  Future<void> writeSession(String? value) async => session = value;
+  @override
+  Map<String, Object?>? readState() => null;
+  @override
+  Future<void> writeState(Map<String, Object?>? value) async {}
+}
+
 class _FakeLogin implements CodexLogin {
   _FakeLogin(this.result, this._cancel);
 
@@ -146,6 +200,29 @@ void main() {
     await tester.pump();
   }
 
+  Future<void> pumpWithCcApi(
+    WidgetTester tester,
+    _FakeCcApiConnector connector, {
+    Future<List<FeaturedUpstream>>? featured,
+  }) async {
+    tester.view.physicalSize = const Size(1000, 1600);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: ModelsSettingsPage(
+            providers: providers,
+            listModels: list,
+            ccApi: connector,
+            featured: featured ?? Future.value(const []),
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+  }
+
   Future<void> type(WidgetTester tester, String field, String text) async {
     final input = find.descendant(
       of: find.bySemanticsLabel(field),
@@ -156,6 +233,121 @@ void main() {
     await tester.testTextInput.receiveAction(TextInputAction.done);
     await tester.pump();
   }
+
+  testWidgets('injected connector remains stable across provider rebuilds', (tester) async {
+    final connector = _FakeCcApiConnector(
+      providers: providers,
+      current: CcApiConnectionStatus.connected,
+    );
+    await pumpWithCcApi(tester, connector);
+    await providers.setDefaultModel(null);
+    await tester.pump();
+    await tester.tap(find.text('CC API'));
+    await tester.pump();
+    expect(connector.refreshes, 1);
+    expect(connector.status, CcApiConnectionStatus.connected);
+  });
+
+  testWidgets('CC API card shows disconnected state and connects on tap', (tester) async {
+    final connector = _FakeCcApiConnector(
+      providers: providers,
+      current: CcApiConnectionStatus.disconnected,
+    );
+    await pumpWithCcApi(tester, connector);
+    expect(find.text('CC API'), findsOneWidget);
+    expect(find.text('Claude、GPT、Gemini 一键接入'), findsOneWidget);
+    expect(find.text('登录 CC API'), findsOneWidget);
+    await tester.tap(find.text('CC API'));
+    await tester.pump();
+    expect(connector.connects, 1);
+  });
+
+  testWidgets('CC API card disables action while connecting', (tester) async {
+    final connector = _FakeCcApiConnector(
+      providers: providers,
+      current: CcApiConnectionStatus.disconnected,
+    )..pending = Completer<bool>();
+    await pumpWithCcApi(tester, connector);
+    await tester.tap(find.text('CC API'));
+    await tester.pump();
+    await tester.tap(find.text('CC API'));
+    expect(connector.connects, 1);
+    expect(find.text('正在连接'), findsOneWidget);
+  });
+
+  testWidgets('CC API card shows connected model count and refreshes', (tester) async {
+    await providers.save(const ModelProvider(
+      id: 'cc-api',
+      name: 'CC API',
+      models: [ProviderModel('claude-sonnet', enabled: true)],
+    ));
+    final connector = _FakeCcApiConnector(
+      providers: providers,
+      current: CcApiConnectionStatus.disconnected,
+    );
+    await pumpWithCcApi(tester, connector);
+    expect(find.text('已连接 · 1 个模型'), findsOneWidget);
+    await tester.tap(find.text('CC API'));
+    await tester.pump();
+    expect(connector.refreshes, 1);
+  });
+
+  testWidgets('CC API card renders login and generic failure states', (tester) async {
+    final connector = _FakeCcApiConnector(
+      providers: providers,
+      current: CcApiConnectionStatus.needsLogin,
+    );
+    await pumpWithCcApi(tester, connector);
+    expect(find.text('需要重新登录'), findsOneWidget);
+    connector.current = CcApiConnectionStatus.connected;
+    connector.failRefresh = true;
+    await tester.pump();
+    await tester.tap(find.text('CC API'));
+    await tester.pump();
+    expect(find.text('暂时无法连接'), findsOneWidget);
+    expect(find.text('secret must not render'), findsNothing);
+  });
+
+  testWidgets('Models page places fixed CC API card before external featured cards', (tester) async {
+    final upstream = FeaturedUpstream(
+      id: 'remote', name: 'Remote Featured', url: Uri.parse('https://remote.example'),
+    );
+    final connector = _FakeCcApiConnector(
+      providers: providers, current: CcApiConnectionStatus.disconnected,
+    );
+    await pumpWithCcApi(tester, connector, featured: Future.value([upstream]));
+    final cc = tester.getTopLeft(find.text('CC API'));
+    final remote = tester.getTopLeft(find.text('Remote Featured'));
+    expect(cc.dx, lessThan(remote.dx));
+  });
+
+  testWidgets('Models page preserves external featured-card open callback', (tester) async {
+    final opened = <Uri>[];
+    final upstream = FeaturedUpstream(
+      id: 'remote',
+      name: 'Remote Featured',
+      url: Uri.parse('https://remote.example'),
+    );
+    final connector = _FakeCcApiConnector(
+      providers: providers,
+      current: CcApiConnectionStatus.disconnected,
+    );
+    await tester.pumpWidget(MaterialApp(
+      home: Scaffold(
+        body: ModelsSettingsPage(
+          providers: providers,
+          ccApi: connector,
+          featured: Future.value([upstream]),
+          featuredOpen: opened.add,
+        ),
+      ),
+    ));
+    await tester.pumpAndSettle();
+    expect(find.text('CC API'), findsOneWidget);
+    expect(find.text('Remote Featured'), findsOneWidget);
+    await tester.tap(find.text('Remote Featured'));
+    expect(opened, [Uri.parse('https://remote.example')]);
+  });
 
   testWidgets('the built-in provider is listed, hidden but not removed', (
     tester,
@@ -173,7 +365,7 @@ void main() {
     expect(find.text('Connection'), findsNothing);
   });
 
-  testWidgets('on BaoCode\'s own core there is no built-in provider: '
+  testWidgets('on CCCode\'s own core there is no built-in provider: '
       'neither listed nor offered as the default', (tester) async {
     ClaudeCore.current = () => ClaudeCore.builtin;
     // Picked on the CLI: Claude Code's own default, and its Haiku.
@@ -306,7 +498,7 @@ void main() {
     await tester.pump();
     await tester.tap(find.bySemanticsLabel('Change Icon'));
     await tester.pump();
-    // The makers' logos first, the site's icon among the pictures.
+    // The makers' logos first, the website's icon among the pictures.
     // The tab, and its section.
     expect(find.text('Logos'), findsNWidgets(2));
     await tester.tap(find.bySemanticsLabel('Kimi'));
@@ -319,7 +511,7 @@ void main() {
     await tester.pump();
     await tester.tap(find.text('Custom'));
     await tester.pump();
-    expect(find.bySemanticsLabel("Use the site's icon"), findsOneWidget);
+    expect(find.bySemanticsLabel("Use the website's icon"), findsOneWidget);
     await tester.tap(find.text('Remove'));
     await tester.pump();
     expect(providers.provider('ds')!.icon, isNull);

@@ -32,8 +32,8 @@ void main() {
   }
 
   setUp(() {
-    dataDir = Directory.systemTemp.createTempSync('baocode-remote-data-');
-    temp = Directory.systemTemp.createTempSync('baocode-remote-custom-');
+    dataDir = Directory.systemTemp.createTempSync('cccode-remote-data-');
+    temp = Directory.systemTemp.createTempSync('cccode-remote-custom-');
     final root = temp.resolveSymbolicLinksSync();
     home = p.join(root, 'home');
     config = p.join(home, '.claude');

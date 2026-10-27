@@ -1,4 +1,4 @@
-// BaoCode's own core on its own, run as `claude -p` is, with its
+// CCCode's own core on its own, run as `claude -p` is, with its
 // arguments: `dart run bao_agent -p --input-format stream-json
 // --output-format stream-json …`, or one prompt on stdin.
 import 'dart:io';

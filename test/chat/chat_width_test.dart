@@ -114,7 +114,7 @@ void main() {
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
     final data = (await tester.runAsync(
-      () => Directory.systemTemp.createTemp('baocode-chat-width'),
+      () => Directory.systemTemp.createTemp('cccode-chat-width'),
     ))!;
     final settings = UserSettings(p.join(data.path, 'settings.json'));
     await tester.runAsync(settings.load);

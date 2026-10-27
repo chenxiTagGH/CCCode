@@ -16,7 +16,7 @@
 //   dart run tool/build_windows.dart --stock-engine keep Flutter's own
 //                                                  flutter_windows.dll
 //   dart run tool/build_windows.dart --channel      the channel build
-//                                                  (BAOCODE_CHANNEL;
+//                                                  (CCCODE_CHANNEL;
 //                                                  lib/channel/), its
 //                                                  installer named
 //                                                  -setup-channel.exe
@@ -50,16 +50,16 @@ const _installersRelative = r'build\installers';
 const _symbolsRelative = r'build\symbols';
 
 /// What has to be in the bundle for the app to start. A Release build that
-/// fails at the link step (a running baocode.exe holding the output file) still
-/// leaves a baocode.exe behind — but data\ is written by the install step that
+/// fails at the link step (a running cccode.exe holding the output file) still
+/// leaves a cccode.exe behind — but data\ is written by the install step that
 /// failure skipped, and the executable cannot start without it.
 const _required = [
-  'baocode.exe',
+  'cccode.exe',
   'flutter_windows.dll',
   // The browsers' native messaging host and its manifest, which the
   // installer's keys point the browsers to (windows/BrowserBridge).
-  'baocode-browser-host.exe',
-  'dev.baocode.browser.json',
+  'cccode-browser-host.exe',
+  'vip.cchub.cccode.browser.json',
   // The VC++ runtime, carried rather than taken from System32, which may
   // be older than the build's (see windows/CMakeLists.txt).
   'msvcp140.dll',
@@ -129,7 +129,7 @@ Future<void> main(List<String> arguments) async {
       'build',
       'windows',
       '--release',
-      if (channel) '--dart-define=BAOCODE_CHANNEL=true',
+      if (channel) '--dart-define=CCCODE_CHANNEL=true',
       // Not --split-debug-info, which would also leave the app's stack
       // traces (errors.log) unnamed, as offsets.
       '--extra-gen-snapshot-options=--save-debugging-info='
@@ -204,7 +204,7 @@ Future<void> main(List<String> arguments) async {
     '/DAppVersion=${version.full}',
     '/DOutDir=${installers.path}',
     if (channel) '/DEdition=-channel',
-    '${root.path}\\tool\\baocode.iss',
+    '${root.path}\\tool\\cccode.iss',
   ], root.path);
 
   // None when published already (--remote-release).
@@ -224,7 +224,7 @@ Future<void> main(List<String> arguments) async {
 
   _step('Done');
   final installer = File(
-    '${installers.path}\\BaoCode-${version.marketing}-setup'
+    '${installers.path}\\CCCode-${version.marketing}-setup'
     '${channel ? '-channel' : ''}.exe',
   );
   for (final file in [installer, ...servers]) {
@@ -297,7 +297,7 @@ void _checkBundle(Directory directory, List<String> required) {
     '\n'
     'A Release build that failed at the link step leaves exactly this: the\n'
     'install step that writes data\\ never ran. If the build reported\n'
-    'LNK1104, a running baocode.exe is holding the output file — close it and\n'
+    'LNK1104, a running cccode.exe is holding the output file — close it and\n'
     'build again.',
   );
 }

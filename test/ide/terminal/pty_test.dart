@@ -20,7 +20,7 @@ void main() {
   late File registryFile;
 
   setUp(() {
-    dir = Directory.systemTemp.createTempSync('baocode-pty');
+    dir = Directory.systemTemp.createTempSync('cccode-pty');
     registryFile = File(p.join(dir.path, 'pty-processes.json'));
     // Never the user's own list, nor their processes.
     PtyProcesses.registry = ChildProcessRegistry(
@@ -68,7 +68,7 @@ void main() {
     expect(await pty.exitCode.timeout(timeout), 0);
     expect(
       printed.toString(),
-      contains('term=xterm-256color program=baocode lang=en_US.UTF-8'),
+      contains('term=xterm-256color program=cccode lang=en_US.UTF-8'),
     );
   });
 

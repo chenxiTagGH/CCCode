@@ -44,8 +44,8 @@ void main() {
     addTearDown(() => ClaudeCore.current = () => ClaudeCore.fallback);
     // flutter_test answers every HttpClient request with a 400.
     HttpOverrides.global = null;
-    dataDir = Directory.systemTemp.createTempSync('baocode-install-data-');
-    home = Directory.systemTemp.createTempSync('baocode-install-home-');
+    dataDir = Directory.systemTemp.createTempSync('cccode-install-data-');
+    home = Directory.systemTemp.createTempSync('cccode-install-home-');
     marks = Directory(p.join(home.path, 'marks'))..createSync();
     final project = Directory(p.join(home.path, 'project'))..createSync();
     root = project.resolveSymbolicLinksSync();
@@ -348,7 +348,7 @@ echo built >> "$MARKS/builds"
 
     Future<SourceServerBinaries?> find() => SourceServerBinaries.find(
       current: p.join(checkout.path, 'packages'),
-      executable: '/Applications/Nowhere.app/Contents/MacOS/BaoCode',
+      executable: '/Applications/Nowhere.app/Contents/MacOS/CCCode',
       environment: {
         'FLUTTER_ROOT': p.join(home.path, 'sdk'),
         'MARKS': marks.path,
@@ -362,7 +362,7 @@ echo built >> "$MARKS/builds"
       expect(binaries.version, startsWith('dev-'));
       final built = utf8.decode((await binaries.read('linux-arm64'))!);
       expect(built, contains('--target-os linux --target-arch arm64'));
-      expect(built, contains('-Dbaocode.version=${binaries.version}'));
+      expect(built, contains('-Dcccode.version=${binaries.version}'));
       await binaries.read('linux-arm64');
       expect((await find())!.version, binaries.version);
       final again = await (await find())!.read('linux-arm64');
@@ -407,7 +407,7 @@ echo built >> "$MARKS/builds"
       expect(
         await SourceServerBinaries.find(
           current: home.path,
-          executable: '/Applications/Nowhere.app/Contents/MacOS/BaoCode',
+          executable: '/Applications/Nowhere.app/Contents/MacOS/CCCode',
           environment: {'FLUTTER_ROOT': p.join(home.path, 'sdk')},
         ),
         isNull,

@@ -140,14 +140,14 @@ void main() {
       expect(opened, [ManualUpdateRequired.downloadPage]);
       expect(
         '${ManualUpdateRequired.downloadPage}',
-        'https://baocode.dev/download',
+        './download',
       );
     });
 
     test('a download that fails its checks is told, not installed', () async {
       make(manifest: manifestOf('1.2.0'));
       backend.downloadError = const UpdateVerificationException(
-        'The download is not signed by BaoCode',
+        'The download is not signed by CCCode',
       );
       await controller.checkNow(notifications, l10n);
       notifications.clearAll();

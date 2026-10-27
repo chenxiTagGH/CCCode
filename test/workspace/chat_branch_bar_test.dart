@@ -143,7 +143,7 @@ void main() {
     }
     await _pump(
       tester,
-      name: 'BaoCode',
+      name: 'CCCode',
       workspace: true,
       repositories: [
         ('/work/monad', monad),
@@ -151,8 +151,8 @@ void main() {
         ('/work/notes', notes),
       ],
     );
-    expect(find.text('BaoCode'), findsOneWidget);
-    await tester.tap(find.text('BaoCode'));
+    expect(find.text('CCCode'), findsOneWidget);
+    await tester.tap(find.text('CCCode'));
     await tester.pumpAndSettle();
     expect(find.text('monad'), findsOneWidget);
     expect(find.text('main'), findsOneWidget);

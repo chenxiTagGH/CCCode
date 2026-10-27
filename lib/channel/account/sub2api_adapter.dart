@@ -51,7 +51,11 @@ class Sub2ApiAdapter extends AccountAdapter {
       _url('/auth/refresh'),
       json: {'refresh_token': refresh},
     );
-    if (response.status == 401 || response.status == 403) {
+    final jsonAuthFailure = response.json is Map &&
+        ((response.json as Map)['code'] == 401 ||
+            (response.json as Map)['code'] == 403);
+    if (response.status == 401 ||
+        (response.status == 403 && jsonAuthFailure)) {
       forget();
       throw const AccountSignedOut();
     }
@@ -75,12 +79,7 @@ class Sub2ApiAdapter extends AccountAdapter {
   Object? _data(AccountResponse response) {
     final json = response.json;
     if (response.ok && json is Map && json['code'] == 0) return json['data'];
-    final message = json is Map ? json['message'] : null;
-    throw AccountError(
-      message is String && message.isNotEmpty
-          ? message
-          : 'HTTP ${response.status}',
-    );
+    throw AccountError('HTTP ${response.status}');
   }
 
   /// [method] [path] with the access token; once again with a fresh one
@@ -100,8 +99,16 @@ class Sub2ApiAdapter extends AccountAdapter {
         headers: {...headers, 'Authorization': 'Bearer $token'},
         json: json,
       );
-      if (response.status == 401 && attempt == 0) continue;
-      if (response.status == 401) {
+      final jsonAuthFailure = response.json is Map &&
+          (response.json as Map)['code'] == 401 ||
+          (response.json is Map && (response.json as Map)['code'] == 403);
+      if ((response.status == 401 ||
+              (response.status == 403 && jsonAuthFailure)) &&
+          attempt == 0) {
+        continue;
+      }
+      if (response.status == 401 ||
+          (response.status == 403 && jsonAuthFailure)) {
         forget();
         throw const AccountSignedOut();
       }
@@ -188,7 +195,7 @@ class Sub2ApiAdapter extends AccountAdapter {
   @override
   Future<AccountKey> create(String name, {AccountGroup? group}) async {
     // A key without a group reaches no models: without one picked, the
-    // first group the user may use, Anthropic's first (BaoCode speaks it
+    // first group the user may use, Anthropic's first (CCCode speaks it
     // best).
     if (group == null) {
       final groups = await this.groups();
@@ -199,7 +206,7 @@ class Sub2ApiAdapter extends AccountAdapter {
     await _call(
       'POST',
       '/keys',
-      // Its pages send one with each write; the site wants it.
+      // Its pages send one with each write; the website wants it.
       headers: {'Idempotency-Key': _idempotencyKey()},
       json: {'name': name, 'group_id': ?int.tryParse(group?.id ?? '')},
     );
@@ -207,9 +214,7 @@ class Sub2ApiAdapter extends AccountAdapter {
     // Listed newest first.
     return made.firstWhere(
       (key) => key.name == name,
-      orElse: () => made.isEmpty
-          ? throw const AccountError('the key was not made')
-          : made.first,
+      orElse: () => throw const AccountError('the key was not made'),
     );
   }
 
@@ -232,7 +237,7 @@ class Sub2ApiAdapter extends AccountAdapter {
           json: {'refresh_token': refresh},
         );
       } on Object {
-        // Forgotten here all the same; it ends on the site in time.
+        // Forgotten here all the same; it ends on the website in time.
       }
     }
     _access = null;

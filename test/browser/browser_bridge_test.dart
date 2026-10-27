@@ -225,12 +225,12 @@ void main() {
   test('the Windows manifest names the host beside it, for the extension '
       'alone', () {
     final manifest = jsonDecode(
-      File('windows/BrowserBridge/dev.baocode.browser.json').readAsStringSync(),
+      File('windows/BrowserBridge/vip.cchub.cccode.browser.json').readAsStringSync(),
     ) as Map<String, Object?>;
     expect(manifest, {
       'name': BrowserBridge.hostName,
-      'description': 'BaoCode',
-      'path': 'baocode-browser-host.exe',
+      'description': 'CCCode',
+      'path': 'cccode-browser-host.exe',
       'type': 'stdio',
       'allowed_origins': [
         for (final id in BrowserBridge.extensionIds) 'chrome-extension://$id/',

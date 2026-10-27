@@ -4,7 +4,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import '../chat/widgets/hover_builder.dart';
-import '../icons/brand_logos.dart' show BaoCodeLogo;
+import '../icons/brand_logos.dart' show CCCodeLogo;
 import '../ide/ide_button.dart';
 import '../l10n/l10n.dart';
 import '../platform/app_platform.dart';
@@ -112,7 +112,7 @@ class _StashWelcomeState extends State<StashWelcome>
         l10n.stashWelcomeNoteBody,
       ),
       (
-        const BaoCodeLogo(size: 15),
+        const CCCodeLogo(size: 15),
         l10n.stashWelcomeAgentTitle,
         l10n.stashWelcomeAgent,
       ),

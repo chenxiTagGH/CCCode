@@ -82,7 +82,7 @@ Future<Workspace> pumpApp(
     preferences: preferences,
     icons: IconLibrary(storage: storage),
   );
-  await tester.pumpWidget(BaoCodeApp(workspace: workspace));
+  await tester.pumpWidget(CCCodeApp(workspace: workspace));
   await tester.runAsync(workspace.load);
   await tester.runAsync(workspace.icons.load);
   await tester.pump();

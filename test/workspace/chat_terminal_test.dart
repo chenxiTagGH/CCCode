@@ -18,7 +18,7 @@ import '../ide/terminal/fake_pty.dart';
 import '../ide/terminal/fake_terminal.dart';
 import 'chat_window_keys_test.dart' show press;
 
-const _window = MethodChannel('baocode/window');
+const _window = MethodChannel('cccode/window');
 
 Future<Workspace> _pumpApp(
   WidgetTester tester, {
@@ -39,7 +39,7 @@ Future<Workspace> _pumpApp(
   );
   final workspace = Workspace.mock();
   await tester.pumpWidget(
-    BaoCodeApp(workspace: workspace, terminalBackend: terminalBackend),
+    CCCodeApp(workspace: workspace, terminalBackend: terminalBackend),
   );
   await tester.pump();
   return workspace;

@@ -94,7 +94,7 @@ Future<Workspace> pumpLoaded(
     drafts: drafts,
     titler: titler,
   );
-  await tester.pumpWidget(BaoCodeApp(workspace: workspace));
+  await tester.pumpWidget(CCCodeApp(workspace: workspace));
   await tester.runAsync(workspace.load);
   await tester.pump();
   return workspace;

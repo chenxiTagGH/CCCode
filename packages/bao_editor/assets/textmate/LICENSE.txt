@@ -1,4 +1,4 @@
-Except for the installed extensions at the end and BaoCode's own themes
+Except for the installed extensions at the end and CCCode's own themes
 (themes/theme-bao), the files in this directory
 were downloaded from Visual Studio Code (https://github.com/microsoft/vscode)
 at revision 6a598d4a13031703d483d103c1d934a36ad27971

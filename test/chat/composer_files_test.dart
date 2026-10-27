@@ -88,12 +88,12 @@ void _type(WidgetTester tester, String text) {
 void _window(WidgetTester tester, Object? Function(MethodCall call) answer) {
   final messenger = tester.binding.defaultBinaryMessenger;
   messenger.setMockMethodCallHandler(
-    const MethodChannel('baocode/window'),
+    const MethodChannel('cccode/window'),
     (call) async => answer(call),
   );
   addTearDown(
     () => messenger.setMockMethodCallHandler(
-      const MethodChannel('baocode/window'),
+      const MethodChannel('cccode/window'),
       null,
     ),
   );

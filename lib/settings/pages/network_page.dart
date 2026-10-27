@@ -12,7 +12,7 @@ import 'network_test_view.dart';
 import 'settings_dropdown.dart';
 import 'settings_widgets.dart';
 
-/// Settings → Network: the proxy BaoCode and the Claude Code it starts go
+/// Settings → Network: the proxy CCCode and the Claude Code it starts go
 /// through (`http.proxyMode`, `http.proxy`), the one in use now, and a
 /// test of it: whether a few sites answer through it, and how quickly.
 class NetworkSettingsPage extends StatefulWidget {
@@ -134,7 +134,7 @@ class _NetworkSettingsPageState extends State<NetworkSettingsPage> {
           ? l10n.networkTestHintRefused
           : l10n.networkTestHintOffline;
     }
-    // Only the site at home answers: the others do not get through.
+    // Only the website at home answers: the others do not get through.
     final reached = [
       for (final MapEntry(:key, :value) in results.entries)
         if (value is SiteReached) key,

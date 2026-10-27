@@ -27,7 +27,7 @@ Page now:
 Main thread: busy 300 ms; scripting 200 ms, rendering 50 ms, parsing 10 ms
   No long task (50 ms or more).
 
-Trace: /tmp/baocode-traces/trace-1.json (12.0 kB; DevTools › Performance › Load profile opens it)''';
+Trace: /tmp/cccode-traces/trace-1.json (12.0 kB; DevTools › Performance › Load profile opens it)''';
 
 void main() {
   group('a call of a browser tool', () {
@@ -85,7 +85,7 @@ void main() {
     });
 
     test('is a browser step, about what it acted on', () {
-      call('c1', 'mcp__baocode__browser_click', {'tabId': 3, 'ref': 12});
+      call('c1', 'mcp__cccode__browser_click', {'tabId': 3, 'ref': 12});
       var step = transcript.itemAt(0) as ToolCallItem;
       expect(step.kind, ToolKind.browser);
       expect(step.tool, 'browser_click');
@@ -101,7 +101,7 @@ void main() {
     });
 
     test('says what the agent said it does', () {
-      call('c1', 'mcp__baocode__browser_click', {
+      call('c1', 'mcp__cccode__browser_click', {
         'tabId': 3,
         'ref': 12,
         'description': '点击登录按钮',
@@ -112,7 +112,7 @@ void main() {
     });
 
     test('keeps the pictures it returned', () {
-      call('s1', 'mcp__baocode__browser_screenshot', {'tabId': 3});
+      call('s1', 'mcp__cccode__browser_screenshot', {'tabId': 3});
       answer('s1', [
         {
           'type': 'image',
@@ -256,7 +256,7 @@ void main() {
       ('FCP', '380 ms', 'good'),
       ('TTFB', '12 ms', 'good'),
     ]);
-    expect(report.trace, '/tmp/baocode-traces/trace-1.json');
+    expect(report.trace, '/tmp/cccode-traces/trace-1.json');
     expect(report.lines.first, '  DOMContentLoaded: 300 ms, load: 900 ms');
     expect(report.lines.last, '  No long task (50 ms or more).');
   });

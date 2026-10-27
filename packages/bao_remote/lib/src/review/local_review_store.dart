@@ -214,7 +214,7 @@ class LocalReviewStore implements ReviewStore {
     ReviewBlob from,
     ReviewBlob to,
   ) async {
-    final temp = await Directory.systemTemp.createTemp('baocode-review-');
+    final temp = await Directory.systemTemp.createTemp('cccode-review-');
     try {
       final ours = p.join(temp.path, 'current');
       final base = p.join(temp.path, 'base');

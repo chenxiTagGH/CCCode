@@ -19,7 +19,7 @@ const attribution = (() => {
   // A browser that blocks storage may never answer: given up on after a while.
   const within = (promise, ms, fallback) => Promise.race([promise, new Promise((done) => setTimeout(() => done(fallback), ms))]);
   const store = (mode, use) => new Promise((resolve, reject) => {
-    const open = indexedDB.open('baocode', 1);
+    const open = indexedDB.open('cccode', 1);
     open.onupgradeneeded = () => open.result.createObjectStore('kv');
     open.onerror = () => reject(open.error);
     open.onsuccess = () => {
@@ -32,8 +32,8 @@ const attribution = (() => {
   });
   const fromDb = () => within(store('readonly', (kv) => kv.get(KEY)).catch(() => null), 1500, null);
   const toDb = (r) => within(store('readwrite', (kv) => kv.put(r, KEY)).then(() => true, () => false), 1500, false);
-  const fromLocal = () => { try { return JSON.parse(localStorage.getItem(`baocode.${KEY}`)); } catch { return null; } };
-  const toLocal = (r) => { try { localStorage.setItem(`baocode.${KEY}`, JSON.stringify(r)); return true; } catch { return false; } };
+  const fromLocal = () => { try { return JSON.parse(localStorage.getItem(`cccode.${KEY}`)); } catch { return null; } };
+  const toLocal = (r) => { try { localStorage.setItem(`cccode.${KEY}`, JSON.stringify(r)); return true; } catch { return false; } };
   // Written by /dl/ for a download from another site's frame (below), whose
   // storage was that site's alone.
   const fromCookie = () => {
@@ -124,7 +124,7 @@ const attribution = (() => {
 
 // A channel listed in channels.json shows in three
 // places: its logo and name in place of the brand's, "<its logo> <its
-// name> × <our logo> BaoCode" for the home page's title, and its subtitle
+// name> × <our logo> CCCode" for the home page's title, and its subtitle
 // in place of ours; the visitor's kept source decides, as for the
 // download. Only listed ones, words as text, the logo from /channels/: an
 // address anyone can make up never puts anything on the page. head.js has
@@ -154,7 +154,7 @@ listedChannel.then((channel) => {
   if (name) {
     for (const el of document.querySelectorAll('.top .brand')) el.replaceChildren(...side(logo, name).childNodes);
     for (const el of document.querySelectorAll('[data-channel-title]')) {
-      el.replaceChildren(side(logo, name), ' ', span('channel-x', '×'), ' ', side('/icon.png', 'BaoCode'));
+      el.replaceChildren(side(logo, name), ' ', span('channel-x', '×'), ' ', side('/icon.png', 'CCCode'));
     }
   }
   if (subtitle) for (const el of document.querySelectorAll('[data-channel-subtitle]')) el.textContent = subtitle;
@@ -284,7 +284,7 @@ function showDownloads(downloads, v) {
     for (const a of document.querySelectorAll(`[data-file="${os}"]`)) {
       a.href = file.url;
       if (a.classList.contains('button')) a.title = `≈ ${Math.round(file.size / 1e6)} MB`;
-      if (a.hasAttribute('data-name')) a.textContent = `BaoCode ${v}`;
+      if (a.hasAttribute('data-name')) a.textContent = `CCCode ${v}`;
     }
     for (const el of document.querySelectorAll(`[data-size="${os}"]`)) {
       el.textContent = `≈ ${Math.round(file.size / 1e6)} MB`;

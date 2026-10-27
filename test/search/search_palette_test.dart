@@ -38,7 +38,7 @@ Future<Workspace> _pumpApp(
   addTearDown(() => KeybindingService.instance = KeybindingService());
   final workspace = Workspace.mock();
   await tester.pumpWidget(
-    BaoCodeApp(workspace: workspace, conversations: conversations),
+    CCCodeApp(workspace: workspace, conversations: conversations),
   );
   await tester.pump();
   return workspace;
@@ -91,7 +91,7 @@ void main() {
       'We should retry the websocket handshake twice before failing.',
     );
     await tester.pumpWidget(
-      BaoCodeApp(workspace: workspace, conversations: search),
+      CCCodeApp(workspace: workspace, conversations: search),
     );
     await tester.pump();
     await tester.tap(

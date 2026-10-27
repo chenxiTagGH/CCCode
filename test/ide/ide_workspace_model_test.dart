@@ -426,7 +426,7 @@ void main() {
   test(
     'a file outside the project opens and saves as one inside does',
     () async {
-      final temp = await Directory.systemTemp.createTemp('baocode-outside-');
+      final temp = await Directory.systemTemp.createTemp('cccode-outside-');
       addTearDown(() => temp.delete(recursive: true));
       final base = await temp.resolveSymbolicLinks();
       final project = await Directory(p.join(base, 'project')).create();

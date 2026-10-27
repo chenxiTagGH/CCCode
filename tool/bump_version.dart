@@ -11,7 +11,7 @@
 // The build number only ever goes up: the app is offered an update when
 // the manifest's version is newer than its own, build numbers counted
 // (docs/auto-update.md). It drafts the release's notes too
-// (tool/draft_release_notes.dart). Rewrite them, make the site's changelog
+// (tool/draft_release_notes.dart). Rewrite them, make the website's changelog
 // (tool/build_changelog.dart), then commit, and push the tag it prints: CI
 // builds and publishes the release (.github/workflows/release.yml).
 import 'dart:io';

@@ -1,6 +1,6 @@
 # baocode.dev
 
-The BaoCode website, hosted on Cloudflare, with no build step: `site/` is
+The CCCode website, hosted on Cloudflare, with no build step: `site/` is
 served as it is, `/download` being `download.html`.
 
 - English at the root, Chinese under `zh/` (`/zh/`, `/zh/download`,
@@ -11,7 +11,7 @@ served as it is, `/download` being `download.html`.
   `dart run tool/build_changelog.dart` from `release-notes/`. Edit those.
 
 - `import.html`, `import.js`: a site's one-click import of an upstream,
-  handed on to the app (`baocode://provider/import`); `upstreams.html`, how
+  handed on to the app (`cccode://provider/import`); `upstreams.html`, how
   a site adds it. See `docs/upstream-import.md`.
 - `site.js` keeps, on any page, where a visitor came from (`?abc` after
   any page's address, the site linking here, or direct); `head.js`,

@@ -18,8 +18,8 @@ import 'package:path/path.dart' as p;
 void main() {
   final chrome = Platform.environment['BAO_BROWSER_LIVE'];
   final host = p.absolute(
-    'build/macos/Build/Products/Debug/BaoCode.app/Contents/MacOS/'
-    'baocode-browser-host',
+    'build/macos/Build/Products/Debug/CCCode.app/Contents/MacOS/'
+    'cccode-browser-host',
   );
 
   test(
@@ -33,7 +33,7 @@ void main() {
           .writeAsStringSync(
             jsonEncode({
               'name': BrowserBridge.hostName,
-              'description': 'BaoCode',
+              'description': 'CCCode',
               'path': host,
               'type': 'stdio',
               'allowed_origins': [

@@ -80,7 +80,7 @@ void main() {
   }
 
   setUp(() async {
-    temp = await Directory.systemTemp.createTemp('baocode_review_');
+    temp = await Directory.systemTemp.createTemp('cccode_review_');
     final resolved = await temp.resolveSymbolicLinks();
     root = p.join(resolved, 'project');
     checkpoints = p.join(resolved, 'checkpoints');

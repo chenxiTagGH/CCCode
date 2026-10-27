@@ -79,7 +79,7 @@ class ErrorLog {
     }
   }
 
-  static const channel = MethodChannel('baocode/logs');
+  static const channel = MethodChannel('cccode/logs');
 
   /// An error the framework caught: in a build, a layout, a paint, a
   /// gesture's handler.
@@ -151,7 +151,7 @@ class ErrorLog {
         file.renameSync(previousPath);
       }
       _append(
-        '--- BaoCode $appVersionString · ${Platform.operatingSystem} '
+        '--- CCCode $appVersionString · ${Platform.operatingSystem} '
         '${Platform.operatingSystemVersion} · '
         '${_clock().toIso8601String()} ---\n',
       );

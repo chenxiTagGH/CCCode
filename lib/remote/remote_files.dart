@@ -21,7 +21,7 @@ import 'remote_status.dart' show sshErrorText;
 import 'ssh_host.dart';
 
 /// The command browsing a remote host for a file to open.
-const openRemoteFileCommandId = 'baocode.remote.openFile';
+const openRemoteFileCommandId = 'cccode.remote.openFile';
 
 /// Where the hosts to pick from come from when not given: `~/.ssh/config`;
 /// replaceable under test.

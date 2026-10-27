@@ -31,14 +31,14 @@ void main() {
 
   tearDown(() => server.close(force: true));
 
-  test('a firewall\'s page in place of the site is not a sign-out', () async {
+  test('a firewall\'s page in place of the website is not a sign-out', () async {
     await expectLater(
       sendToAccountSite('POST', base.replace(path: '/firewall')),
       throwsA(isA<AccountBlocked>().having((e) => e.host, 'host', '127.0.0.1')),
     );
   });
 
-  test('the site\'s own 403 comes back, for the adapter to read', () async {
+  test('the website\'s own 403 comes back, for the adapter to read', () async {
     final response = await sendToAccountSite(
       'POST',
       base.replace(path: '/api/v1/auth/refresh'),

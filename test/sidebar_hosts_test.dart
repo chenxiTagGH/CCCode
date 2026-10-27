@@ -18,7 +18,7 @@ Future<Workspace> pumpLoaded(
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
   final workspace = Workspace(kernels: [claude], preferences: preferences);
-  await tester.pumpWidget(BaoCodeApp(workspace: workspace));
+  await tester.pumpWidget(CCCodeApp(workspace: workspace));
   await tester.runAsync(workspace.load);
   await tester.pump();
   return workspace;

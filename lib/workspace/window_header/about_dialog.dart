@@ -7,18 +7,18 @@ import '../../theme/workbench_theme.dart' show themeColors;
 import '../../update/version.dart';
 
 /// The app's icon, as the Dock and the taskbar show it.
-const aboutIconAsset = 'assets/branding/app_icon.png';
+const aboutIconAsset = 'assets/branding/cccode_icon.png';
 
 /// Help → About: what the app is, and which build this is.
-Future<void> showAboutBaoCode(BuildContext context) => showDialog<void>(
+Future<void> showAboutCCCode(BuildContext context) => showDialog<void>(
   context: context,
   // Black, not the theme's: as upstream's dialogs dim the window.
   barrierColor: const Color(0x88000000),
-  builder: (context) => const _AboutBaoCodeDialog(),
+  builder: (context) => const _AboutCCCodeDialog(),
 );
 
-class _AboutBaoCodeDialog extends StatelessWidget {
-  const _AboutBaoCodeDialog();
+class _AboutCCCodeDialog extends StatelessWidget {
+  const _AboutCCCodeDialog();
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +59,7 @@ class _AboutBaoCodeDialog extends StatelessWidget {
                 ),
                 SizedBox(width: 10),
                 Text(
-                  'BaoCode',
+                  'CCCode',
                   style: TextStyle(
                     color: AppColors.textPrimary,
                     fontSize: 15,

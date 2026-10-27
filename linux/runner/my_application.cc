@@ -15,6 +15,9 @@ struct _MyApplication {
   GtkWindow* window;
   GtkWidget* view;
   FlMethodChannel* window_channel;
+  FlMethodChannel* open_channel;
+  GPtrArray* pending_open;
+  gboolean open_ready;
 };
 
 G_DEFINE_TYPE(MyApplication, my_application, GTK_TYPE_APPLICATION)
@@ -243,7 +246,7 @@ static void reveal_path(const char* path) {
                 nullptr, nullptr);
 }
 
-// baocode/window: the calls WindowControls makes when this host is a desktop.
+// cccode/window: the calls WindowControls makes when this host is a desktop.
 // Menus, clipboard images and drag-out stay unimplemented (MissingPlugin);
 // the app already treats those as optional.
 static void window_method_call_cb(FlMethodChannel* channel, FlMethodCall* call,
@@ -327,23 +330,135 @@ static void window_method_call_cb(FlMethodChannel* channel, FlMethodCall* call,
   fl_method_call_respond(call, response, nullptr);
 }
 
+static void open_method_call_cb(FlMethodChannel* channel, FlMethodCall* call,
+                                gpointer user_data) {
+  MyApplication* self = MY_APPLICATION(user_data);
+  const char* name = fl_method_call_get_name(call);
+  if (strcmp(name, "takePending") == 0) {
+    g_autoptr(FlValue) result = fl_value_new_list();
+    for (guint i = 0; i < self->pending_open->len; i++) {
+      fl_value_append_take(
+          result, fl_value_new_string((const char*)self->pending_open->pdata[i]));
+    }
+    g_ptr_array_set_size(self->pending_open, 0);
+    self->open_ready = TRUE;
+    g_autoptr(FlMethodResponse) response =
+        FL_METHOD_RESPONSE(fl_method_success_response_new(result));
+    fl_method_call_respond(call, response, nullptr);
+    return;
+  }
+  if (strcmp(name, "stop") == 0) {
+    self->open_ready = FALSE;
+    g_autoptr(FlMethodResponse) response =
+        FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
+    fl_method_call_respond(call, response, nullptr);
+    return;
+  }
+  g_autoptr(FlMethodResponse) response =
+      FL_METHOD_RESPONSE(fl_method_not_implemented_response_new());
+  fl_method_call_respond(call, response, nullptr);
+}
+
+static gboolean is_cccode_link(const char* link) {
+  constexpr char kPrefix[] = "cccode://";
+  constexpr char kProviderPath[] = "provider/import?";
+  constexpr char kActivatePath[] = "activate?";
+  if (link == nullptr || strncmp(link, kPrefix, strlen(kPrefix)) != 0) {
+    return FALSE;
+  }
+  const char* suffix = link + strlen(kPrefix);
+  const gboolean provider =
+      strncmp(suffix, kProviderPath, strlen(kProviderPath)) == 0 &&
+      suffix[strlen(kProviderPath)] != '\0';
+  const gboolean activate =
+      strncmp(suffix, kActivatePath, strlen(kActivatePath)) == 0 &&
+      suffix[strlen(kActivatePath)] != '\0';
+  if (!provider && !activate) return FALSE;
+  for (const char* character = link; *character != '\0'; character++) {
+    if (*character <= ' ' || *character == '\\' || *character == '#') {
+      return FALSE;
+    }
+  }
+  return TRUE;
+}
+
+static const char* request_marker(const char* flag) {
+  if (strcmp(flag, "--cccode-agent") == 0) return "\0agent";
+  if (strcmp(flag, "--cccode-link") == 0) return "\0import";
+  return "\0code";
+}
+
+static gboolean is_open_flag(const char* flag) {
+  return strcmp(flag, "--cccode-cli") == 0 ||
+         strcmp(flag, "--cccode-agent") == 0 ||
+         strcmp(flag, "--cccode-link") == 0;
+}
+
+static void deliver_open_arguments(MyApplication* self, char** arguments,
+                                   gint argument_count) {
+  if (argument_count < 2 || !is_open_flag(arguments[1])) return;
+  const gboolean link = strcmp(arguments[1], "--cccode-link") == 0;
+  if (link && (argument_count < 3 || !is_cccode_link(arguments[2]))) return;
+  const gint payload_count = link ? 3 : argument_count;
+  const char* marker = request_marker(arguments[1]);
+
+  if (!self->open_ready) {
+    g_ptr_array_add(self->pending_open, g_strdup(marker));
+    for (gint index = 2; index < payload_count; index++) {
+      g_ptr_array_add(self->pending_open, g_strdup(arguments[index]));
+    }
+    return;
+  }
+  g_autoptr(FlValue) list = fl_value_new_list();
+  fl_value_append_take(list, fl_value_new_string(marker));
+  for (gint index = 2; index < payload_count; index++) {
+    fl_value_append_take(list, fl_value_new_string(arguments[index]));
+  }
+  fl_method_channel_invoke_method(self->open_channel, "open", list, nullptr,
+                                  nullptr, nullptr);
+}
+
 static void register_window_channel(MyApplication* self, FlView* view) {
   FlEngine* engine = fl_view_get_engine(view);
   g_autoptr(FlStandardMethodCodec) codec = fl_standard_method_codec_new();
   g_clear_object(&self->window_channel);
   self->window_channel = fl_method_channel_new(
-      fl_engine_get_binary_messenger(engine), "baocode/window",
+      fl_engine_get_binary_messenger(engine), "cccode/window",
       FL_METHOD_CODEC(codec));
   fl_method_channel_set_method_call_handler(self->window_channel,
                                              window_method_call_cb, self,
                                              nullptr);
   // The channel build's login window (see lib/channel/account/).
   login_window_register(fl_engine_get_binary_messenger(engine), self->window);
+  g_clear_object(&self->open_channel);
+  g_autoptr(FlStandardMethodCodec) open_codec = fl_standard_method_codec_new();
+  self->open_channel = fl_method_channel_new(
+      fl_engine_get_binary_messenger(engine), "cccode/open",
+      FL_METHOD_CODEC(open_codec));
+  fl_method_channel_set_method_call_handler(self->open_channel,
+                                             open_method_call_cb, self,
+                                             nullptr);
+}
+
+static int my_application_command_line(GApplication* application,
+                                        GApplicationCommandLine* command_line) {
+  MyApplication* self = MY_APPLICATION(application);
+  gint argument_count = 0;
+  gchar** arguments = g_application_command_line_get_arguments(
+      command_line, &argument_count);
+  deliver_open_arguments(self, arguments, argument_count);
+  g_strfreev(arguments);
+  g_application_activate(application);
+  return 0;
 }
 
 // Implements GApplication::activate.
 static void my_application_activate(GApplication* application) {
   MyApplication* self = MY_APPLICATION(application);
+  if (self->window != nullptr) {
+    gtk_window_present(self->window);
+    return;
+  }
   GtkWindow* window =
       GTK_WINDOW(gtk_application_window_new(GTK_APPLICATION(application)));
   self->window = window;
@@ -352,7 +467,7 @@ static void my_application_activate(GApplication* application) {
   // The app paints its own header on Windows only. Everywhere else the
   // system draws the caption, so this is a normal title bar (no GTK
   // header bar stacked on top of the Flutter view).
-  gtk_window_set_title(window, "BaoCode");
+  gtk_window_set_title(window, "CCCode");
   gtk_window_set_default_size(window, kDefaultWidth, kDefaultHeight);
   GdkGeometry geometry = {};
   geometry.min_width = kMinWidth;
@@ -397,6 +512,10 @@ static gboolean my_application_local_command_line(GApplication* application,
     *exit_status = 1;
     return TRUE;
   }
+  if (g_application_get_is_remote(application)) {
+    *exit_status = 0;
+    return TRUE;
+  }
 
   g_application_activate(application);
   *exit_status = 0;
@@ -418,12 +537,15 @@ static void my_application_shutdown(GApplication* application) {
 static void my_application_dispose(GObject* object) {
   MyApplication* self = MY_APPLICATION(object);
   g_clear_pointer(&self->dart_entrypoint_arguments, g_strfreev);
+  g_clear_pointer(&self->pending_open, g_ptr_array_unref);
+  g_clear_object(&self->open_channel);
   g_clear_object(&self->window_channel);
   G_OBJECT_CLASS(my_application_parent_class)->dispose(object);
 }
 
 static void my_application_class_init(MyApplicationClass* klass) {
   G_APPLICATION_CLASS(klass)->activate = my_application_activate;
+  G_APPLICATION_CLASS(klass)->command_line = my_application_command_line;
   G_APPLICATION_CLASS(klass)->local_command_line =
       my_application_local_command_line;
   G_APPLICATION_CLASS(klass)->startup = my_application_startup;
@@ -431,7 +553,9 @@ static void my_application_class_init(MyApplicationClass* klass) {
   G_OBJECT_CLASS(klass)->dispose = my_application_dispose;
 }
 
-static void my_application_init(MyApplication* self) {}
+static void my_application_init(MyApplication* self) {
+  self->pending_open = g_ptr_array_new_with_free_func(g_free);
+}
 
 MyApplication* my_application_new() {
   // Set the program name to the application ID, which helps various systems
@@ -442,5 +566,6 @@ MyApplication* my_application_new() {
 
   return MY_APPLICATION(g_object_new(my_application_get_type(),
                                      "application-id", APPLICATION_ID, "flags",
-                                     G_APPLICATION_NON_UNIQUE, nullptr));
+                                     G_APPLICATION_HANDLES_COMMAND_LINE,
+                                     nullptr));
 }

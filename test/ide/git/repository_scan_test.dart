@@ -209,7 +209,7 @@ void main() {
 
   test('a repository\'s submodules are read from its .gitmodules, from a '
       'folder in it too', () async {
-    final dir = await Directory.systemTemp.createTemp('baocode-submodules-');
+    final dir = await Directory.systemTemp.createTemp('cccode-submodules-');
     addTearDown(() => dir.delete(recursive: true));
     final root = dir.path;
     Future<void> git(List<String> arguments) async {

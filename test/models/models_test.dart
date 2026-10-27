@@ -447,7 +447,7 @@ void main() {
       expect(providers.auxiliaryModel, isNull);
     });
 
-    test('BaoCode\'s own core has no Claude Code of the machine\'s: its '
+    test('CCCode\'s own core has no Claude Code of the machine\'s: its '
         'models and Haiku, picked on the CLI, stand for none', () async {
       final providers = ModelProviders.memory(providers: [_gateway]);
       await providers.setDefaultModel('opus');
@@ -1192,7 +1192,7 @@ void main() {
       expect(calls.single.$1, ['-i']);
       expect(
         calls.single.$2,
-        'add-generic-password -U -s BaoCode -a "provider.gw" -X 736b2dc3a9\n',
+        'add-generic-password -U -s CCCode -a "provider.gw" -X 736b2dc3a9\n',
       );
       expect(calls.single.$1.join(' '), isNot(contains('sk-')));
 
@@ -1201,7 +1201,7 @@ void main() {
       expect(calls.last.$1, [
         'find-generic-password',
         '-s',
-        'BaoCode',
+        'CCCode',
         '-a',
         'provider.gw',
         '-w',

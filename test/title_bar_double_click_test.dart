@@ -14,7 +14,7 @@ import 'package:baocode/workspace/workspace.dart';
 
 import 'sidebar_test.dart' show pumpApp;
 
-const _window = MethodChannel('baocode/window');
+const _window = MethodChannel('cccode/window');
 
 final _macOS = TargetPlatformVariant.only(TargetPlatform.macOS);
 
@@ -239,7 +239,7 @@ void main() {
     tester.view.physicalSize = const Size(600, 800);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
-    await tester.pumpWidget(BaoCodeApp(workspace: Workspace()));
+    await tester.pumpWidget(CCCodeApp(workspace: Workspace()));
     await tester.pump();
     expect(find.text('Open a project folder'), findsOneWidget);
 

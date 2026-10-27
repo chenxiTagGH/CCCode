@@ -201,7 +201,7 @@ void main() {
   testWidgets('Select Default Profile writes it to settings.json, where '
       'new terminals and the dropdown find it', (tester) async {
     final temp = Directory.systemTemp.createTempSync(
-      'baocode-terminal-default',
+      'cccode-terminal-default',
     );
     addTearDown(() => temp.deleteSync(recursive: true));
     final settings = UserSettings(

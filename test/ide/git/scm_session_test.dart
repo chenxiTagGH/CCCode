@@ -13,7 +13,7 @@ void main() {
   late String path;
 
   setUp(() async {
-    temp = await Directory.systemTemp.createTemp('baocode-scm-session');
+    temp = await Directory.systemTemp.createTemp('cccode-scm-session');
     path = p.join(temp.path, 'User', 'settings.json');
   });
 

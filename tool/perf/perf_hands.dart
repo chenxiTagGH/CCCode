@@ -420,7 +420,7 @@ final List<PerfScenario> handScenarios = [
     'A hand\'s own scrolling, recorded by record.hands (--hands FILE), '
         'played back in the view it was recorded in, as it came.',
     (c) async {
-      final file = Platform.environment['BAOCODE_PERF_HANDS'];
+      final file = Platform.environment['CCCODE_PERF_HANDS'];
       c.check(file != null, 'a recording to play (--hands FILE)');
       if (file == null) return;
       final recorded = jsonDecode(File(file).readAsStringSync()) as Map;
@@ -439,18 +439,18 @@ final List<PerfScenario> handScenarios = [
   ),
   PerfScenario(
     'record.hands',
-    'Records a hand scrolling one view (BAOCODE_PERF_RECORD_VIEW: chat, '
+    'Records a hand scrolling one view (CCCODE_PERF_RECORD_VIEW: chat, '
         'sidebar, stash_cards, stash_note, side_panel, ide; chat by default) '
-        'for 40 seconds (BAOCODE_PERF_RECORD_SECONDS), with the real mouse '
+        'for 40 seconds (CCCODE_PERF_RECORD_SECONDS), with the real mouse '
         'and trackpad: how closely it followed, and the events, for '
         'follow.replay. --record FILE says where they go.',
     (c) async {
       final env = Platform.environment;
-      final out = env['BAOCODE_PERF_RECORD'];
+      final out = env['CCCODE_PERF_RECORD'];
       c.check(out != null, 'where the recording goes (--record FILE)');
       if (out == null) return;
-      final seconds = int.tryParse(env['BAOCODE_PERF_RECORD_SECONDS'] ?? '');
-      final name = env['BAOCODE_PERF_RECORD_VIEW'] ?? 'chat';
+      final seconds = int.tryParse(env['CCCODE_PERF_RECORD_SECONDS'] ?? '');
+      final name = env['CCCODE_PERF_RECORD_VIEW'] ?? 'chat';
       final view = await (_views[name]?.$2 ?? _chat)(c);
       if (view == null) return;
       await view.middle();

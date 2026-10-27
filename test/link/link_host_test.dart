@@ -39,10 +39,10 @@ void main() {
       ),
       filesOf: (project) => (
         files: _MemoryFiles({
-          '~/code/baocode/README.md': '# BaoCode',
-          '~/code/baocode/lib/chat/chat_history_view.dart': 'class View {}',
-          '~/code/baocode/assets/logo.png': null,
-          '~/code/baocode/node_modules/x/index.js': '',
+          '~/code/cccode/README.md': '# CCCode',
+          '~/code/cccode/lib/chat/chat_history_view.dart': 'class View {}',
+          '~/code/cccode/assets/logo.png': null,
+          '~/code/cccode/node_modules/x/index.js': '',
         }),
         paths: p.posix,
       ),
@@ -159,13 +159,13 @@ void main() {
     expect(state.device.name, 'Test Mac');
     expect(
       [for (final p in state.projects) p.name],
-      ['baocode', 'cursor-docs', 'api-gateway'],
+      ['cccode', 'cursor-docs', 'api-gateway'],
     );
     expect(state.projects.first.branch, 'main');
     final first = state.sessions.firstWhere(
       (s) => s.title == 'Sticky user message on scroll',
     );
-    expect(first.project, '~/code/baocode');
+    expect(first.project, '~/code/cccode');
 
     final opened = LinkSessionUpdate.fromJson(
       (await peer.call(LinkMethods.open, {'session': first.id}))!
@@ -285,7 +285,7 @@ void main() {
         .session
         .attach();
     final listed =
-        (await peer.call(LinkMethods.files, {'project': '~/code/baocode'}))!
+        (await peer.call(LinkMethods.files, {'project': '~/code/cccode'}))!
             as Map;
     // Not what the index leaves out (node_modules).
     expect(listed['paths'], [
@@ -300,23 +300,23 @@ void main() {
 
     final read =
         (await peer.call(LinkMethods.read, {
-              'project': '~/code/baocode',
+              'project': '~/code/cccode',
               'path': 'lib/chat/chat_history_view.dart',
             }))!
             as Map;
     expect(read['text'], 'class View {}');
     final image =
         (await peer.call(LinkMethods.read, {
-              'project': '~/code/baocode',
+              'project': '~/code/cccode',
               'path': 'assets/logo.png',
             }))!
             as Map;
     expect(image['binary'], isTrue);
 
     for (final (project, path) in [
-      ('~/code/baocode', '../../.ssh/id_ed25519'),
-      ('~/code/baocode', ''),
-      ('~', 'code/baocode/README.md'),
+      ('~/code/cccode', '../../.ssh/id_ed25519'),
+      ('~/code/cccode', ''),
+      ('~', 'code/cccode/README.md'),
     ]) {
       await expectLater(
         peer.call(LinkMethods.read, {'project': project, 'path': path}),

@@ -17,16 +17,16 @@ Future<ChannelAttribution?> lookUpChannel(Uri url) async {
   return told;
 }
 
-/// Where the channels the site lists are read from instead (`…/channels.json`
-/// and their logos), to try a channel's welcome before the site has it:
+/// Where the channels the website lists are read from instead (`…/channels.json`
+/// and their logos), to try a channel's welcome before the website has it:
 /// `site/` served locally, say.
-const channelsUrlVariable = 'BAOCODE_CHANNELS_URL';
+const channelsUrlVariable = 'CCCODE_CHANNELS_URL';
 
-/// The site's.
+/// The CCCode website's.
 const channelsBase = 'https://baocode.dev';
 
-/// The channel [id]'s entry as the site lists it (site/channels.json),
-/// its logo with it; null for one not listed. Throws when the site could
+/// The channel [id]'s entry as the website lists it (site/channels.json),
+/// its logo with it; null for one not listed. Throws when the website could
 /// not be read.
 Future<ChannelEntry?> channelEntry(String id) async {
   final override = Platform.environment[channelsUrlVariable]?.trim() ?? '';
@@ -53,7 +53,7 @@ Future<ChannelEntry?> channelEntry(String id) async {
 Future<Uint8List?> _get(Uri url) async {
   final client = HttpClient()
     ..connectionTimeout = _timeout
-    ..userAgent = 'BaoCode/$currentAppVersion (${Platform.operatingSystem})';
+    ..userAgent = 'CCCode/$currentAppVersion (${Platform.operatingSystem})';
   try {
     final request = await client.getUrl(url).timeout(_timeout);
     final response = await request.close().timeout(_timeout);

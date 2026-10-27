@@ -15,6 +15,8 @@ import '../../l10n/l10n.dart';
 import '../../models/codex/codex_api.dart' show codexClientVersion;
 import '../../models/codex/codex_service.dart';
 import '../../models/codex/codex_usage.dart';
+import '../../models/cc_api_connector.dart';
+import '../../models/cc_api_store.dart';
 import '../../models/auxiliary_model_menu.dart';
 import '../../models/featured_upstreams.dart';
 import '../../models/model_icons.dart';
@@ -27,6 +29,10 @@ import '../../theme/workbench_theme.dart' show themeColors;
 import '../../chat/widgets/hover_builder.dart';
 import '../../chat/widgets/pixel_loader.dart';
 import '../../workspace/workspace.dart';
+import '../../settings/user_settings.dart';
+import '../../channel/account/account_send.dart' show sendToAccountSite;
+import '../../channel/account/login_window.dart';
+import 'cc_api_card.dart';
 import 'featured_upstreams_strip.dart';
 import 'model_dialogs.dart';
 import 'settings_dropdown.dart';
@@ -71,6 +77,8 @@ class ModelsSettingsPage extends StatefulWidget {
     this.codex,
     this.workspace,
     this.featured,
+    this.featuredOpen,
+    this.ccApi,
   });
 
   final ModelProviders providers;
@@ -87,6 +95,12 @@ class ModelsSettingsPage extends StatefulWidget {
   /// The upstreams shown cards of; the app's when null (see
   /// [FeaturedUpstreamsStrip]).
   final Future<List<FeaturedUpstream>>? featured;
+
+  /// Opens an external featured card; the app's browser opener when null.
+  final void Function(Uri url)? featuredOpen;
+
+  /// The CC API connector; the app's when null.
+  final CcApiConnector? ccApi;
 
   /// An upstream to open the page of, as the page shows next (or now, if
   /// it does): one just imported. Taken as it is opened.
@@ -125,7 +139,7 @@ class _ModelsSettingsPageState extends State<ModelsSettingsPage> {
 
   ModelProviders get _providers => widget.providers;
 
-  /// The sites listed (see [ModelsSettingsPage.featured]).
+  /// The CCCode websites listed (see [ModelsSettingsPage.featured]).
   late final Future<List<FeaturedUpstream>> _featured =
       widget.featured ?? FeaturedUpstream.load();
 
@@ -133,6 +147,15 @@ class _ModelsSettingsPageState extends State<ModelsSettingsPage> {
   /// it as it answers: their upstreams lead the list.
   Set<String> _listedHosts = const {};
   bool _relisted = false;
+  late CcApiConnector _ccApi;
+
+  CcApiConnector _productionCcApi() => CcApiConnector(
+    providers: _providers,
+    store: GlobalCcApiStore(SettingsFiles.instance.storage),
+    openWindow: ChannelLoginWindow.new,
+    send: sendToAccountSite,
+    listModels: widget.listModels,
+  );
 
   /// Whether [_featured] is the app's, got again behind it.
   bool get _follows => widget.featured == null;
@@ -140,6 +163,7 @@ class _ModelsSettingsPageState extends State<ModelsSettingsPage> {
   @override
   void initState() {
     super.initState();
+    _ccApi = widget.ccApi ?? _productionCcApi();
     _reveal();
     ModelsSettingsPage.reveal.addListener(_reveal);
     if (_follows) FeaturedUpstream.known.addListener(_relist);
@@ -162,6 +186,19 @@ class _ModelsSettingsPageState extends State<ModelsSettingsPage> {
     if (listed.isEmpty || !mounted) return;
     _relisted = true;
     _takeHosts(listed);
+  }
+
+  @override
+  void didUpdateWidget(covariant ModelsSettingsPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.ccApi != null && widget.ccApi != oldWidget.ccApi) {
+      _ccApi = widget.ccApi!;
+    } else if (widget.ccApi == null &&
+        (oldWidget.ccApi != null ||
+            widget.providers != oldWidget.providers ||
+            widget.listModels != oldWidget.listModels)) {
+      _ccApi = _productionCcApi();
+    }
   }
 
   @override
@@ -222,7 +259,7 @@ class _ModelsSettingsPageState extends State<ModelsSettingsPage> {
     final l10n = context.l10n;
     if (value == null) return l10n.modelsAuxiliaryAuto;
     if (value == builtinProviderId) {
-      // Not there on BaoCode's own core: automatic in its place.
+      // Not there on CCCode's own core: automatic in its place.
       return _providers.builtinAvailable
           ? l10n.modelsAuxiliaryBuiltin
           : l10n.modelsAuxiliaryAuto;
@@ -318,6 +355,8 @@ class _ModelsSettingsPageState extends State<ModelsSettingsPage> {
         upstreams: _featured,
         follow: _follows,
         hosts: [for (final provider in _providers.providers) provider.host],
+        open: widget.featuredOpen ?? FeaturedUpstreamsStrip.openUrl,
+        leading: CcApiCard(connector: _ccApi, onChanged: () => setState(() {})),
       ),
       children: [
         SettingsCard(
@@ -374,7 +413,7 @@ class _ModelsSettingsPageState extends State<ModelsSettingsPage> {
           title: l10n.modelsProviders,
           children: [
             // Claude Code as set up on this machine: the CLI's alone, not
-            // BaoCode's own core's.
+            // CCCode's own core's.
             if (_providers.builtinAvailable)
               _ProviderRow(
                 icon: const ProviderIcon(builtinProviderId, size: 16),
@@ -387,7 +426,7 @@ class _ModelsSettingsPageState extends State<ModelsSettingsPage> {
                 onEnabled: (value) =>
                     unawaited(_providers.setBuiltinHidden(!value)),
               ),
-            // The newest at a site BaoCode lists first (one imported later
+            // The newest at a site CCCode lists first (one imported later
             // takes the place of one before); the rest in their order.
             for (final provider in [
               ?pinned,

@@ -24,7 +24,7 @@ import 'package:baocode/workspace/editor_launcher.dart';
 import 'package:baocode/workspace/window_header/window_header.dart';
 import 'package:baocode/workspace/workspace.dart';
 
-const _window = MethodChannel('baocode/window');
+const _window = MethodChannel('cccode/window');
 
 final _mac = TargetPlatformVariant.only(TargetPlatform.macOS);
 
@@ -44,7 +44,7 @@ Future<Workspace> pumpApp(WidgetTester tester) async {
     ),
   );
   final workspace = Workspace.mock();
-  await tester.pumpWidget(BaoCodeApp(workspace: workspace));
+  await tester.pumpWidget(CCCodeApp(workspace: workspace));
   await tester.pump();
   return workspace;
 }

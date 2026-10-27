@@ -186,7 +186,7 @@ class PairingOffer {
     throw FormatException('Not a pairing code', text);
   }
 
-  static const scheme = 'baocode';
+  static const scheme = 'cccode';
   static const version = 1;
 
   /// The desktop's name, shown while pairing.
@@ -209,7 +209,7 @@ class PairingOffer {
 
   bool expiredAt(DateTime now) => !now.isBefore(expires);
 
-  /// `baocode://pair?d=…`: what the QR code holds.
+  /// `cccode://pair?d=…`: what the QR code holds.
   String get uri {
     final json = {
       'v': version,

@@ -54,7 +54,7 @@ void main() {
 
   setUpAll(() async {
     if (skip != false) return;
-    dir = await Directory.systemTemp.createTemp('baocode-lldb-dap-');
+    dir = await Directory.systemTemp.createTemp('cccode-lldb-dap-');
     program = '${dir.path}/program';
     final r = await Process.run(_clang!, ['-g', '-O0', '-o', program, _source]);
     if (r.exitCode != 0) fail('clang failed: ${r.stderr}');

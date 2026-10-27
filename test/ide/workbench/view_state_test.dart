@@ -89,7 +89,7 @@ void main() {
   testWidgets('Format on Save and Git Blame are kept in settings.json', (
     tester,
   ) async {
-    final temp = Directory.systemTemp.createTempSync('baocode-ide-toggles');
+    final temp = Directory.systemTemp.createTempSync('cccode-ide-toggles');
     addTearDown(() => temp.deleteSync(recursive: true));
     final settings = UserSettings(
       p.join(temp.path, 'User', 'settings.json'),
@@ -109,7 +109,7 @@ void main() {
     );
     final state = tester.state<IdeWorkbenchState>(find.byType(IdeWorkbench));
 
-    expect(state.runCommand('baocode.ide.toggleFormatOnSave'), isTrue);
+    expect(state.runCommand('cccode.ide.toggleFormatOnSave'), isTrue);
     expect(state.runCommand('git.blame.toggleEditorDecoration'), isTrue);
     for (var i = 0; i < 100; i++) {
       if (settings['git.blame.editorDecoration.enabled'] != null) break;
@@ -126,7 +126,7 @@ void main() {
     File(settings.path).writeAsStringSync('{"editor.formatOnSave": false}');
     await tester.runAsync(settings.load);
     await tester.pump();
-    expect(state.runCommand('baocode.ide.toggleFormatOnSave'), isTrue);
+    expect(state.runCommand('cccode.ide.toggleFormatOnSave'), isTrue);
     for (var i = 0; i < 100; i++) {
       if (settings['editor.formatOnSave'] == true) break;
       await tester.runAsync(

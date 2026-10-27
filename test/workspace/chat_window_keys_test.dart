@@ -16,7 +16,7 @@ import 'package:baocode/workspace/chat_grid.dart';
 import 'package:baocode/workspace/window_header/header_menu_bar.dart';
 import 'package:baocode/workspace/workspace.dart';
 
-const _window = MethodChannel('baocode/window');
+const _window = MethodChannel('cccode/window');
 
 Future<Workspace> pumpApp(WidgetTester tester) async {
   tester.view.physicalSize = const Size(1400, 900);
@@ -34,7 +34,7 @@ Future<Workspace> pumpApp(WidgetTester tester) async {
     ),
   );
   final workspace = Workspace.mock();
-  await tester.pumpWidget(BaoCodeApp(workspace: workspace));
+  await tester.pumpWidget(CCCodeApp(workspace: workspace));
   await tester.pump();
   return workspace;
 }

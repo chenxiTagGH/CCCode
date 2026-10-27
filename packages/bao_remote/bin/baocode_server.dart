@@ -1,14 +1,14 @@
 // The server of a remote project, started over SSH by the app:
 //
-//   baocode-server [--data <dir>]
+//   cccode-server [--data <dir>]
 //       answers JSON-RPC on stdin and stdout (see RemoteProtocol), logs on
 //       stderr, and ends, with every process it started, when the
 //       connection does.
-//   baocode-server --session <id> [--resume] [--grace <s>] [--data <dir>]
+//   cccode-server --session <id> [--resume] [--grace <s>] [--data <dir>]
 //       the same over a session that outlives the connection (see
 //       ServerSession): a bridge to the session's daemon, started first
 //       unless resuming one.
-//   baocode-server --daemon <id> …
+//   cccode-server --daemon <id> …
 //       that daemon, out of the SSH session.
 
 import 'dart:async';
@@ -18,11 +18,11 @@ import 'dart:io';
 import 'package:bao_agent/bao_agent.dart' show runAgentCommandLine;
 import 'package:bao_remote/server.dart';
 
-/// The app's version the server came with (`-Dbaocode.version=…`).
-const _version = String.fromEnvironment('baocode.version');
+/// The app's version the server came with (`-Dcccode.version=…`).
+const _version = String.fromEnvironment('cccode.version');
 
 Future<void> main(List<String> arguments) async {
-  // `agent <claude's arguments>`: BaoCode's own core, run here as the CLI
+  // `agent <claude's arguments>`: CCCode's own core, run here as the CLI
   // would be (see ServerClaude.startBuiltin).
   if (arguments.firstOrNull == ServerClaude.agentCommand) {
     exit(
@@ -40,7 +40,7 @@ Future<void> main(List<String> arguments) async {
   final at = arguments.indexOf('--data');
   final dataDir = at >= 0 && at + 1 < arguments.length
       ? arguments[at + 1]
-      : '$home/.baocode-server/data';
+      : '$home/.cccode-server/data';
   Directory(dataDir).createSync(recursive: true);
   // A key Claude Code is given stays in memory where there is a place for
   // it, not on disk. A session's daemon outlives the login, whose
@@ -82,7 +82,7 @@ Future<void> main(List<String> arguments) async {
       ),
     );
   }
-  void log(String message) => stderr.writeln('baocode-server: $message');
+  void log(String message) => stderr.writeln('cccode-server: $message');
 
   final peer = RpcPeer(
     stdin.transform(utf8.decoder).transform(const LineSplitter()),

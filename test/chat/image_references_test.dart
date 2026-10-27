@@ -75,7 +75,7 @@ Future<Uint8List> _png() async {
 Future<void> _pasteImages(WidgetTester tester, int count) async {
   final bytes = (await tester.runAsync(_png))!;
   tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
-    const MethodChannel('baocode/window'),
+    const MethodChannel('cccode/window'),
     (call) async => switch (call.method) {
       'readPasteboardImages' => [
         for (var i = 0; i < count; i++) {'bytes': bytes, 'type': 'image/png'},
@@ -85,7 +85,7 @@ Future<void> _pasteImages(WidgetTester tester, int count) async {
   );
   addTearDown(
     () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
-      const MethodChannel('baocode/window'),
+      const MethodChannel('cccode/window'),
       null,
     ),
   );
@@ -98,7 +98,7 @@ Future<void> _pasteImages(WidgetTester tester, int count) async {
 List<MethodCall> _windowCalls(WidgetTester tester, {String? chosen}) {
   final calls = <MethodCall>[];
   tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
-    const MethodChannel('baocode/window'),
+    const MethodChannel('cccode/window'),
     (call) async {
       calls.add(call);
       return switch (call.method) {
@@ -219,7 +219,7 @@ void main() {
     await _pasteImages(tester, 1);
     // Text on the pasteboard now, no image.
     tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
-      const MethodChannel('baocode/window'),
+      const MethodChannel('cccode/window'),
       (call) async => call.method == 'readPasteboardImages' ? [] : null,
     );
     tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(

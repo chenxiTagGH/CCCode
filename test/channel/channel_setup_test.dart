@@ -357,7 +357,7 @@ void main() {
       final setup = setupOf();
       addTearDown(setup.dispose);
       expect(
-        setup.acceptLink(' baocode://activate?i=$_id&s=channel&c=YouTube\n'),
+        setup.acceptLink('cccode://activate?i=$_id&s=channel&c=YouTube'),
         ChannelLinkResult.accepted,
       );
       expect(setup.done, isTrue);
@@ -368,7 +368,7 @@ void main() {
       final setup = setupOf();
       addTearDown(setup.dispose);
       expect(
-        setup.acceptLink('baocode://activate?i=$_id&s=none'),
+        setup.acceptLink('cccode://activate?i=$_id&s=none'),
         ChannelLinkResult.accepted,
       );
       expect(store.attribution, const ChannelAttribution('none', null));
@@ -380,16 +380,22 @@ void main() {
       for (final link in [
         '',
         'https://baocode.dev/activate#i=$_id',
-        'baocode://provider/import?v=1',
-        'baocode://activate?i=$_id',
-        'baocode://activate?i=$_id&s=channel',
-        'baocode://activate?i=$_id&s=ads&c=x',
+        'cccode://provider/import?v=1',
+        'cccode://activate',
+        'cccode://activate?',
+        'cccode://activate:8443?i=$_id',
+        'cccode://activate/path?i=$_id',
+        'cccode://activate?i=$_id#fragment',
+        'cccode://activate?i=$_id\\path',
+        'cccode://activate?i=$_id s=channel',
+        'cccode://activate?i=$_id&s=channel',
+        'cccode://activate?i=$_id&s=ads&c=x',
       ]) {
         expect(setup.acceptLink(link), ChannelLinkResult.invalid, reason: link);
       }
       expect(
         setup.acceptLink(
-          'baocode://activate?i=00000000-0000-4000-8000-000000000000&s=direct',
+          'cccode://activate?i=00000000-0000-4000-8000-000000000000&s=direct',
         ),
         ChannelLinkResult.otherInstall,
       );
@@ -416,10 +422,18 @@ void main() {
       expect(store.state, ChannelSetup.doneState);
     });
 
-    test('tells its links from the other baocode:// links', () {
-      expect(ChannelSetup.isLink('baocode://activate?i=x'), isTrue);
-      expect(ChannelSetup.isLink('baocode://provider/import?v=1'), isFalse);
-      expect(ChannelSetup.isLink('https://baocode.dev/activate'), isFalse);
+    test('tells its links from the other cccode:// links', () {
+      expect(ChannelSetup.isLink('cccode://activate?i=x'), isTrue);
+      expect(ChannelSetup.isLink(' cccode://activate?i=x'), isFalse);
+      expect(ChannelSetup.isLink('cccode://activate?i=x\n'), isFalse);
+      expect(ChannelSetup.isLink('cccode://activate:8443?i=x'), isFalse);
+      expect(ChannelSetup.isLink('cccode://activate/path?i=x'), isFalse);
+      expect(ChannelSetup.isLink('cccode://activate?i=x#fragment'), isFalse);
+      expect(ChannelSetup.isLink('cccode://activate?i=x\\path'), isFalse);
+      expect(ChannelSetup.isLink('cccode://activate?i=x y'), isFalse);
+      expect(ChannelSetup.isLink('cccode://activate?'), isFalse);
+      expect(ChannelSetup.isLink('cccode://provider/import?v=1'), isFalse);
+      expect(ChannelSetup.isLink('./activate'), isFalse);
     });
   });
 
@@ -542,15 +556,15 @@ void main() {
       final setup = setupOf(poll: const Duration(hours: 1));
       addTearDown(setup.dispose);
       await open(tester, setup);
-      expect(find.text('欢迎使用 BaoCode'), findsOneWidget);
+      expect(find.text('欢迎使用 CCCode'), findsOneWidget);
       await tester.sendKeyEvent(LogicalKeyboardKey.escape);
       await tester.sendKeyEvent(LogicalKeyboardKey.enter);
       await tester.tapAt(const Offset(5, 5));
       await tester.pump(const Duration(milliseconds: 400));
-      expect(find.text('欢迎使用 BaoCode'), findsOneWidget);
+      expect(find.text('欢迎使用 CCCode'), findsOneWidget);
       await tester.state<NavigatorState>(find.byType(Navigator)).maybePop();
       await tester.pump(const Duration(milliseconds: 400));
-      expect(find.text('欢迎使用 BaoCode'), findsOneWidget);
+      expect(find.text('欢迎使用 CCCode'), findsOneWidget);
     });
 
     testWidgets('opens the page, waits for it, then welcomes the channel’s '
@@ -620,7 +634,7 @@ void main() {
       await tester.pump();
       await tester.enterText(
         find.byType(EditableText),
-        'baocode://activate?i=$_id&s=direct',
+        'cccode://activate?i=$_id&s=direct',
       );
       await tester.tap(find.text('确定'));
       await tester.pump();
@@ -690,14 +704,14 @@ void main() {
       expect(find.byType(EditableText), findsNothing);
       await tester.tap(find.text('浏览器没反应？'));
       await tester.pump();
-      await tester.enterText(find.byType(EditableText), 'baocode://nope');
+      await tester.enterText(find.byType(EditableText), 'cccode://nope');
       await tester.tap(find.text('确定'));
       await tester.pump();
       expect(find.textContaining('这不是网页上的链接'), findsOneWidget);
 
       await tester.enterText(
         find.byType(EditableText),
-        'baocode://activate?i=$_id&s=channel&c=youtube',
+        'cccode://activate?i=$_id&s=channel&c=youtube',
       );
       await tester.tap(find.text('确定'));
       await tester.pump();

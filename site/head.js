@@ -11,12 +11,12 @@
   const zh = path === '/zh' || path.startsWith('/zh/');
   document.addEventListener('click', (event) => {
     const link = event.target.closest?.('a.lang[hreflang]');
-    if (link) try { localStorage.setItem('baocode.lang', link.hreflang); } catch {}
+    if (link) try { localStorage.setItem('cccode.lang', link.hreflang); } catch {}
   }, true);
   if (/^\/(zh\/)?(import|activate)(\.html)?$/.test(path)) return;
   if (navigator.webdriver || /bot|crawl|spider|slurp|preview|facebookexternalhit/i.test(navigator.userAgent)) return;
   let picked = null;
-  try { picked = localStorage.getItem('baocode.lang'); } catch {}
+  try { picked = localStorage.getItem('cccode.lang'); } catch {}
   const system = (navigator.languages || [navigator.language])
     .map((tag) => String(tag).toLowerCase())
     .find((tag) => tag.startsWith('zh') || tag.startsWith('en'));
@@ -32,7 +32,7 @@
 // for already. Never hidden for long, whatever happens.
 (() => {
   let kept = null;
-  try { kept = JSON.parse(localStorage.getItem('baocode.attribution')); } catch {}
+  try { kept = JSON.parse(localStorage.getItem('cccode.attribution')); } catch {}
   // A channel kept, or one in the address, replacing whatever is.
   if (kept?.source !== 'channel' && location.search.length < 2) return;
   const root = document.documentElement;

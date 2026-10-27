@@ -18,7 +18,7 @@ import 'package:baocode/workspace/workspace.dart';
 // flutter run -d windows -t tool/windows_close_smoke.dart
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final data = await Directory.systemTemp.createTemp('baocode-window-smoke-');
+  final data = await Directory.systemTemp.createTemp('cccode-window-smoke-');
   DataDirectory.current = DataDirectory(data.path);
   final folder = await Directory('${data.path}/project').create();
   final workspace = Workspace.mock();
@@ -30,7 +30,7 @@ Future<void> main() async {
     hasTray: () => true,
   );
   if (!await windows.start()) throw StateError('Windows host unavailable');
-  runWidget(BaoCodeApp(workspace: workspace, windows: windows));
+  runWidget(CCCodeApp(workspace: workspace, windows: windows));
   await WidgetsBinding.instance.endOfFrame;
   for (var cycle = 1; cycle <= 5; cycle++) {
     stdout.writeln('WINDOW_SMOKE $cycle: opening IDE');
@@ -86,7 +86,7 @@ Future<void> main() async {
     }
     await Future<void>.delayed(const Duration(milliseconds: 500));
     stdout.writeln('WINDOW_SMOKE $cycle: closing IDE ${ide.viewId}');
-    await MethodChannel('baocode/window.${ide.viewId}')
+    await MethodChannel('cccode/window.${ide.viewId}')
         .invokeMethod<void>('windowCommand', 'close');
     final deadline = DateTime.now().add(const Duration(seconds: 10));
     while (host.viewOf(ide.viewId) != null) {

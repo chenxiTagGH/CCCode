@@ -14,7 +14,7 @@ import 'package:path/path.dart' as p;
 void main() {
   late Directory temp;
 
-  setUp(() => temp = Directory.systemTemp.createTempSync('baocode-si-test'));
+  setUp(() => temp = Directory.systemTemp.createTempSync('cccode-si-test'));
   tearDown(() => temp.deleteSync(recursive: true));
 
   test('the scripts are VS Code 6a598d4a\'s, headers and all', () {
@@ -66,7 +66,7 @@ void main() {
       final folder = ShellIntegrationFolder(temp);
       final root = folder.path;
       expect(p.dirname(root), temp.path);
-      expect(p.basename(root), startsWith('baocode-shell-integration-'));
+      expect(p.basename(root), startsWith('cccode-shell-integration-'));
       if (!Platform.isWindows) {
         // Like mkdtemp: the user's alone.
         expect(Directory(root).statSync().mode & 0x1ff, 0x1c0);

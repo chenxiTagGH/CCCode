@@ -22,7 +22,7 @@ void main() {
     addTearDown(
       () => messenger.setMockMethodCallHandler(SystemChannels.platform, null),
     );
-    await tester.pumpWidget(BaoCodeApp(workspace: Workspace.mock()));
+    await tester.pumpWidget(CCCodeApp(workspace: Workspace.mock()));
     await tester.pump();
     final list = find.byType(SuperListView);
     final position = tester.widget<SuperListView>(list).controller!.position;

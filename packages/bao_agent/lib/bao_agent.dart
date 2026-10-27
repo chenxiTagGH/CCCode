@@ -1,4 +1,4 @@
-/// BaoCode's own coding agent: Claude Code's protocol, written in Dart.
+/// CCCode's own coding agent: Claude Code's protocol, written in Dart.
 ///
 /// A session is an [AgentEngine] (in the caller's isolate) or an
 /// [AgentIsolate] (in one of its own), made with [EngineOptions]; it takes

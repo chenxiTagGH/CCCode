@@ -1,11 +1,11 @@
-; The Windows installer for BaoCode, compiled by tool/build_windows.dart.
+; The Windows installer for CCCode, compiled by tool/build_windows.dart.
 ;
 ; It is compiled with three /D defines, all required:
-;   BundleDir  the Release bundle to pack (the folder holding baocode.exe)
+;   BundleDir  the Release bundle to pack (the folder holding cccode.exe)
 ;   AppVersion the version pubspec.yaml carries, as it writes it (1.0.0+1)
 ;   OutDir     where to write the installer (build/installers)
 ;
-; Output: BaoCode-<version>-setup.exe
+; Output: CCCode-<version>-setup.exe
 
 #ifndef BundleDir
   #error BundleDir is not defined: pass /DBundleDir=<release bundle folder>
@@ -36,15 +36,15 @@
 ; between versions, or an upgrade installs beside the old one instead of over
 ; it.
 AppId={{6fdd732b-95c6-4c37-af6f-ff574358deb5}
-AppName=BaoCode
+AppName=CCCode
 AppVersion={#VersionNumber}
-AppPublisher=BaoCode
-AppVerName=BaoCode {#VersionNumber}
-DefaultDirName={autopf}\BaoCode
-DefaultGroupName=BaoCode
-UninstallDisplayName=BaoCode
-UninstallDisplayIcon={app}\baocode.exe
-OutputBaseFilename=BaoCode-{#VersionNumber}-setup{#Edition}
+AppPublisher=CCCode
+AppVerName=CCCode {#VersionNumber}
+DefaultDirName={autopf}\CCCode
+DefaultGroupName=CCCode
+UninstallDisplayName=CCCode
+UninstallDisplayIcon={app}\cccode.exe
+OutputBaseFilename=CCCode-{#VersionNumber}-setup{#Edition}
 OutputDir={#OutDir}
 ; What Explorer shows for the installer itself. Windows wants four numbers,
 ; where pubspec's version has three.
@@ -65,7 +65,7 @@ ArchitecturesInstallIn64BitMode=x64compatible
 PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
 DisableProgramGroupPage=yes
-; A running BaoCode is asked to close (it quits on WM_ENDSESSION, see
+; A running CCCode is asked to close (it quits on WM_ENDSESSION, see
 ; windows/runner/flutter_window.cpp), and ended if it does not: a version
 ; from before that, or one stuck, would otherwise hold Setup at "Closing
 ; applications..." for good.
@@ -81,16 +81,16 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; \
   GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
-Name: "addtopath"; Description: "Add BaoCode to the PATH"; \
+Name: "addtopath"; Description: "Add CCCode to the PATH"; \
   GroupDescription: "Other:"; Flags: unchecked
 Name: "contextmenu"; \
-  Description: "Add ""Open with BaoCode"" and ""Open with Fast Ide"" to Explorer's context menu"; \
+  Description: "Add ""Open with CCCode"" and ""Open with Fast Ide"" to Explorer's context menu"; \
   GroupDescription: "Other:"
 
 [Files]
-; The whole bundle: baocode.exe, the engine and plugin DLLs, data\ (the
+; The whole bundle: cccode.exe, the engine and plugin DLLs, data\ (the
 ; AOT app.so and flutter_assets) which sit beside the executable, and
-; remote\ (VERSION and servers.json: which baocode-server remote projects
+; remote\ (VERSION and servers.json: which cccode-server remote projects
 ; run on their host, and where the app downloads it; tool/build_windows.dart
 ; puts them there), and openssh\ (OpenSSH for Windows, for remote projects
 ; where the system's ssh is too old to ask for a password).
@@ -98,9 +98,9 @@ Source: "{#BundleDir}\*"; DestDir: "{app}"; \
   Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
-Name: "{group}\BaoCode"; Filename: "{app}\baocode.exe"
-Name: "{group}\{cm:UninstallProgram,BaoCode}"; Filename: "{uninstallexe}"
-Name: "{autodesktop}\BaoCode"; Filename: "{app}\baocode.exe"; Tasks: desktopicon
+Name: "{group}\CCCode"; Filename: "{app}\cccode.exe"
+Name: "{group}\{cm:UninstallProgram,CCCode}"; Filename: "{uninstallexe}"
+Name: "{autodesktop}\CCCode"; Filename: "{app}\cccode.exe"; Tasks: desktopicon
 
 [Registry]
 ; Only when asked for. Which hive follows the install mode: a per-machine
@@ -115,86 +115,86 @@ Root: HKCU; Subkey: "Environment"; ValueType: expandsz; ValueName: "Path"; \
   Check: (not IsAdminInstallMode) and NeedsAddPath(ExpandConstant('{app}'), False)
 
 ; Explorer's context menu, on a file, a folder and a folder's background,
-; each in a new window: Open with BaoCode, a new agent in a narrow window of
+; each in a new window: Open with CCCode, a new agent in a narrow window of
 ; its own (a file in its composer; see AppWindows.openAgent), and Open with
 ; Fast Ide, as `code -n` opens it (the path its own working folder: it is
 ; absolute). HKA is the install mode's hive (HKLM per machine, HKCU per
 ; user). Windows 11 lists them under "Show more options". Unticked on a
 ; reinstall, they go. Settings → General writes the same keys under HKCU
 ; (lib/platform/context_menu_io.dart), for the user alone.
-Root: HKA; Subkey: "Software\Classes\*\shell\BaoCode"; ValueType: string; \
-  ValueName: ""; ValueData: "{code:MenuLabel|BaoCode}"; Tasks: contextmenu; \
+Root: HKA; Subkey: "Software\Classes\*\shell\CCCode"; ValueType: string; \
+  ValueName: ""; ValueData: "{code:MenuLabel|CCCode}"; Tasks: contextmenu; \
   Flags: uninsdeletekey
-Root: HKA; Subkey: "Software\Classes\*\shell\BaoCode"; ValueType: string; \
-  ValueName: "Icon"; ValueData: """{app}\baocode.exe"""; Tasks: contextmenu
-Root: HKA; Subkey: "Software\Classes\*\shell\BaoCode\command"; \
+Root: HKA; Subkey: "Software\Classes\*\shell\CCCode"; ValueType: string; \
+  ValueName: "Icon"; ValueData: """{app}\cccode.exe"""; Tasks: contextmenu
+Root: HKA; Subkey: "Software\Classes\*\shell\CCCode\command"; \
   ValueType: string; ValueName: ""; \
-  ValueData: """{app}\baocode.exe"" --baocode-agent ""%1"""; Tasks: contextmenu
-Root: HKA; Subkey: "Software\Classes\Directory\shell\BaoCode"; \
-  ValueType: string; ValueName: ""; ValueData: "{code:MenuLabel|BaoCode}"; \
+  ValueData: """{app}\cccode.exe"" --cccode-agent ""%1"""; Tasks: contextmenu
+Root: HKA; Subkey: "Software\Classes\Directory\shell\CCCode"; \
+  ValueType: string; ValueName: ""; ValueData: "{code:MenuLabel|CCCode}"; \
   Tasks: contextmenu; Flags: uninsdeletekey
-Root: HKA; Subkey: "Software\Classes\Directory\shell\BaoCode"; \
-  ValueType: string; ValueName: "Icon"; ValueData: """{app}\baocode.exe"""; \
+Root: HKA; Subkey: "Software\Classes\Directory\shell\CCCode"; \
+  ValueType: string; ValueName: "Icon"; ValueData: """{app}\cccode.exe"""; \
   Tasks: contextmenu
-Root: HKA; Subkey: "Software\Classes\Directory\shell\BaoCode\command"; \
+Root: HKA; Subkey: "Software\Classes\Directory\shell\CCCode\command"; \
   ValueType: string; ValueName: ""; \
-  ValueData: """{app}\baocode.exe"" --baocode-agent ""%V"""; Tasks: contextmenu
-Root: HKA; Subkey: "Software\Classes\Directory\Background\shell\BaoCode"; \
-  ValueType: string; ValueName: ""; ValueData: "{code:MenuLabel|BaoCode}"; \
+  ValueData: """{app}\cccode.exe"" --cccode-agent ""%V"""; Tasks: contextmenu
+Root: HKA; Subkey: "Software\Classes\Directory\Background\shell\CCCode"; \
+  ValueType: string; ValueName: ""; ValueData: "{code:MenuLabel|CCCode}"; \
   Tasks: contextmenu; Flags: uninsdeletekey
-Root: HKA; Subkey: "Software\Classes\Directory\Background\shell\BaoCode"; \
-  ValueType: string; ValueName: "Icon"; ValueData: """{app}\baocode.exe"""; \
+Root: HKA; Subkey: "Software\Classes\Directory\Background\shell\CCCode"; \
+  ValueType: string; ValueName: "Icon"; ValueData: """{app}\cccode.exe"""; \
   Tasks: contextmenu
-Root: HKA; Subkey: "Software\Classes\Directory\Background\shell\BaoCode\command"; \
+Root: HKA; Subkey: "Software\Classes\Directory\Background\shell\CCCode\command"; \
   ValueType: string; ValueName: ""; \
-  ValueData: """{app}\baocode.exe"" --baocode-agent ""%V"""; Tasks: contextmenu
-Root: HKA; Subkey: "Software\Classes\*\shell\BaoCodeFastIde"; \
+  ValueData: """{app}\cccode.exe"" --cccode-agent ""%V"""; Tasks: contextmenu
+Root: HKA; Subkey: "Software\Classes\*\shell\CCCodeFastIde"; \
   ValueType: string; ValueName: ""; ValueData: "{code:MenuLabel|Fast Ide}"; \
   Tasks: contextmenu; Flags: uninsdeletekey
-Root: HKA; Subkey: "Software\Classes\*\shell\BaoCodeFastIde"; \
-  ValueType: string; ValueName: "Icon"; ValueData: """{app}\baocode.exe"""; \
+Root: HKA; Subkey: "Software\Classes\*\shell\CCCodeFastIde"; \
+  ValueType: string; ValueName: "Icon"; ValueData: """{app}\cccode.exe"""; \
   Tasks: contextmenu
-Root: HKA; Subkey: "Software\Classes\*\shell\BaoCodeFastIde\command"; \
+Root: HKA; Subkey: "Software\Classes\*\shell\CCCodeFastIde\command"; \
   ValueType: string; ValueName: ""; \
-  ValueData: """{app}\baocode.exe"" --baocode-cli ""%1"" -n ""%1"""; \
+  ValueData: """{app}\cccode.exe"" --cccode-cli ""%1"" -n ""%1"""; \
   Tasks: contextmenu
-Root: HKA; Subkey: "Software\Classes\Directory\shell\BaoCodeFastIde"; \
+Root: HKA; Subkey: "Software\Classes\Directory\shell\CCCodeFastIde"; \
   ValueType: string; ValueName: ""; ValueData: "{code:MenuLabel|Fast Ide}"; \
   Tasks: contextmenu; Flags: uninsdeletekey
-Root: HKA; Subkey: "Software\Classes\Directory\shell\BaoCodeFastIde"; \
-  ValueType: string; ValueName: "Icon"; ValueData: """{app}\baocode.exe"""; \
+Root: HKA; Subkey: "Software\Classes\Directory\shell\CCCodeFastIde"; \
+  ValueType: string; ValueName: "Icon"; ValueData: """{app}\cccode.exe"""; \
   Tasks: contextmenu
-Root: HKA; Subkey: "Software\Classes\Directory\shell\BaoCodeFastIde\command"; \
+Root: HKA; Subkey: "Software\Classes\Directory\shell\CCCodeFastIde\command"; \
   ValueType: string; ValueName: ""; \
-  ValueData: """{app}\baocode.exe"" --baocode-cli ""%V"" -n ""%V"""; \
+  ValueData: """{app}\cccode.exe"" --cccode-cli ""%V"" -n ""%V"""; \
   Tasks: contextmenu
-Root: HKA; Subkey: "Software\Classes\Directory\Background\shell\BaoCodeFastIde"; \
+Root: HKA; Subkey: "Software\Classes\Directory\Background\shell\CCCodeFastIde"; \
   ValueType: string; ValueName: ""; ValueData: "{code:MenuLabel|Fast Ide}"; \
   Tasks: contextmenu; Flags: uninsdeletekey
-Root: HKA; Subkey: "Software\Classes\Directory\Background\shell\BaoCodeFastIde"; \
-  ValueType: string; ValueName: "Icon"; ValueData: """{app}\baocode.exe"""; \
+Root: HKA; Subkey: "Software\Classes\Directory\Background\shell\CCCodeFastIde"; \
+  ValueType: string; ValueName: "Icon"; ValueData: """{app}\cccode.exe"""; \
   Tasks: contextmenu
-Root: HKA; Subkey: "Software\Classes\Directory\Background\shell\BaoCodeFastIde\command"; \
+Root: HKA; Subkey: "Software\Classes\Directory\Background\shell\CCCodeFastIde\command"; \
   ValueType: string; ValueName: ""; \
-  ValueData: """{app}\baocode.exe"" --baocode-cli ""%V"" -n ""%V"""; \
+  ValueData: """{app}\cccode.exe"" --cccode-cli ""%V"" -n ""%V"""; \
   Tasks: contextmenu
-; The baocode: URL scheme, always: a site's one-click import of an upstream
-; (baocode.dev/import opens baocode://provider/import?…; see
-; docs/upstream-import.md), and the channel build's setup (baocode.dev/activate
-; opens baocode://activate?…). The link comes after --baocode-link, which the
+; The cccode: URL scheme, always: a site's one-click import of an upstream
+; (the website/import opens cccode://provider/import?…; see
+; docs/upstream-import.md), and the channel build's setup (the website/activate
+; opens cccode://activate?…). The link comes after --cccode-link, which the
 ; runner hands Flutter as a request (windows/runner/open_requests.cpp).
-Root: HKA; Subkey: "Software\Classes\baocode"; ValueType: string; \
-  ValueName: ""; ValueData: "URL:BaoCode"; Flags: uninsdeletekey
-Root: HKA; Subkey: "Software\Classes\baocode"; ValueType: string; \
+Root: HKA; Subkey: "Software\Classes\cccode"; ValueType: string; \
+  ValueName: ""; ValueData: "URL:CCCode"; Flags: uninsdeletekey
+Root: HKA; Subkey: "Software\Classes\cccode"; ValueType: string; \
   ValueName: "URL Protocol"; ValueData: ""
-Root: HKA; Subkey: "Software\Classes\baocode\DefaultIcon"; ValueType: string; \
-  ValueName: ""; ValueData: """{app}\baocode.exe"",0"
-Root: HKA; Subkey: "Software\Classes\baocode\shell\open\command"; \
+Root: HKA; Subkey: "Software\Classes\cccode\DefaultIcon"; ValueType: string; \
+  ValueName: ""; ValueData: """{app}\cccode.exe"",0"
+Root: HKA; Subkey: "Software\Classes\cccode\shell\open\command"; \
   ValueType: string; ValueName: ""; \
-  ValueData: """{app}\baocode.exe"" --baocode-link ""%1"""
-; The browsers' native messaging host for BaoCode's extension, always
-; (windows/BrowserBridge): a browser finds dev.baocode.browser.json, beside
-; baocode.exe, by its key, and the manifest names the host beside it.
+  ValueData: """{app}\cccode.exe"" --cccode-link ""%1"""
+; The browsers' native messaging host for CCCode's extension, always
+; (windows/BrowserBridge): a browser finds vip.cchub.cccode.browser.json, beside
+; cccode.exe, by its key, and the manifest names the host beside it.
 ; Chrome's key is also the one Brave, Vivaldi and other Chromium browsers
 ; read; Edge and Chromium read their own. The keys above go at uninstall
 ; too when nothing else is left in them (the browser is not installed).
@@ -204,44 +204,44 @@ Root: HKA; Subkey: "Software\Google\Chrome"; ValueType: none; \
   Flags: uninsdeletekeyifempty
 Root: HKA; Subkey: "Software\Google\Chrome\NativeMessagingHosts"; \
   ValueType: none; Flags: uninsdeletekeyifempty
-Root: HKA; Subkey: "Software\Google\Chrome\NativeMessagingHosts\dev.baocode.browser"; \
+Root: HKA; Subkey: "Software\Google\Chrome\NativeMessagingHosts\vip.cchub.cccode.browser"; \
   ValueType: string; ValueName: ""; \
-  ValueData: "{app}\dev.baocode.browser.json"; Flags: uninsdeletekey
+  ValueData: "{app}\vip.cchub.cccode.browser.json"; Flags: uninsdeletekey
 Root: HKA; Subkey: "Software\Microsoft\Edge"; ValueType: none; \
   Flags: uninsdeletekeyifempty
 Root: HKA; Subkey: "Software\Microsoft\Edge\NativeMessagingHosts"; \
   ValueType: none; Flags: uninsdeletekeyifempty
-Root: HKA; Subkey: "Software\Microsoft\Edge\NativeMessagingHosts\dev.baocode.browser"; \
+Root: HKA; Subkey: "Software\Microsoft\Edge\NativeMessagingHosts\vip.cchub.cccode.browser"; \
   ValueType: string; ValueName: ""; \
-  ValueData: "{app}\dev.baocode.browser.json"; Flags: uninsdeletekey
+  ValueData: "{app}\vip.cchub.cccode.browser.json"; Flags: uninsdeletekey
 Root: HKA; Subkey: "Software\Chromium"; ValueType: none; \
   Flags: uninsdeletekeyifempty
 Root: HKA; Subkey: "Software\Chromium\NativeMessagingHosts"; \
   ValueType: none; Flags: uninsdeletekeyifempty
-Root: HKA; Subkey: "Software\Chromium\NativeMessagingHosts\dev.baocode.browser"; \
+Root: HKA; Subkey: "Software\Chromium\NativeMessagingHosts\vip.cchub.cccode.browser"; \
   ValueType: string; ValueName: ""; \
-  ValueData: "{app}\dev.baocode.browser.json"; Flags: uninsdeletekey
+  ValueData: "{app}\vip.cchub.cccode.browser.json"; Flags: uninsdeletekey
 ; Unticked: what an earlier install added goes.
-Root: HKA; Subkey: "Software\Classes\*\shell\BaoCode"; ValueType: none; \
+Root: HKA; Subkey: "Software\Classes\*\shell\CCCode"; ValueType: none; \
   Tasks: not contextmenu; Flags: deletekey
-Root: HKA; Subkey: "Software\Classes\Directory\shell\BaoCode"; ValueType: none; \
+Root: HKA; Subkey: "Software\Classes\Directory\shell\CCCode"; ValueType: none; \
   Tasks: not contextmenu; Flags: deletekey
-Root: HKA; Subkey: "Software\Classes\Directory\Background\shell\BaoCode"; \
+Root: HKA; Subkey: "Software\Classes\Directory\Background\shell\CCCode"; \
   ValueType: none; Tasks: not contextmenu; Flags: deletekey
-Root: HKA; Subkey: "Software\Classes\*\shell\BaoCodeFastIde"; ValueType: none; \
+Root: HKA; Subkey: "Software\Classes\*\shell\CCCodeFastIde"; ValueType: none; \
   Tasks: not contextmenu; Flags: deletekey
-Root: HKA; Subkey: "Software\Classes\Directory\shell\BaoCodeFastIde"; \
+Root: HKA; Subkey: "Software\Classes\Directory\shell\CCCodeFastIde"; \
   ValueType: none; Tasks: not contextmenu; Flags: deletekey
-Root: HKA; Subkey: "Software\Classes\Directory\Background\shell\BaoCodeFastIde"; \
+Root: HKA; Subkey: "Software\Classes\Directory\Background\shell\CCCodeFastIde"; \
   ValueType: none; Tasks: not contextmenu; Flags: deletekey
 
 [Run]
-Filename: "{app}\baocode.exe"; Description: "{cm:LaunchProgram,BaoCode}"; \
+Filename: "{app}\cccode.exe"; Description: "{cm:LaunchProgram,CCCode}"; \
   Flags: nowait postinstall skipifsilent
 ; An update the app ran (lib/update/installer_io.dart) is silent, which
 ; skips the entry above: /RELAUNCH opens the app again once it is in place,
 ; as the user who ran it rather than the administrator Setup elevated to.
-Filename: "{app}\baocode.exe"; Flags: nowait runasoriginaluser; \
+Filename: "{app}\cccode.exe"; Flags: nowait runasoriginaluser; \
   Check: RelaunchRequested
 
 [Code]
@@ -283,7 +283,7 @@ begin
   CloseHandle(App);
 end;
 
-// The browser extension's host (baocode-browser-host.exe), which Chrome or
+// The browser extension's host (cccode-browser-host.exe), which Chrome or
 // Edge keeps running while the extension is connected: it has no window,
 // so CloseApplications does not close it, and replacing or removing it
 // fails ("DeleteFile failed; code 5"). Ended first; the extension connects
@@ -293,9 +293,9 @@ var
   Code: Integer;
 begin
   if Exec(ExpandConstant('{sys}\taskkill.exe'),
-    '/F /IM baocode-browser-host.exe', '', SW_HIDE,
+    '/F /IM cccode-browser-host.exe', '', SW_HIDE,
     ewWaitUntilTerminated, Code) then
-    Log(Format('taskkill baocode-browser-host.exe: %d', [Code]));
+    Log(Format('taskkill cccode-browser-host.exe: %d', [Code]));
 end;
 
 function PrepareToInstall(var NeedsRestart: Boolean): String;
@@ -328,7 +328,7 @@ begin
     end;
 end;
 
-// The context menu's labels (see [Registry]): "Open with BaoCode", in
+// The context menu's labels (see [Registry]): "Open with CCCode", in
 // Chinese where Windows is. Written as code points, so the script's encoding
 // does not matter.
 function MenuLabel(Param: String): String;

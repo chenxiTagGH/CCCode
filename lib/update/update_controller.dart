@@ -32,7 +32,7 @@ class UpdateController {
   /// Opens a file in the app the system opens it with: the install's log.
   final Future<void> Function(String path)? openFile;
 
-  /// [version]'s notes on the site's changelog (tool/build_changelog.dart
+  /// [version]'s notes on the website's changelog (tool/build_changelog.dart
   /// makes it), the Chinese page for [languageCode] `zh`.
   static Uri changelogUrl(AppVersion version, String languageCode) => Uri.parse(
     'https://baocode.dev/${languageCode.startsWith('zh') ? 'zh/' : ''}'
@@ -105,7 +105,7 @@ class UpdateController {
 
   /// Offers [offer] in [notifications]: Restart to Update, Later and Skip
   /// This Version (only the first when it is mandatory); Release Notes
-  /// opens the version's notes on the site's changelog where there are
+  /// opens the version's notes on the website's changelog where there are
   /// notes.
   IdeNotification showOffer(
     IdeNotifications notifications,

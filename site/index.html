@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>BaoCode — An awesome, easy-to-use desktop UI for Claude Code</title>
+<title>CCCode — An awesome, easy-to-use desktop UI for Claude Code</title>
 <meta name="description" content="An awesome, easy-to-use desktop UI for Claude Code, with a millisecond-fast IDE built in.">
 <link rel="icon" href="icon.png">
 <link rel="stylesheet" href="style.css">
@@ -46,10 +46,10 @@
 </svg>
 <canvas class="grid" aria-hidden="true"></canvas>
 <header class="top">
-  <a class="brand" href="/"><img src="icon.png" alt="">BaoCode</a>
+  <a class="brand" href="/"><img src="icon.png" alt="">CCCode</a>
   <a href="download.html">Download</a>
   <a href="/changelog">Changelog</a>
-  <a href="https://github.com/baocode-dev/baocode"><svg class="ic" aria-hidden="true"><use href="#ic-github"/></svg>GitHub</a>
+  <a href="https://github.com/chenxiTagGH/CCCode"><svg class="ic" aria-hidden="true"><use href="#ic-github"/></svg>GitHub</a>
   <a class="lang" href="/zh/" hreflang="zh" lang="zh-CN">中文</a>
 </header>
 
@@ -76,7 +76,7 @@
     </ol>
   </nav>
 
-  <h1 data-channel-title>BaoCode</h1>
+  <h1 data-channel-title>CCCode</h1>
   <p class="subtitle" data-channel-subtitle>An awesome, easy-to-use desktop UI for Claude Code, with a millisecond-fast IDE built in.</p>
   <p class="meta"><span data-version>Version 1.6.0</span><span>macOS (Apple silicon and Intel), Windows and Linux, iPhone app in beta</span><span>Free and open source</span><span data-updated>Updated 23 October 2026</span></p>
 
@@ -91,21 +91,21 @@
   </div>
 
   <figure>
-    <div class="img" data-src="shots/main.webp"><img decoding="async" src="shots/main.webp" width="1568" height="976" alt="BaoCode’s main window with two conversations side by side and the model picker open" fetchpriority="high"></div>
+    <div class="img" data-src="shots/main.webp"><img decoding="async" src="shots/main.webp" width="1568" height="976" alt="CCCode’s main window with two conversations side by side and the model picker open" fetchpriority="high"></div>
     <div class="img" data-src="shots/main-ide.webp"><img decoding="async" loading="lazy" src="shots/main-ide.webp" width="1568" height="1007" alt="Fast IDE with a conversation docked beside the editor and terminal"></div>
-    <figcaption>Top: BaoCode’s main window, with your agents grouped by project, two conversations side by side while background agents run, and the model picker. Bottom: Fast IDE with the conversation docked beside the editor and terminal, while Claude runs five analysis agents; the selected code goes into the message as a reference.</figcaption>
+    <figcaption>Top: CCCode’s main window, with your agents grouped by project, two conversations side by side while background agents run, and the model picker. Bottom: Fast IDE with the conversation docked beside the editor and terminal, while Claude runs five analysis agents; the selected code goes into the message as a reference.</figcaption>
   </figure>
 
   <h2 id="why"><svg class="ic" aria-hidden="true"><use href="#ic-lightbulb"/></svg>Why we built this</h2>
   <p>We use Claude Code every day. The terminal is a fine place to run it, but a poor place to read it: long diffs scroll out of view, earlier steps are hard to find again, and reviewing what changed means switching to another app.</p>
-  <p>BaoCode is the window we wanted around it. It is drawn natively, it opens instantly, and it never makes Claude wait on the interface.</p>
+  <p>CCCode is the window we wanted around it. It is drawn natively, it opens instantly, and it never makes Claude wait on the interface.</p>
   <p>Then it kept growing: its agents use your own browser, make and read pictures, and run on any model; ideas go into Stash as they come, to hand over when they’re ready; and when you’re away from the computer, your phone keeps you in charge. All of it in the same native app, as light as ever.</p>
 
   <h2 id="interface"><svg class="ic" aria-hidden="true"><use href="#ic-panel-left"/></svg>The interface</h2>
-  <p>The interface is the point of BaoCode, so most of the work went into details you may not notice until you go back to something else:</p>
+  <p>The interface is the point of CCCode, so most of the work went into details you may not notice until you go back to something else:</p>
   <ul class="features">
     <li><svg class="ic" aria-hidden="true"><use href="#ic-fold-vertical"/></svg><span><strong>Steps fold away.</strong> Reads, searches and commands collapse into single lines, so the conversation reads as what Claude said and did.</span></li>
-    <li><svg class="ic" aria-hidden="true"><use href="#ic-git-compare"/></svg><span><strong>Every change can be reviewed.</strong> What Claude changed is marked right in the code, each part to keep or undo on its own, or a file or everything at once; in the side panel beside the chat, with no trip to the IDE. Checkpoints keep only the files the agents edited, in BaoCode’s own data folder, never in your repository’s <code>.git</code>.</span></li>
+    <li><svg class="ic" aria-hidden="true"><use href="#ic-git-compare"/></svg><span><strong>Every change can be reviewed.</strong> What Claude changed is marked right in the code, each part to keep or undo on its own, or a file or everything at once; in the side panel beside the chat, with no trip to the IDE. Checkpoints keep only the files the agents edited, in CCCode’s own data folder, never in your repository’s <code>.git</code>.</span></li>
     <li><svg class="ic" aria-hidden="true"><use href="#ic-activity"/></svg><span><strong>You can see what it is doing.</strong> The current task, the subagents and the background tasks running stay above the input while Claude works; the time so far, the writing speed and the tokens roll by as it goes, and each turn ends with its time and cost.</span></li>
     <li><svg class="ic" aria-hidden="true"><use href="#ic-panel-left"/></svg><span><strong>A long conversation at a glance.</strong> Beside the chat sits a minimap of the whole conversation, your messages, code, tables and changes each telling apart; a piece of liquid glass marks where you are, and a click or a drag takes you anywhere. However long a conversation, it is read from its end, the earlier turns as you scroll up, so it opens without a wait.</span></li>
     <li><svg class="ic" aria-hidden="true"><use href="#ic-flag"/></svg><span><strong>Give it a goal.</strong> Type <code>/goal</code> and what you want done, and Claude keeps working until it is met. The goal stays above the input with how long it has been worked on; open it to see why it isn’t met yet, or to change it. Set one in the middle of a task and it takes effect at once.</span></li>
@@ -121,7 +121,7 @@
   </figure>
 
   <h2 id="browser"><svg class="ic" aria-hidden="true"><use href="#ic-globe"/></svg>Your Chrome, the agent’s DevTools<span class="pill-new">New</span></h2>
-  <p>Agents use the very Chrome you use every day (or Edge, Brave or Arc), with your sign-ins, cookies and extensions, not a headless browser of their own that’s signed in to nothing. And what the BaoCode extension gives them is more than opening pages and clicking about: it’s every panel of Chrome’s developer tools, 28 browser tools in all, to look something up in a dashboard, test the page you just wrote, or chase a bug that only shows in production, all in your own browser.</p>
+  <p>Agents use the very Chrome you use every day (or Edge, Brave or Arc), with your sign-ins, cookies and extensions, not a headless browser of their own that’s signed in to nothing. And what the CCCode extension gives them is more than opening pages and clicking about: it’s every panel of Chrome’s developer tools, 28 browser tools in all, to look something up in a dashboard, test the page you just wrote, or chase a bug that only shows in production, all in your own browser.</p>
   <div class="table caps">
     <table>
       <thead><tr><th>What</th><th>What the agent can do</th></tr></thead>
@@ -145,12 +145,12 @@
       </tbody>
     </table>
   </div>
-  <p>They touch only the tabs you share with them, those in the yellow BaoCode tab group: the BaoCode button in the toolbar hands over the tab you’re on, and dragging a tab out of the group takes it back. BaoCode’s side panel shows the page they’re using as it happens, and you can click and type in it to take over at any moment. The extension only passes messages along, and everything stays on your computer.</p>
+  <p>They touch only the tabs you share with them, those in the yellow CCCode tab group: the CCCode button in the toolbar hands over the tab you’re on, and dragging a tab out of the group takes it back. CCCode’s side panel shows the page they’re using as it happens, and you can click and type in it to take over at any moment. The extension only passes messages along, and everything stays on your computer.</p>
   <p>Get the extension from the <a href="/dl/chrome-web-store">Chrome Web Store</a>, or <a href="download.html#browser">download the zip</a> to load it unpacked; on macOS and Windows. What it does and doesn’t do is in its <a href="/browser-privacy">privacy notes</a>.</p>
 
   <h2 id="stash"><svg class="ic" aria-hidden="true"><use href="#ic-inbox"/></svg>Stash</h2>
   <p>Good ideas turn up while you’re busy with something else. Give Stash a global shortcut, press it in any app, and a small panel takes whatever you have: text, screenshots, files, links, code. Each note gets its own number, like an issue.</p>
-  <p>When it’s ready, click Implement in BaoCode and choose a new git worktree or the current branch, or @ the note in a chat. The chat and the note are linked, and the note’s card shows how it’s going. Jotted down too quickly? Clarify turns a one-liner into a full request, using its images and attachments.</p>
+  <p>When it’s ready, click Implement in CCCode and choose a new git worktree or the current branch, or @ the note in a chat. The chat and the note are linked, and the note’s card shows how it’s going. Jotted down too quickly? Clarify turns a one-liner into a full request, using its images and attachments.</p>
   <p>Sign in to GitHub or GitLab (GitHub Enterprise and self-hosted GitLab too) to import issues into Stash and see the linked issues and pull requests with their latest state and checks. Replying to or closing an issue waits for your OK, with a warning first if the text looks like it holds a local path or a secret.</p>
 
   <h2 id="images"><svg class="ic" aria-hidden="true"><use href="#ic-image"/></svg>Pictures</h2>
@@ -159,10 +159,10 @@
 
   <h2 id="speed"><svg class="ic" aria-hidden="true"><use href="#ic-zap"/></svg>Speed</h2>
   <p>VS Code and Cursor are built on Electron. Each window is a web page, and every copy of the app carries its own Chromium browser and Node.js. That is where the seconds at launch, the gigabyte of memory and the 200 MB downloads go.</p>
-  <p>BaoCode is not a web page. It is a native app that draws its own interface straight to the GPU, with no browser underneath.</p>
+  <p>CCCode is not a web page. It is a native app that draws its own interface straight to the GPU, with no browser underneath.</p>
   <div class="table">
     <table>
-      <thead><tr><th></th><th>BaoCode</th><th>VS Code</th><th>Cursor</th></tr></thead>
+      <thead><tr><th></th><th>CCCode</th><th>VS Code</th><th>Cursor</th></tr></thead>
       <tbody>
         <tr><td>Launch</td><td>≈ 0.18 s</td><td>≈ 2–3 s</td><td>≈ 2–3 s</td></tr>
         <tr><td>Memory, one window idle</td><td>≈ 120 MB</td><td>≈ 970 MB</td><td>≈ 1.9 GB</td></tr>
@@ -173,11 +173,11 @@
   </div>
 
   <h2 id="themes"><svg class="ic" aria-hidden="true"><use href="#ic-palette"/></svg>Your themes</h2>
-  <p>BaoCode’s colors are VS Code’s theme colors, so the themes you already use look the way you expect: the editor, the conversation and the sidebar all follow them. Change the theme whenever you like; the window previews each one as you move through the list.</p>
+  <p>CCCode’s colors are VS Code’s theme colors, so the themes you already use look the way you expect: the editor, the conversation and the sidebar all follow them. Change the theme whenever you like; the window previews each one as you move through the list.</p>
   <p>And not only the ones that come with it: search Open VSX in the Extensions view, or drop in a <code>.vsix</code>, to install VS Code color themes and file icon themes. We made Bao Dark and Bao Light of our own, the defaults.</p>
-  <p>This is what BaoCode does with VS Code as a whole: it keeps the parts that matter most and fits them into a 16 MB download on Windows.</p>
+  <p>This is what CCCode does with VS Code as a whole: it keeps the parts that matter most and fits them into a 16 MB download on Windows.</p>
   <figure>
-    <div class="img" data-src="shots/themes-light.webp"><img decoding="async" loading="lazy" src="shots/themes-light.webp" width="1568" height="974" alt="BaoCode’s main window in a light theme, with search open"></div>
+    <div class="img" data-src="shots/themes-light.webp"><img decoding="async" loading="lazy" src="shots/themes-light.webp" width="1568" height="974" alt="CCCode’s main window in a light theme, with search open"></div>
     <div class="img" data-src="shots/themes-dark.webp"><img decoding="async" loading="lazy" src="shots/themes-dark.webp" width="1568" height="996" alt="Fast IDE in Kimbie Dark, with the color theme list open"></div>
     <figcaption>Top: the main window in a light theme, with search open across agents, conversations, files and actions. Bottom: Fast IDE in Kimbie Dark, picked from VS Code’s own light and dark themes.</figcaption>
   </figure>
@@ -194,59 +194,59 @@
 
   <h2 id="remote"><svg class="ic" aria-hidden="true"><use href="#ic-server"/></svg>Remote projects over SSH</h2>
   <p>Your code doesn’t have to be on your machine. Open a folder on a Linux server over SSH, the way VS Code’s Remote-SSH does: the window stays on your computer, and files, search, Git, terminals, language servers and Claude Code all run on the server, right next to the code.</p>
-  <p>Pick a host from your <code>~/.ssh/config</code>, or type <code>user@host</code>, then choose a folder. Remote projects sit in the sidebar with the rest, marked with their host, and a new chat can start in one from the folder menu above the input. If the server has no Claude Code, BaoCode installs it there, and the models you added work there too.</p>
-  <p>If the connection drops, BaoCode reconnects by itself, and a conversation that was cut off carries on with your next message. If a host can’t be reached, it tells you why, with a button to try again.</p>
-  <p>The server needs Linux (x64 or arm64). SSH keys, ssh-agent and passwords all work, and a password can be kept in the system keychain; a verification code asked at sign-in is asked in BaoCode.</p>
+  <p>Pick a host from your <code>~/.ssh/config</code>, or type <code>user@host</code>, then choose a folder. Remote projects sit in the sidebar with the rest, marked with their host, and a new chat can start in one from the folder menu above the input. If the server has no Claude Code, CCCode installs it there, and the models you added work there too.</p>
+  <p>If the connection drops, CCCode reconnects by itself, and a conversation that was cut off carries on with your next message. If a host can’t be reached, it tells you why, with a button to try again.</p>
+  <p>The server needs Linux (x64 or arm64). SSH keys, ssh-agent and passwords all work, and a password can be kept in the system keychain; a verification code asked at sign-in is asked in CCCode.</p>
 
   <h2 id="mobile"><svg class="ic" aria-hidden="true"><use href="#ic-smartphone"/></svg>Your phone</h2>
-  <p>You’ve gone out, and the agents are still at work on the computer at home. Pair BaoCode on your phone with the computer and you can follow what each of its agents is doing, answer their questions, grant permissions, approve their plans, or send the next message.</p>
+  <p>You’ve gone out, and the agents are still at work on the computer at home. Pair CCCode on your phone with the computer and you can follow what each of its agents is doing, answer their questions, grant permissions, approve their plans, or send the next message.</p>
   <p>Pair by scanning a code, or let a phone on the same network find the computer by itself. The two compare a security code as they pair, then connect directly over the local network or the internet, end-to-end encrypted; a new IP address on the computer needs no pairing again, and a Cloudflare Tunnel works too. The beta for iPhone and iPad is on TestFlight, from the <a href="download.html#phone">download page</a>.</p>
 
   <h2 id="customize"><svg class="ic" aria-hidden="true"><use href="#ic-puzzle"/></svg>Skills, MCP servers and more</h2>
   <p>Everything Claude Code can be extended with is in one place: plugins, MCP servers, skills, subagents, rules, commands and hooks, for you or for a single project. Skills you have on claude.ai show up here too.</p>
   <figure>
-    <div class="img" data-src="shots/customize.webp"><img decoding="async" loading="lazy" src="shots/customize.webp" width="1568" height="1164" alt="Customize in BaoCode, listing skills synced from claude.ai"></div>
+    <div class="img" data-src="shots/customize.webp"><img decoding="async" loading="lazy" src="shots/customize.webp" width="1568" height="1164" alt="Customize in CCCode, listing skills synced from claude.ai"></div>
     <figcaption>Customize: plugins, MCP servers, skills, subagents, rules, commands and hooks, here with the skills synced from claude.ai.</figcaption>
   </figure>
 
   <h2 id="models"><svg class="ic" aria-hidden="true"><use href="#ic-sparkles"/></svg>Any model</h2>
-  <p>Claude Code does the work; you choose the model. Add an upstream that speaks Anthropic’s API, OpenAI’s Chat Completions or OpenAI’s Responses, and BaoCode’s local proxy translates between it and Claude Code. Its tools, skills and way of working stay the same. You can even run Claude Code on GPT-6 Astra.</p>
+  <p>Claude Code does the work; you choose the model. Add an upstream that speaks Anthropic’s API, OpenAI’s Chat Completions or OpenAI’s Responses, and CCCode’s local proxy translates between it and Claude Code. Its tools, skills and way of working stay the same. You can even run Claude Code on GPT-6 Astra.</p>
   <p>With a ChatGPT plan, sign in with your ChatGPT account and use Codex’s models on its allowance; sign in with several, and one that runs out hands over to the next. On a supported site, one click on Import adds the upstream and your key. Test each model in one click once it’s added, and give an upstream request headers of your own.</p>
   <p>API keys are kept in the system keychain, not in a settings file; you can choose which model Claude Code uses for each part of its work, and each chat can pick its own.</p>
   <figure>
-    <div class="img" data-src="shots/models.webp"><img decoding="async" loading="lazy" src="shots/models.webp" width="1568" height="1174" alt="Adding a model upstream in BaoCode’s settings, with its protocol menu open"></div>
+    <div class="img" data-src="shots/models.webp"><img decoding="async" loading="lazy" src="shots/models.webp" width="1568" height="1174" alt="Adding a model upstream in CCCode’s settings, with its protocol menu open"></div>
     <figcaption>Adding an upstream: its protocol, base URL and API key, the models it offers, and which model Claude Code uses for each role.</figcaption>
   </figure>
 
   <h2 id="notifications"><svg class="ic" aria-hidden="true"><use href="#ic-bell"/></svg>Notifications</h2>
-  <p>You don’t have to watch the window. When an agent needs you, to answer a question, grant a permission or approve a plan, or when it finishes its turn, BaoCode tells you the way your system does: a notification, a sound, and a count on the app’s icon of the agents waiting on you.</p>
+  <p>You don’t have to watch the window. When an agent needs you, to answer a question, grant a permission or approve a plan, or when it finishes its turn, CCCode tells you the way your system does: a notification, a sound, and a count on the app’s icon of the agents waiting on you.</p>
   <p>Close the window and the agents keep running in the menu bar (the tray on Windows), whose menu shows which of them are waiting on you. The default sound is a microwave’s ding, because the work is ready: <button class="play" type="button" data-sound="sounds/microwave-ding.m4a" aria-label="Play the notification sound"><svg class="ic start" aria-hidden="true"><use href="#ic-play"/></svg><svg class="ic stop" aria-hidden="true"><use href="#ic-square"/></svg>Play</button></p>
   <p>Choose man-oh-yeah, Gulp Gulp Gulp Gulp, a system sound or your own audio file in Settings → Notifications. When several agents notify together, each sound plays without cutting off the others.</p>
   <figure>
-    <div class="img" data-src="shots/notifications.webp"><img decoding="async" loading="lazy" src="shots/notifications.webp" width="1568" height="1222" alt="BaoCode’s notification settings"></div>
+    <div class="img" data-src="shots/notifications.webp"><img decoding="async" loading="lazy" src="shots/notifications.webp" width="1568" height="1222" alt="CCCode’s notification settings"></div>
     <figcaption>Notification settings: when to be told, the sound, and the menu bar icon.</figcaption>
   </figure>
 
   <h2 id="limits"><svg class="ic" aria-hidden="true"><use href="#ic-target"/></svg>What it doesn’t do</h2>
-  <p><strong>BaoCode builds no agent ecosystem of its own, by design.</strong> Claude Code’s is unmatched: its tools, skills, plugins, MCP servers, subagents and hooks. A second one would only split it. BaoCode’s job is to give Claude Code the interface it deserves, and to make everything around it work out of the box.</p>
-  <p>So BaoCode doesn’t come with a model or an account. Where Claude Code is installed, it runs yours, with your settings, your sign-in and your <code>CLAUDE.md</code>. Where it isn’t, BaoCode has a core of its own: it reads the same <code>CLAUDE.md</code>, skills, subagents, commands, hooks, plugins and MCP servers, and runs on the upstreams you add in Settings → Models. For a Claude subscription, pick Claude Code CLI in Settings → General → Core, and BaoCode downloads it if it isn’t there.</p>
-  <p>Other agents, such as the Codex CLI, aren’t supported; their models work through BaoCode, as above.</p>
+  <p><strong>CCCode builds no agent ecosystem of its own, by design.</strong> Claude Code’s is unmatched: its tools, skills, plugins, MCP servers, subagents and hooks. A second one would only split it. CCCode’s job is to give Claude Code the interface it deserves, and to make everything around it work out of the box.</p>
+  <p>So CCCode doesn’t come with a model or an account. Where Claude Code is installed, it runs yours, with your settings, your sign-in and your <code>CLAUDE.md</code>. Where it isn’t, CCCode has a core of its own: it reads the same <code>CLAUDE.md</code>, skills, subagents, commands, hooks, plugins and MCP servers, and runs on the upstreams you add in Settings → Models. For a Claude subscription, pick Claude Code CLI in Settings → General → Core, and CCCode downloads it if it isn’t there.</p>
+  <p>Other agents, such as the Codex CLI, aren’t supported; their models work through CCCode, as above.</p>
 
   <h2 id="download"><svg class="ic" aria-hidden="true"><use href="#ic-download"/></svg>Download</h2>
   <ul class="features">
     <li><svg class="ic logo" aria-hidden="true"><use href="#ic-apple"/></svg><span><strong>macOS</strong>: for <a data-file="macos-arm64" href="/dl/macos-arm64">Apple silicon</a> or <a data-file="macos-x64" href="/dl/macos-x64">Intel</a>, macOS 12 Monterey or later.</span></li>
-    <li><svg class="ic logo" aria-hidden="true"><use href="#ic-windows"/></svg><span><strong>Windows</strong>: <a data-file="windows" data-name href="/dl/windows">BaoCode 1.6.0</a>, x64, Windows 10 or later.</span></li>
+    <li><svg class="ic logo" aria-hidden="true"><use href="#ic-windows"/></svg><span><strong>Windows</strong>: <a data-file="windows" data-name href="/dl/windows">CCCode 1.6.0</a>, x64, Windows 10 or later.</span></li>
     <li><svg class="ic logo" aria-hidden="true"><use href="#ic-linux"/></svg><span><strong>Linux</strong>: a .deb for <a data-file="linux-x64" href="/dl/linux-x64">x64</a> or <a data-file="linux-arm64" href="/dl/linux-arm64">arm64</a>, Ubuntu 22.04 or later and other Debian-based distributions.</span></li>
     <li><svg class="ic" aria-hidden="true"><use href="#ic-smartphone"/></svg><span><strong>iPhone and iPad (beta)</strong>: on TestFlight, <a href="download.html#phone">from the download page</a>, iOS 15 or later.</span></li>
     <li><svg class="ic logo" aria-hidden="true"><use href="#ic-chrome"/></svg><span><strong>Browser extension</strong>: from the <a href="/dl/chrome-web-store">Chrome Web Store</a>, for Chrome, Edge, Brave, Arc and other Chromium browsers.</span></li>
   </ul>
-  <p>BaoCode updates itself in the background and asks before restarting. You can make updates manual, or turn them off, in Settings → Updates.</p>
+  <p>CCCode updates itself in the background and asks before restarting. You can make updates manual, or turn them off, in Settings → Updates.</p>
 
   <h2 id="source"><svg class="ic" aria-hidden="true"><use href="#ic-git-fork"/></svg>Source code</h2>
-  <p>BaoCode is open source under the <a href="https://github.com/baocode-dev/baocode/blob/main/LICENSE">GPL-3.0</a>; its editor and terminal packages are MIT. The code is on <a href="https://github.com/baocode-dev/baocode">GitHub</a>. Issues and pull requests are welcome; discuss a change in an issue first, as <a href="https://github.com/baocode-dev/baocode/blob/main/CONTRIBUTING.md">CONTRIBUTING.md</a> asks.</p>
+  <p>CCCode is open source under the <a href="https://github.com/chenxiTagGH/CCCode/blob/main/LICENSE">GPL-3.0</a>; its editor and terminal packages are MIT. The code is on <a href="https://github.com/chenxiTagGH/CCCode">GitHub</a>. Issues and pull requests are welcome; discuss a change in an issue first, as <a href="https://github.com/chenxiTagGH/CCCode/blob/main/CONTRIBUTING.md">CONTRIBUTING.md</a> asks.</p>
 
 
-  <footer>BaoCode is an independent project, not affiliated with or endorsed by Anthropic. Claude Code is a product of Anthropic.</footer>
+  <footer>CCCode is an independent project, not affiliated with or endorsed by Anthropic. Claude Code is a product of Anthropic.</footer>
 </main>
 
 <script src="site.js"></script>

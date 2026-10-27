@@ -54,7 +54,7 @@ String composerMessage(WidgetTester tester) =>
 void pickFiles(WidgetTester tester, List<String> paths) {
   final messenger = tester.binding.defaultBinaryMessenger;
   messenger.setMockMethodCallHandler(
-    const MethodChannel('baocode/window'),
+    const MethodChannel('cccode/window'),
     (call) async => switch (call.method) {
       'pickFiles' => [
         for (final path in paths) {'path': path, 'directory': false},
@@ -64,7 +64,7 @@ void pickFiles(WidgetTester tester, List<String> paths) {
   );
   addTearDown(
     () => messenger.setMockMethodCallHandler(
-      const MethodChannel('baocode/window'),
+      const MethodChannel('cccode/window'),
       null,
     ),
   );

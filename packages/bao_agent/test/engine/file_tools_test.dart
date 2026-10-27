@@ -7,7 +7,7 @@ import 'package:path/path.dart' as p;
 import '../support/harness.dart';
 
 /// A ripgrep on this machine, if there is one (on `PATH`, or the one
-/// BaoCode's extension host brings).
+/// CCCode's extension host brings).
 String? _ripgrep() {
   for (final dir in (Platform.environment['PATH'] ?? '').split(':')) {
     final candidate = File(p.join(dir, 'rg'));
@@ -15,7 +15,7 @@ String? _ripgrep() {
   }
   final home = Platform.environment['HOME'] ?? '';
   final hosts = Directory(
-    p.join(home, 'Library', 'Application Support', 'baocode', 'exthost'),
+    p.join(home, 'Library', 'Application Support', 'cccode', 'exthost'),
   );
   if (!hosts.existsSync()) return null;
   try {

@@ -86,14 +86,14 @@ class CodeArgs {
   /// The suffix of the file the macOS script writes a request to, which
   /// the system hands the app as one to open (see shell_command_io.dart):
   /// the working directory on the first line, the arguments on the rest.
-  static const requestFileSuffix = '.baocode-cli';
+  static const requestFileSuffix = '.cccode-cli';
 
   /// The flag the Windows script (code.cmd) starts the app with, the
   /// console's folder and the arguments next; the runner hands them over
   /// as a request ([requestMarker]; see open_requests.cpp).
-  static const windowsRequestFlag = '--baocode-cli';
+  static const windowsRequestFlag = '--cccode-cli';
 
-  /// The marker of Open with BaoCode (Explorer's context menu, which the
+  /// The marker of Open with CCCode (Explorer's context menu, which the
   /// Windows installer or the settings add; Finder's, the macOS app's
   /// Finder extension, see AppDelegate.swift), the paths next: each in a
   /// new agent, in the chat's window (see AppWindows.openAgent).
@@ -101,17 +101,89 @@ class CodeArgs {
 
   /// The flag that menu starts the app with, the path next; the runner
   /// hands it over as a request ([agentRequestMarker]).
-  static const windowsAgentFlag = '--baocode-agent';
+  static const windowsAgentFlag = '--cccode-agent';
 
   /// The marker of a site's one-click import of an upstream (a
-  /// `baocode://provider/import?…` link, see UpstreamImport), the link
+  /// `cccode://provider/import?…` link, see UpstreamImport), the link
   /// next: asked about in the main window, which comes in front for it.
   static const importRequestMarker = '\u0000import';
 
-  /// The flag Windows starts the app with for a `baocode://` link (the URL
+  /// The flag Windows starts the app with for a `cccode://` link (the URL
   /// scheme the installer registers), the link next; the runner hands it
   /// over as a request ([importRequestMarker]).
-  static const windowsLinkFlag = '--baocode-link';
+  static const windowsLinkFlag = '--cccode-link';
+
+  /// Whether [link] has the exact native import URI shape. Query contents are
+  /// interpreted by UpstreamImport later; this only rejects malformed URI
+  /// syntax and forms that cannot be an import link.
+  ///
+  /// This helper is deliberately kept here so native-entry and live-delivery
+  /// paths share the same Dart-side final validation without importing models.
+  static bool isImportLink(String link) {
+    if (link.isEmpty ||
+        link.contains(RegExp(r'[\s\\]')) ||
+        !link.startsWith('cccode://')) {
+      return false;
+    }
+    final uri = Uri.tryParse(link);
+    if (uri == null ||
+        uri.scheme != 'cccode' ||
+        uri.host != 'provider' ||
+        uri.userInfo.isNotEmpty ||
+        uri.hasPort ||
+        uri.path != '/import' ||
+        uri.query.isEmpty ||
+        uri.fragment.isNotEmpty) {
+      return false;
+    }
+    try {
+      uri.queryParameters;
+      return true;
+    } on FormatException {
+      return false;
+    }
+  }
+
+  /// Whether [request] is a validated import request.
+  static bool isImportRequest(List<String> request) =>
+      request.length == 2 &&
+      request.first == importRequestMarker &&
+      isImportLink(request[1]);
+
+  /// Converts Linux's desktop entry arguments for a `cccode://` link into
+  /// the request shape consumed by [OpenRequests]. Returns null for anything
+  /// other than exactly `--cccode-link <cccode://provider/import?...>`.
+  static bool isLinkRequest(List<String> request) {
+    if (request.length != 2 || request.first != importRequestMarker) {
+      return false;
+    }
+    if (isImportLink(request[1])) return true;
+    final uri = Uri.tryParse(request[1]);
+    if (uri == null ||
+        uri.scheme != 'cccode' ||
+        uri.host != 'activate' ||
+        uri.userInfo.isNotEmpty ||
+        uri.hasPort ||
+        uri.path.isNotEmpty ||
+        uri.fragment.isNotEmpty) {
+      return false;
+    }
+    try {
+      return uri.query.isNotEmpty && uri.queryParameters.isNotEmpty;
+    } on FormatException {
+      return false;
+    }
+  }
+
+  static List<String>? importRequest(List<String> arguments) {
+    if (arguments.length != 2 || arguments.first != windowsLinkFlag) {
+      return null;
+    }
+    final link = arguments[1];
+    final request = [importRequestMarker, link];
+    if (!isLinkRequest(request)) return null;
+    return request;
+  }
 
   /// Whether [argument] starts a request ([requestMarker],
   /// [agentRequestMarker], [importRequestMarker]) among what the system
@@ -250,7 +322,7 @@ enum LaunchRequest {
   /// Started as itself: the windows of the last run.
   none,
 
-  /// Open with BaoCode ([CodeArgs.windowsAgentFlag]): the chat's window.
+  /// Open with CCCode ([CodeArgs.windowsAgentFlag]): the chat's window.
   agent,
 
   /// Paths to open in the IDE (Open with Fast Ide, the `code` command,

@@ -37,7 +37,7 @@ void main() {
   late String fakeBin;
 
   setUp(() {
-    sandbox = Directory.systemTemp.createTempSync('baocode-ssh-');
+    sandbox = Directory.systemTemp.createTempSync('cccode-ssh-');
     home = Directory(p.join(sandbox.path, 'home'))..createSync();
     log = File(p.join(sandbox.path, 'ssh.log'));
     fakeBin = p.join(sandbox.path, 'bin');
@@ -169,7 +169,7 @@ exec '$dartExecutable' '${p.absolute('packages', 'bao_remote', 'bin', 'baocode_s
     expect(connection.hello.home, home.path);
     expect(connection.hello.dataDir, p.join(home.path, 'server-data'));
     final installed = File(
-      p.join(home.path, '.baocode-server', '1-abc', 'baocode-server'),
+      p.join(home.path, '.cccode-server', '1-abc', 'cccode-server'),
     );
     expect(installed.existsSync(), isTrue);
     expect(installed.readAsBytesSync(), serverScript());
@@ -177,9 +177,9 @@ exec '$dartExecutable' '${p.absolute('packages', 'bao_remote', 'bin', 'baocode_s
     expect(progress.any((line) => line.contains('Installing')), isTrue);
     expect(commands(), [
       'sh -s',
-      startsWith("sh -c 'mkdir -p .baocode-server/1-abc && gzip -dc >"),
+      startsWith("sh -c 'mkdir -p .cccode-server/1-abc && gzip -dc >"),
       matches(
-        r'^\.baocode-server/1-abc/baocode-server --session [0-9a-f]{32}$',
+        r'^\.cccode-server/1-abc/cccode-server --session [0-9a-f]{32}$',
       ),
     ]);
 
@@ -198,7 +198,7 @@ exec '$dartExecutable' '${p.absolute('packages', 'bao_remote', 'bin', 'baocode_s
     expect(binaries.reads, ['linux-x64']);
     expect(commands(), [
       'sh -s',
-      startsWith('.baocode-server/1-abc/baocode-server --session '),
+      startsWith('.cccode-server/1-abc/cccode-server --session '),
     ]);
     await again.close();
   }, timeout: const Timeout(Duration(minutes: 2)));
@@ -410,7 +410,7 @@ exec '$dartExecutable' '${p.absolute('packages', 'bao_remote', 'bin', 'baocode_s
     expect(connection.linked, isTrue);
     expect(
       commands().last,
-      '.baocode-server/1-abc/baocode-server '
+      '.cccode-server/1-abc/cccode-server '
       '--session $id --resume',
     );
 
@@ -537,7 +537,7 @@ exec '$dartExecutable' '${p.absolute('packages', 'bao_remote', 'bin', 'baocode_s
     expect(arguments, containsAllInOrder(['-T', '-o', 'BatchMode=yes']));
     expect(arguments, contains('ServerAliveInterval=15'));
     expect(arguments.sublist(arguments.length - 2), ['dev', 'cmd']);
-    expect(launcher.serverPath, '.baocode-server/7/baocode-server');
+    expect(launcher.serverPath, '.cccode-server/7/cccode-server');
     expect(launcher.uploadCommand('n', gzip: false), contains('cat >'));
   });
 

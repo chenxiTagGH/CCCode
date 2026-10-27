@@ -40,7 +40,7 @@ void main() {
     expect(
       text,
       startsWith(
-        '--- BaoCode $appVersionString · ${Platform.operatingSystem} ',
+        '--- CCCode $appVersionString · ${Platform.operatingSystem} ',
       ),
     );
     expect(

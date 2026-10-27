@@ -59,7 +59,7 @@ void main() {
   KeySequence keys(String text) => KeySequence.parse(text)!;
 
   setUp(() {
-    temp = Directory.systemTemp.createTempSync('baocode-keybindings-editing');
+    temp = Directory.systemTemp.createTempSync('cccode-keybindings-editing');
     path = p.join(temp.path, 'User', 'keybindings.json');
     Directory(p.dirname(path)).createSync(recursive: true);
     file = JsoncFile(path);

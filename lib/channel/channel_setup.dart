@@ -5,8 +5,8 @@ import 'package:flutter/foundation.dart';
 import '../platform/event_log.dart';
 import '../settings/user_settings.dart';
 
-/// Where the user came to baocode.dev from, as the site kept it in their
-/// browser: a channel's id from the address (`channel`), the site linking
+/// Where the user came to the website from, as the website kept it in their
+/// browser: a channel's id from the address (`channel`), the website linking
 /// there (`referrer`), neither (`direct`); `none` when the browser the
 /// setup opened had nothing kept.
 @immutable
@@ -15,13 +15,13 @@ class ChannelAttribution {
 
   static const sources = ['channel', 'referrer', 'direct', 'none'];
 
-  // Letters of any script, digits, . _ -: a channel's id as the site takes
+  // Letters of any script, digits, . _ -: a channel's id as the website takes
   // it, or a host.
   static final _value = RegExp(r'^[\p{L}\p{N}._-]{1,128}$', unicode: true);
 
   final String source;
 
-  /// The channel's id or the site's host, lower case; null for direct and
+  /// The channel's id or the website's host, lower case; null for direct and
   /// none.
   final String? value;
 
@@ -57,7 +57,7 @@ class ChannelAttribution {
   String toString() => value == null ? source : '$source:$value';
 }
 
-/// A channel the site lists (site/channels.json), as the app shows it once
+/// A channel the website lists (site/channels.json), as the app shows it once
 /// set up: its name, its logo, the account site it signs in to, and the
 /// welcome it may have.
 @immutable
@@ -71,15 +71,15 @@ class ChannelInfo {
 
   final String name;
 
-  /// Where the logo is on the site (`/channels/…`), if it has one.
+  /// Where the logo is on the website (`/channels/…`), if it has one.
   final String? logo;
 
-  /// The site its users sign in to; without one, the channel build cannot
+  /// The CCCode website its users sign in to; without one, the channel build cannot
   /// be used by its users.
   final ChannelAccountSite? account;
   final ChannelWelcome? welcome;
 
-  // As the site takes it (site.js): one of channels/, no way out of it.
+  // As the website takes it (site.js): one of channels/, no way out of it.
   static final _logo = RegExp(r'^/channels/[\w.-]+$');
 
   /// The channel's entry in channels.json, in [language] (`zh`, `en`; the
@@ -114,12 +114,12 @@ class ChannelInfo {
   }
 }
 
-/// A channel as the welcome shows it: what the site lists, and its logo's
+/// A channel as the welcome shows it: what the website lists, and its logo's
 /// bytes (SVG or a picture), if it could be had.
 typedef ChannelShown = ({ChannelInfo info, Uint8List? logo});
 
 /// A channel's entry in channels.json as read (its logo's bytes with it):
-/// kept, for when the site cannot be reached.
+/// kept, for when the website cannot be reached.
 typedef ChannelEntry = ({String id, Object? json, Uint8List? logo});
 
 /// The panels a channel's account site can run.
@@ -136,7 +136,7 @@ enum ChannelAccountType {
   final String id;
 }
 
-/// The site a channel's users sign in to (channels.json's `account`): its
+/// The CCCode website a channel's users sign in to (channels.json's `account`): its
 /// panel, [url], where they sign in and their keys are; and where the
 /// keys' models are served, [apiUrl], the panel's unless it says, and how
 /// ([protocol]: `anthropic`, `openai-chat`, `openai-responses`), the
@@ -273,7 +273,7 @@ class GlobalChannelSetupStore implements ChannelSetupStore {
 /// null while it has none. Throws when it could not be asked (offline).
 typedef ChannelLookUp = Future<ChannelAttribution?> Function(Uri url);
 
-/// What a pasted or opened `baocode://activate` link came to.
+/// What a pasted or opened `cccode://activate` link came to.
 enum ChannelLinkResult {
   accepted,
 
@@ -286,10 +286,10 @@ enum ChannelLinkResult {
 
 /// The channel build's first start: one build for every channel, which
 /// asks where its user came from of the browser they downloaded it in. It
-/// opens baocode.dev/activate with the install's id; the page sends the
-/// stats server what the site kept in that browser, and the app, asking
+/// opens the website/activate with the install's id; the page sends the
+/// stats server what the website kept in that browser, and the app, asking
 /// there, is set up. Should the app not hear of it, the page hands it a
-/// `baocode://activate?…` link, opened or pasted.
+/// `cccode://activate?…` link, opened or pasted.
 ///
 /// It cannot be put off: the welcome stays till it is done. Pending is
 /// kept, so that a quit, or an update to another build, does not skip it;
@@ -306,9 +306,9 @@ class ChannelSetup extends ChangeNotifier {
     this.offlineAfter = 2,
   }) : _done = again == null && store.state == doneState;
 
-  /// Made with `--dart-define=BAOCODE_CHANNEL=true`: the build the site
+  /// Made with `--dart-define=CCCODE_CHANNEL=true`: the build the website
   /// gives a visitor who came by a channel.
-  static const channelBuild = bool.fromEnvironment('BAOCODE_CHANNEL');
+  static const channelBuild = bool.fromEnvironment('CCCODE_CHANNEL');
 
   static const pendingState = 'pending';
   static const doneState = 'done';
@@ -451,14 +451,30 @@ class ChannelSetup extends ChangeNotifier {
     }
   }
 
-  /// Whether [link] is the page's (`baocode://activate…`), not another
-  /// `baocode://` link.
-  static bool isLink(String link) => switch (Uri.tryParse(link.trim())) {
-    Uri(scheme: 'baocode', host: 'activate') => true,
-    _ => false,
-  };
+  /// Whether [link] is the page's (`cccode://activate…`), not another
+  /// `cccode://` link.
+  static bool isLink(String link) {
+    if (link.isEmpty || link.contains(RegExp(r'[\s\\]'))) return false;
+    final uri = Uri.tryParse(link);
+    if (uri == null ||
+        uri.scheme != 'cccode' ||
+        uri.host != 'activate' ||
+        uri.userInfo.isNotEmpty ||
+        uri.hasPort ||
+        uri.path.isNotEmpty ||
+        uri.fragment.isNotEmpty ||
+        uri.query.isEmpty) {
+      return false;
+    }
+    try {
+      uri.queryParameters;
+      return true;
+    } on FormatException {
+      return false;
+    }
+  }
 
-  /// A `baocode://activate?i=…&s=…&c=…` link, as the page hands it over
+  /// A `cccode://activate?i=…&s=…&c=…` link, as the page hands it over
   /// (opened, or pasted): set up with what it says, which the telemetry
   /// reports (the server might not have heard of it).
   ChannelLinkResult acceptLink(String link) {

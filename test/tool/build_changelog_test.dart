@@ -37,7 +37,7 @@ void main() {
 
   group('draft_release_notes', () {
     test(
-      'feat, perf and fix under their headings; not the site, CI or docs',
+      'feat, perf and fix under their headings; not the website, CI or docs',
       () {
         final sections = draftSections([
           'feat(chat): Pin a message',

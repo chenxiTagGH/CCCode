@@ -214,7 +214,7 @@ void main() {
       proxy = make();
     });
 
-    test('any answer is the site reached, timed to its headers', () async {
+    test('any answer is the website reached, timed to its headers', () async {
       final server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
       addTearDown(() => server.close(force: true));
       server.listen((request) {

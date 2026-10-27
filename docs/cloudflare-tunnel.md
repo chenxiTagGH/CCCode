@@ -7,7 +7,7 @@
 ## 0. 前提
 
 - 有一个**托管在 Cloudflare 的域名**（免费套餐就够）。
-- 桌面端 BaoCode 正在运行，设置 → 手机 → 打开「允许手机连接」（默认监听 **47100**）。
+- 桌面端 CCCode 正在运行，设置 → 手机 → 打开「允许手机连接」（默认监听 **47100**）。
 - 装了 [Claude Code](https://claude.com/claude-code)，或者任何支持 MCP 的客户端。
 
 文中用 `example.com` 代替你自己的域名，`link.example.com` 是要用的子域——**照着做的时候换成你自己的**。
@@ -19,7 +19,7 @@
 Cloudflare 的隧道入口在 **443 端口只收 TLS**，所以手机要用 `wss://` 去连。公网地址写成 `wss://link.example.com`，手机就会走 TLS（[`packages/bao_link/lib/src/pairing.dart`](../packages/bao_link/lib/src/pairing.dart) 的 `DirectEndpoint.parse`，`secure` 为真）：
 
 ```
-手机 → wss://link.example.com:443/baocode-link
+手机 → wss://link.example.com:443/cccode-link
      → Cloudflare（443，TLS 在这里卸掉）
      → 隧道 → http://localhost:47100（本机 LinkServer）
 ```
@@ -30,11 +30,11 @@ Cloudflare 的隧道入口在 **443 端口只收 TLS**，所以手机要用 `wss
 
 | 走法 | 结果 |
 | --- | --- |
-| `wss://link.example.com:443/baocode-link` | ✅ 101 ← **用这个** |
-| `ws://link.example.com:80/baocode-link` | ✅ 101（仅在 `always_use_https` 为 off 时） |
-| `ws://<任何域名>:443/baocode-link` | ❌ Cloudflare 400，443 上不收明文 |
+| `wss://link.example.com:443/cccode-link` | ✅ 101 ← **用这个** |
+| `ws://link.example.com:80/cccode-link` | ✅ 101（仅在 `always_use_https` 为 off 时） |
+| `ws://<任何域名>:443/cccode-link` | ❌ Cloudflare 400，443 上不收明文 |
 
-用 `wss://` 时，域名的 **Always Use HTTPS 开着关着都行**，不用为了 BaoCode 去改它。
+用 `wss://` 时，域名的 **Always Use HTTPS 开着关着都行**，不用为了 CCCode 去改它。
 
 > 旧版本手机只会用明文 `ws://`，只能走 80 端口，还要求 `always_use_https` 为 off。手机升级到新版后就不用管这些了。
 
@@ -82,7 +82,7 @@ async () => (await cloudflare.request({ method: 'GET', path: '/zones' })).result
 async () => (await cloudflare.request({
   method: 'POST',
   path: `/accounts/${ACCOUNT_ID}/cfd_tunnel`,
-  body: { name: 'baocode-link', config: { ingress: [] } },
+  body: { name: 'cccode-link', config: { ingress: [] } },
 })).result.id
 ```
 
@@ -162,7 +162,7 @@ INF Updated to new configuration config="{\"ingress\":[{\"hostname\":\"link.exam
 
 先按 `Ctrl+C` 停掉前台进程，再用 launchd 托管，开机自启、挂了自动拉回。
 
-`~/Library/LaunchAgents/dev.baocode.cftunnel-link.plist`：
+`~/Library/LaunchAgents/dev.cccode.cftunnel-link.plist`：
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -170,7 +170,7 @@ INF Updated to new configuration config="{\"ingress\":[{\"hostname\":\"link.exam
 <plist version="1.0">
 <dict>
 	<key>Label</key>
-	<string>dev.baocode.cftunnel-link</string>
+	<string>dev.cccode.cftunnel-link</string>
 
 	<key>ProgramArguments</key>
 	<array>
@@ -206,14 +206,14 @@ INF Updated to new configuration config="{\"ingress\":[{\"hostname\":\"link.exam
 
 ```bash
 # 装 / 更新
-launchctl bootout gui/$(id -u)/dev.baocode.cftunnel-link 2>/dev/null
-launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/dev.baocode.cftunnel-link.plist
+launchctl bootout gui/$(id -u)/dev.cccode.cftunnel-link 2>/dev/null
+launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/dev.cccode.cftunnel-link.plist
 
 # 看状态（应有 state = running 和一个 pid）
-launchctl print gui/$(id -u)/dev.baocode.cftunnel-link | grep -E "state|pid"
+launchctl print gui/$(id -u)/dev.cccode.cftunnel-link | grep -E "state|pid"
 
 # 停掉（保留配置，下次登录还会起）
-launchctl bootout gui/$(id -u)/dev.baocode.cftunnel-link
+launchctl bootout gui/$(id -u)/dev.cccode.cftunnel-link
 ```
 
 > `brew services` 不行——它管的是 `~/.cloudflared/config.yml` 那套，和 token 方式对不上。
@@ -228,12 +228,12 @@ wss://link.example.com
 
 **必须带 `wss://`。**带上它端口默认就是 443；不带的话会被当成明文、端口当成本机的 47100（[`lib/link/link_host.dart`](../lib/link/link_host.dart) 的 `_parse`），连到 Cloudflare 的 47100 上，不通。写成 `https://link.example.com` 也一样。
 
-填好之后，桌面端会把它（存成 `wss://link.example.com:443`）写进二维码的地址列表，手机连的时候就会走 `wss://link.example.com:443/baocode-link`。已经配对过的手机，也可以在手机端的设备页里手动加这个地址。
+填好之后，桌面端会把它（存成 `wss://link.example.com:443`）写进二维码的地址列表，手机连的时候就会走 `wss://link.example.com:443/cccode-link`。已经配对过的手机，也可以在手机端的设备页里手动加这个地址。
 
 ## 7. 排错
 
 ```bash
-# 域名有没有回源到本机：两条都应返回 404 + 正文 "BaoCode"
+# 域名有没有回源到本机：两条都应返回 404 + 正文 "CCCode"
 curl -s https://link.example.com/
 curl -s http://localhost:47100/
 
@@ -241,7 +241,7 @@ curl -s http://localhost:47100/
 curl -i --http1.1 -H "Connection: Upgrade" -H "Upgrade: websocket" \
      -H "Sec-WebSocket-Version: 13" \
      -H "Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==" \
-     https://link.example.com/baocode-link
+     https://link.example.com/cccode-link
 ```
 
 | 现象 | 原因 |
@@ -258,4 +258,4 @@ curl -i --http1.1 -H "Connection: Upgrade" -H "Upgrade: websocket" \
 - 走的是标准的 443 + WebSocket，Cloudflare 各套餐都支持。不过隧道适合个人使用；如果是要长期、规模化地给很多用户用，请改用 [`mobile-link.md`](./mobile-link.md) §5 里预留的中转方案（`RelayEndpoint`），也就是走 Cloudflare Workers 而不是隧道。
 - 隧道是**绑定这台机器**的。换机器要重新装 token 和 plist。
 - 隧道 token 是凭据，泄露了别人就能往你的隧道上挂服务。**别提交进 git**，别贴给别人。要作废就删掉隧道重新建一条。
-- 根路径返回 404、正文是 `BaoCode` 是**正常的**：`LinkServer` 只处理 `/baocode-link` 的 WebSocket 升级，别的路径一律 404。
+- 根路径返回 404、正文是 `CCCode` 是**正常的**：`LinkServer` 只处理 `/cccode-link` 的 WebSocket 升级，别的路径一律 404。

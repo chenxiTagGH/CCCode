@@ -119,7 +119,7 @@ Future<Workspace> _pumpApp(
   addTearDown(() => KeybindingService.instance = KeybindingService());
   final workspace = Workspace.mock();
   await tester.pumpWidget(
-    BaoCodeApp(workspace: workspace, customizations: store),
+    CCCodeApp(workspace: workspace, customizations: store),
   );
   await tester.pump();
   return workspace;

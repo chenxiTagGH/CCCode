@@ -638,7 +638,7 @@ void main() {
     expect(controller.shownText, '\uFFFC ');
   });
 
-  testWidgets('files put in the draft from outside (Open with BaoCode) go '
+  testWidgets('files put in the draft from outside (Open with CCCode) go '
       'in as if pasted: before the composer shows, and while it does', (
     tester,
   ) async {
@@ -679,7 +679,7 @@ void main() {
     final messenger = tester.binding.defaultBinaryMessenger;
     final menus = <List<Map<Object?, Object?>>>[];
     final replies = ['selectAll', 'copy', 'paste'];
-    messenger.setMockMethodCallHandler(const MethodChannel('baocode/window'), (
+    messenger.setMockMethodCallHandler(const MethodChannel('cccode/window'), (
       call,
     ) async {
       switch (call.method) {
@@ -740,7 +740,7 @@ void main() {
       expect(menus, hasLength(3));
     } finally {
       messenger.setMockMethodCallHandler(
-        const MethodChannel('baocode/window'),
+        const MethodChannel('cccode/window'),
         null,
       );
       messenger.setMockMethodCallHandler(SystemChannels.platform, null);
@@ -766,7 +766,7 @@ void main() {
       /// The menu item [command] chosen, as the window sends it.
       Future<void> menu(String command) async {
         await messenger.handlePlatformMessage(
-          'baocode/window',
+          'cccode/window',
           const StandardMethodCodec().encodeMethodCall(
             MethodCall('editCommand', command),
           ),
@@ -801,7 +801,7 @@ void main() {
       expect(copied!.length, greaterThan(200));
     } finally {
       messenger.setMockMethodCallHandler(
-        const MethodChannel('baocode/window'),
+        const MethodChannel('cccode/window'),
         null,
       );
       messenger.setMockMethodCallHandler(SystemChannels.platform, null);
@@ -954,14 +954,14 @@ void main() {
         // The pasteboard's own channel: no images, as the composer's paste
         // asks it (else the ask never answers under the test binding).
         ..setMockMethodCallHandler(
-          const MethodChannel('baocode/window'),
+          const MethodChannel('cccode/window'),
           (call) async => null,
         );
       addTearDown(() {
         tester.binding.defaultBinaryMessenger
           ..setMockMethodCallHandler(SystemChannels.platform, null)
           ..setMockMethodCallHandler(
-            const MethodChannel('baocode/window'),
+            const MethodChannel('cccode/window'),
             null,
           );
       });
@@ -1377,7 +1377,7 @@ void main() {
 
     testWidgets('an edit stays open while another conversation is visited '
         'from the sidebar', (tester) async {
-      await tester.pumpWidget(BaoCodeApp(workspace: Workspace.mock()));
+      await tester.pumpWidget(CCCodeApp(workspace: Workspace.mock()));
       await tester.pump();
       final title = find.descendant(
         of: find.byType(Sidebar),

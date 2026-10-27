@@ -2059,17 +2059,17 @@ void main() {
     final (:panel, :session) = await _pumpReply(
       tester,
       '[secrets](../outside/key.pem), [passwd](/etc/passwd), '
-      '`/etc/hosts` and [the site](https://baocode.dev).',
+      '`/etc/hosts` and [the website](.).',
       texts: {'/etc/hosts': 'x', '/outside/key.pem': 'x'},
     );
     expect(_span(tester, 'secrets')?.recognizer, isNull);
     expect(_span(tester, 'passwd')?.recognizer, isNull);
     expect(_span(tester, '/etc/hosts')?.recognizer, isNull);
     // The web link keeps its own (the browser's), which no file takes.
-    expect(_span(tester, 'the site')?.recognizer, isA<TapGestureRecognizer>());
+    expect(_span(tester, 'the website')?.recognizer, isA<TapGestureRecognizer>());
     final scope = tester.element(find.byType(MarkdownView));
     expect(
-      FileOpenScope.maybeOf(scope)!.linkRecognizer('https://baocode.dev'),
+      FileOpenScope.maybeOf(scope)!.linkRecognizer('.'),
       isNull,
     );
     expect(panel.shown, isFalse);

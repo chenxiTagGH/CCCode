@@ -10,7 +10,7 @@ void main() {
     tester.view.physicalSize = const Size(1200, 800);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
-    await tester.pumpWidget(BaoCodeApp(workspace: Workspace()));
+    await tester.pumpWidget(CCCodeApp(workspace: Workspace()));
     await tester.pump();
 
     // Not the error style text falls back to with no Material above it

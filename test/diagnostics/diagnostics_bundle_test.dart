@@ -38,7 +38,7 @@ void main() {
   late Directory logs;
 
   setUp(() async {
-    logs = await Directory.systemTemp.createTemp('baocode-diagnostics');
+    logs = await Directory.systemTemp.createTemp('cccode-diagnostics');
   });
 
   tearDown(() => logs.delete(recursive: true));

@@ -9,7 +9,7 @@ import 'featured_upstreams_stub.dart'
 /// An upstream Settings → Models shows a card of, free of charge, for
 /// adding the one-click import (see docs/upstream-import.md): listed in
 /// site/featured/upstreams.json, by a pull request after its issue, and
-/// read from baocode.dev ([feed]): shown as soon as the site is deployed,
+/// read from the website ([feed]): shown as soon as the website is deployed,
 /// with no release of the app.
 @immutable
 class FeaturedUpstream {
@@ -128,7 +128,7 @@ class FeaturedUpstream {
   );
 
   /// [known], from the list kept last time, while there are none: at the
-  /// app's start, with no asking baocode.dev.
+  /// app's start, with no asking the website.
   static Future<void> readKept() async {
     if (known.value.isNotEmpty) return;
     try {

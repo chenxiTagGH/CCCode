@@ -50,7 +50,7 @@ void main() {
   late _FakeHost host;
 
   setUp(() async {
-    data = await Directory.systemTemp.createTemp('baocode-notifications');
+    data = await Directory.systemTemp.createTemp('cccode-notifications');
     settings = UserSettings(p.join(data.path, 'settings.json'));
     await settings.load();
     host = _FakeHost();

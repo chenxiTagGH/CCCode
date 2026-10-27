@@ -64,14 +64,14 @@ class ServerSession {
   /// Hex, as the app makes them: nothing that would name another path.
   static bool isValidId(String id) => RegExp(r'^[0-9a-f]{8,64}$').hasMatch(id);
 
-  static String defaultRunDirectory(String home) => '$home/.baocode-server/run';
+  static String defaultRunDirectory(String home) => '$home/.cccode-server/run';
 
   /// The session's socket: in [runDirectory], else (a path too long for a
   /// socket, which takes about a hundred bytes) in a folder of /tmp.
   String get socketPath {
     final path = '$runDirectory/$id';
     if (path.length < 100) return path;
-    return '${Directory.systemTemp.path}/baocode-server-${_uid()}/$id';
+    return '${Directory.systemTemp.path}/cccode-server-${_uid()}/$id';
   }
 
   String get logPath => '${File(socketPath).parent.path}/$id.log';
@@ -135,7 +135,7 @@ class ServerSession {
         socket = await _connect();
       }
       if (socket == null) {
-        stderr.writeln('baocode-server: the session did not start');
+        stderr.writeln('cccode-server: the session did not start');
         return 1;
       }
     }

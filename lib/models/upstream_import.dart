@@ -1,6 +1,6 @@
 /// An upstream as a site hands it over to be added in one click: the link
-/// on its key's page goes to baocode.dev/import (site/import.js), which
-/// opens `baocode://provider/import?…` (see docs/upstream-import.md).
+/// on its key's page goes to the website/import (site/import.js), which
+/// opens `cccode://provider/import?…` (see docs/upstream-import.md).
 ///
 /// Only where it is, how it is spoken to, its name and the key come in
 /// this way: nothing that changes what Claude Code runs with (an upstream's
@@ -18,19 +18,30 @@ class UpstreamImport {
     this.key = '',
   });
 
-  /// What the link asks: `baocode://provider/import`, then `v` (1),
+  /// What the link asks: `cccode://provider/import`, then `v` (1),
   /// `name`, `protocol` (`anthropic`, the default, `openai-chat` or
   /// `openai-responses`), `url` (the base URL, http or https) and `key`;
   /// null for any other URL, or one without a base URL to go to.
   static UpstreamImport? parse(String link) {
-    final uri = Uri.tryParse(link.trim());
+    final uri = Uri.tryParse(link);
     if (uri == null ||
+        link.isEmpty ||
+        link.contains(RegExp(r'[\s\\]')) ||
         !uri.isScheme(scheme) ||
         uri.host != 'provider' ||
-        uri.path != '/import') {
+        uri.userInfo.isNotEmpty ||
+        uri.hasPort ||
+        uri.path != '/import' ||
+        uri.query.isEmpty ||
+        uri.fragment.isNotEmpty) {
       return null;
     }
-    final query = uri.queryParameters;
+    late final Map<String, String> query;
+    try {
+      query = uri.queryParameters;
+    } on FormatException {
+      return null;
+    }
     if (query['v'] case final version? when version != '1') return null;
     final protocol = switch (query['protocol']) {
       null || '' => ProviderProtocol.anthropic,
@@ -48,8 +59,8 @@ class UpstreamImport {
     );
   }
 
-  /// The app's URL scheme (Info.plist, tool/baocode.iss).
-  static const scheme = 'baocode';
+  /// The app's URL scheme (Info.plist, tool/cccode.iss).
+  static const scheme = 'cccode';
 
   static const maxNameLength = 64;
   static const maxKeyLength = 512;

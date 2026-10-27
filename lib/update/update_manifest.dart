@@ -5,15 +5,15 @@ import 'dart:convert';
 import 'version.dart';
 
 /// Where the app looks for its next version: the release manifest
-/// dl.baocode.dev serves (docs/auto-update.md has its format).
+/// the download site serves (docs/auto-update.md has its format).
 const defaultManifestUrl = 'https://dl.baocode.dev/releases/latest.json';
 
 /// The environment variable that points the app at another manifest, to
 /// try a release before it is published (a local server's, say).
-const manifestUrlVariable = 'BAOCODE_UPDATE_URL';
+const manifestUrlVariable = 'CCCODE_UPDATE_URL';
 
 /// A manifest that cannot be used: not JSON, a field missing or wrong, a
-/// download not on baocode.dev.
+/// download not on the website.
 class UpdateManifestException implements Exception {
   const UpdateManifestException(this.message);
 
@@ -23,7 +23,7 @@ class UpdateManifestException implements Exception {
   String toString() => 'Invalid update manifest: $message';
 }
 
-/// Which download links a manifest may give: https on baocode.dev (or a
+/// Which download links a manifest may give: https on the website (or a
 /// subdomain of it), and [extraOrigins] besides — the origin of a manifest
 /// [manifestUrlVariable] points at, so a release can be tried from where it
 /// is served before it is published.

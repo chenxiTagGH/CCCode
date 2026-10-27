@@ -698,6 +698,6 @@ String? sessionId(Map<String, Object?> request) {
 String? promptCacheKey(Map<String, Object?> request) {
   final session = sessionId(request);
   if (session == null) return null;
-  final digest = sha256.convert(utf8.encode('baocode:$session'));
-  return 'baocode-${'$digest'.substring(0, 32)}';
+  final digest = sha256.convert(utf8.encode('cccode:$session'));
+  return 'cccode-${'$digest'.substring(0, 32)}';
 }

@@ -18,7 +18,7 @@ import 'package:baocode/workspace/workspace.dart';
 
 void main() {
   testWidgets('renders the chat history', (tester) async {
-    await tester.pumpWidget(BaoCodeApp(workspace: Workspace.mock()));
+    await tester.pumpWidget(CCCodeApp(workspace: Workspace.mock()));
 
     await tester.pump();
 
@@ -48,7 +48,7 @@ void main() {
         () => messenger.setMockMethodCallHandler(SystemChannels.platform, null),
       );
 
-      await tester.pumpWidget(BaoCodeApp(workspace: Workspace.mock()));
+      await tester.pumpWidget(CCCodeApp(workspace: Workspace.mock()));
       await tester.pump();
       final selectionArea = tester.widget<SelectionArea>(
         find.byType(SelectionArea),
@@ -78,7 +78,7 @@ void main() {
 
   testWidgets('scrollbar thumb jumps across the virtual feed', (tester) async {
     _scrollbarOnly();
-    await tester.pumpWidget(BaoCodeApp(workspace: Workspace.mock()));
+    await tester.pumpWidget(CCCodeApp(workspace: Workspace.mock()));
     await tester.pumpAndSettle();
     final controller = tester
         .widget<SuperListView>(find.byType(SuperListView))
@@ -158,7 +158,7 @@ void main() {
   });
 
   testWidgets('expands and collapses a thinking block', (tester) async {
-    await tester.pumpWidget(BaoCodeApp(workspace: Workspace.mock()));
+    await tester.pumpWidget(CCCodeApp(workspace: Workspace.mock()));
     await tester.pump();
     tester
         .widget<SuperListView>(find.byType(SuperListView))
@@ -187,7 +187,7 @@ void main() {
     // 2x, like a Retina display: the list's bottom edge can land mid-pixel.
     tester.view.devicePixelRatio = 2;
     addTearDown(tester.view.reset);
-    await tester.pumpWidget(BaoCodeApp(workspace: Workspace.mock()));
+    await tester.pumpWidget(CCCodeApp(workspace: Workspace.mock()));
     await tester.pump();
     final list = find.byType(SuperListView);
     final controller = tester.widget<SuperListView>(list).controller!;
@@ -274,7 +274,7 @@ void main() {
   });
 
   testWidgets('top fade only shows when content is above', (tester) async {
-    await tester.pumpWidget(BaoCodeApp(workspace: Workspace.mock()));
+    await tester.pumpWidget(CCCodeApp(workspace: Workspace.mock()));
     await tester.pump();
     // The two edge fades of the list's mask: top, then bottom.
     List<bool> fadesShown() {
@@ -303,7 +303,7 @@ void main() {
       'Chrome does', (
     tester,
   ) async {
-    await tester.pumpWidget(BaoCodeApp(workspace: Workspace.mock()));
+    await tester.pumpWidget(CCCodeApp(workspace: Workspace.mock()));
     for (var i = 0; i < 3; i++) {
       await tester.pump();
     }
@@ -326,7 +326,7 @@ void main() {
   testWidgets('a trackpad swipe up does not snap back to the bottom', (
     tester,
   ) async {
-    await tester.pumpWidget(BaoCodeApp(workspace: Workspace.mock()));
+    await tester.pumpWidget(CCCodeApp(workspace: Workspace.mock()));
     await tester.pump();
     final list = find.byType(SuperListView);
     final position = tester.widget<SuperListView>(list).controller!.position;
@@ -379,7 +379,7 @@ void main() {
   testWidgets('a drag beside the scrollbar, just missing it, selects '
       'nothing', (tester) async {
     _scrollbarOnly();
-    await tester.pumpWidget(BaoCodeApp(workspace: Workspace.mock()));
+    await tester.pumpWidget(CCCodeApp(workspace: Workspace.mock()));
     await tester.pump(const Duration(milliseconds: 500));
     final list = find.byType(SuperListView);
     final rect = tester.getRect(list);
@@ -418,7 +418,7 @@ void main() {
     tester,
   ) async {
     _scrollbarOnly();
-    await tester.pumpWidget(BaoCodeApp(workspace: Workspace.mock()));
+    await tester.pumpWidget(CCCodeApp(workspace: Workspace.mock()));
     await tester.pump();
     final list = find.byType(SuperListView);
     final position = tester.widget<SuperListView>(list).controller!.position;
@@ -480,7 +480,7 @@ void main() {
       () => messenger.setMockMethodCallHandler(SystemChannels.platform, null),
     );
 
-    await tester.pumpWidget(BaoCodeApp(workspace: Workspace.mock()));
+    await tester.pumpWidget(CCCodeApp(workspace: Workspace.mock()));
     await tester.pump();
     final list = find.byType(SuperListView);
 
@@ -589,7 +589,7 @@ void main() {
         return copied ?? '';
       }
 
-      await tester.pumpWidget(BaoCodeApp(workspace: Workspace.mock()));
+      await tester.pumpWidget(CCCodeApp(workspace: Workspace.mock()));
       await tester.pump();
 
       // Click at the start of the last message: the anchor.
@@ -684,7 +684,7 @@ void main() {
       () => messenger.setMockMethodCallHandler(SystemChannels.platform, null),
     );
 
-    await tester.pumpWidget(BaoCodeApp(workspace: Workspace.mock()));
+    await tester.pumpWidget(CCCodeApp(workspace: Workspace.mock()));
     await tester.pump();
     final anchor =
         tester.getTopLeft(find.textContaining('已完成修改').last) +

@@ -13,7 +13,7 @@ class TestSite {
   final String id;
   final String name;
 
-  /// What is asked: an answer of any status is the site reached.
+  /// What is asked: an answer of any status is the website reached.
   final Uri url;
 
   /// Its logo (assets/network/, from Iconify): in one color, drawn in

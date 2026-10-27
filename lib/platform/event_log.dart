@@ -58,7 +58,7 @@ class EventLog {
       _size = file.existsSync() ? file.lengthSync() : 0;
       _rollIfFull(0);
       _append(
-        '--- BaoCode $appVersionString · ${Platform.operatingSystem} '
+        '--- CCCode $appVersionString · ${Platform.operatingSystem} '
         '${Platform.operatingSystemVersion} · pid $pid ---\n',
       );
     }

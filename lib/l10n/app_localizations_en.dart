@@ -50,7 +50,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get languageSettingsDescription =>
-      'The language of BaoCode\'s menus, views and messages. Changes apply at once.';
+      'The language of CCCode\'s menus, views and messages. Changes apply at once.';
 
   @override
   String languageSettingsFollowSystemCurrent(String language) {
@@ -1406,7 +1406,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get menuContextPanel => 'Context Panel';
 
   @override
-  String get menuAboutBaoCode => 'About BaoCode';
+  String get menuAboutCCCode => 'About CCCode';
 
   @override
   String get windowShowSidebar => 'Show sidebar';
@@ -1446,14 +1446,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get browserNotConnected =>
-      'No browser is connected. Add BaoCode\'s extension to Chrome (or Edge, Brave, Arc) and agents can use the tabs you share with them.';
+      'No browser is connected. Add CCCode\'s extension to Chrome (or Edge, Brave, Arc) and agents can use the tabs you share with them.';
 
   @override
   String get browserNoSharedTab =>
-      'No tab is shared yet. Ask an agent to open a page, or click BaoCode in the browser toolbar to share the tab in front.';
+      'No tab is shared yet. Ask an agent to open a page, or click CCCode in the browser toolbar to share the tab in front.';
 
   @override
-  String get browserOtherApp => 'Another BaoCode is connected to the browser.';
+  String get browserOtherApp => 'Another CCCode is connected to the browser.';
 
   @override
   String get browserSharedTabs => 'Shared Tabs';
@@ -1466,7 +1466,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get browserDetached =>
-      'The browser stopped letting BaoCode see this tab.';
+      'The browser stopped letting CCCode see this tab.';
 
   @override
   String get browserReconnect => 'Reconnect';
@@ -1479,7 +1479,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get browserWatchHint =>
-      'Do it in the BaoCode tab of your browser. When you\'re done, click Done here or the BaoCode button in the browser\'s toolbar.';
+      'Do it in the CCCode tab of your browser. When you\'re done, click Done here or the CCCode button in the browser\'s toolbar.';
 
   @override
   String browserWatchSteps(int count) {
@@ -2072,7 +2072,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get iconPickerBrands => 'Logos';
 
   @override
-  String get iconPickerSiteIcon => 'Use the site\'s icon';
+  String get iconPickerSiteIcon => 'Use the website\'s icon';
 
   @override
   String iconPickerSiteIconNone(String host) {
@@ -3533,7 +3533,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get generalSettingsClaudeCoreDescription =>
-      'Claude Code CLI: Anthropic\'s own program, with this machine\'s sign-in and setup; pick it to use a Claude subscription. Built-in: comes with BaoCode, and uses only the models added in Settings → Models. The CLI is the default, downloaded for you if this machine has none. Changes apply to new sessions.';
+      'Claude Code CLI: Anthropic\'s own program, with this machine\'s sign-in and setup; pick it to use a Claude subscription. Built-in: comes with CCCode, and uses only the models added in Settings → Models. The CLI is the default, downloaded for you if this machine has none. Changes apply to new sessions.';
 
   @override
   String get generalSettingsClaudeCoreBuiltin => 'Built-in';
@@ -3668,7 +3668,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Closing the window hides it there and the agents keep running; its menu shows the agents waiting on you, and quits the app.';
 
   @override
-  String get trayShow => 'Show BaoCode';
+  String get trayShow => 'Show CCCode';
 
   @override
   String get trayWaiting => 'Waiting for You';
@@ -3684,7 +3684,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get trayQuit => 'Quit BaoCode';
+  String get trayQuit => 'Quit CCCode';
 
   @override
   String get attentionNeedsInput => 'Needs your input';
@@ -5220,9 +5220,9 @@ class AppLocalizationsEn extends AppLocalizations {
       count,
       locale: localeName,
       other:
-          'BaoCode does not know the context keys $keys: this keybinding never applies.',
+          'CCCode does not know the context keys $keys: this keybinding never applies.',
       one:
-          'BaoCode does not know the context key $keys: this keybinding never applies.',
+          'CCCode does not know the context key $keys: this keybinding never applies.',
     );
     return '$_temp0';
   }
@@ -5299,7 +5299,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String kbCannotReadKey(String key) {
-    return 'BaoCode cannot read the key “$key”: this keybinding never applies.';
+    return 'CCCode cannot read the key “$key”: this keybinding never applies.';
   }
 
   @override
@@ -5307,7 +5307,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get kbNotSupportedHover =>
-      'BaoCode does not have this command: the keybinding is kept, but does nothing.';
+      'CCCode does not have this command: the keybinding is kept, but does nothing.';
 
   @override
   String get kbPressKeys =>
@@ -5371,26 +5371,26 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dataDirChecking => 'Checking the folder…';
 
   @override
-  String get dataDirAlreadyHolds => 'The folder already holds BaoCode data';
+  String get dataDirAlreadyHolds => 'The folder already holds CCCode data';
 
   @override
   String get dataDirMoveBack =>
-      'Move BaoCode\'s data back to the default folder?';
+      'Move CCCode\'s data back to the default folder?';
 
   @override
-  String get dataDirMoveHere => 'Move BaoCode\'s data to this folder?';
+  String get dataDirMoveHere => 'Move CCCode\'s data to this folder?';
 
   @override
   String get dataDirUseAsIsDetail =>
-      'After a restart BaoCode uses the data there as it is; nothing is copied, and the current folder keeps yours.';
+      'After a restart CCCode uses the data there as it is; nothing is copied, and the current folder keeps yours.';
 
   @override
   String get dataDirCopyDetail =>
-      'BaoCode copies its settings, keybindings, language servers and state there, and uses that folder after a restart.';
+      'CCCode copies its settings, keybindings, language servers and state there, and uses that folder after a restart.';
 
   @override
   String get dataDirOtherFiles =>
-      'The folder holds other files: they stay, beside BaoCode\'s own.';
+      'The folder holds other files: they stay, beside CCCode\'s own.';
 
   @override
   String get dataDirUseItsData => 'Use Its Data';
@@ -5418,18 +5418,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get dataDirRestartTitle =>
-      'Restart BaoCode to use the new data folder';
+      'Restart CCCode to use the new data folder';
 
   @override
   String dataDirRestartDetail(String current, String next) {
-    return 'BaoCode keeps using $current until it restarts. The next start uses $next, and offers to remove what is left in the old one.';
+    return 'CCCode keeps using $current until it restarts. The next start uses $next, and offers to remove what is left in the old one.';
   }
 
   @override
   String get dataDirTheNewFolder => 'the new folder';
 
   @override
-  String get quitConfirmMessage => 'Quit BaoCode?';
+  String get quitConfirmMessage => 'Quit CCCode?';
 
   @override
   String get quitConfirmDetail =>
@@ -5467,7 +5467,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get dataDirDescription =>
-      'Where BaoCode keeps your settings, keybindings, language servers and its own state. Other programs keep files there too (the web view\'s caches); BaoCode never moves or removes those.';
+      'Where CCCode keeps your settings, keybindings, language servers and its own state. Other programs keep files there too (the web view\'s caches); CCCode never moves or removes those.';
 
   @override
   String get dataDirCurrentFolder => 'Current folder';
@@ -5498,13 +5498,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get dataDirSettingUnreadable =>
-      'BaoCode\'s data folder setting cannot be read';
+      'CCCode\'s data folder setting cannot be read';
 
   @override
-  String get dataDirCannotWrite => 'BaoCode cannot write to its data folder';
+  String get dataDirCannotWrite => 'CCCode cannot write to its data folder';
 
   @override
-  String get dataDirUnavailable => 'BaoCode\'s data folder is not available';
+  String get dataDirUnavailable => 'CCCode\'s data folder is not available';
 
   @override
   String dataDirWhereEnv(String variable) {
@@ -5513,7 +5513,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String dataDirWhereFixPointer(String file) {
-    return 'Fix or delete $file and try again; BaoCode changes it only if you choose another folder.';
+    return 'Fix or delete $file and try again; CCCode changes it only if you choose another folder.';
   }
 
   @override
@@ -5537,11 +5537,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get dataDirRemoveOldTitle =>
-      'Remove the data BaoCode left in its previous folder?';
+      'Remove the data CCCode left in its previous folder?';
 
   @override
   String dataDirRemoveOldDetail(String current, String items) {
-    return 'BaoCode now keeps its data in $current. Only its own items are removed from the previous folder ($items); the folder and everything else in it stay.';
+    return 'CCCode now keeps its data in $current. Only its own items are removed from the previous folder ($items); the folder and everything else in it stay.';
   }
 
   @override
@@ -5556,7 +5556,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String dataDirRemoveOldInUseDetail(String items) {
-    return 'Files in $items are in use, perhaps by another program. Everything else was removed; BaoCode offers to remove the rest the next time it starts.';
+    return 'Files in $items are in use, perhaps by another program. Everything else was removed; CCCode offers to remove the rest the next time it starts.';
   }
 
   @override
@@ -5782,7 +5782,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String shellCommandOccupied(String path, String name) {
-    return '$path already runs another app\'s \'$name\' command. Replace it with BaoCode\'s?';
+    return '$path already runs another app\'s \'$name\' command. Replace it with CCCode\'s?';
   }
 
   @override
@@ -5803,7 +5803,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get generalSettingsMainWindowDescription =>
-      'What BaoCode opens to: the agents, or the IDE windows (as Restore Windows says), never both. By default, wherever it was left when it last quit.';
+      'What CCCode opens to: the agents, or the IDE windows (as Restore Windows says), never both. By default, wherever it was left when it last quit.';
 
   @override
   String generalSettingsMainWindowLabel(String name) {
@@ -5861,7 +5861,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String claudePathInUseDownloaded(String version) {
-    return 'In use: Claude Code $version, downloaded by BaoCode';
+    return 'In use: Claude Code $version, downloaded by CCCode';
   }
 
   @override
@@ -6016,7 +6016,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String generalSettingsShellCommandDescription(String location) {
-    return 'Open files and folders in BaoCode from a terminal: \'code <path>\'. Installed at $location.';
+    return 'Open files and folders in CCCode from a terminal: \'code <path>\'. Installed at $location.';
   }
 
   @override
@@ -6315,11 +6315,25 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get modelsCcApiName => 'CC API';
+  String get modelsCcApiDescription => 'One-click access to Claude, GPT and Gemini';
+  String get modelsCcApiLogin => 'Log in to CC API';
+  String get modelsCcApiSignIn => 'Sign in to CC API';
+  String get modelsCcApiConnecting => 'Connecting';
+  String modelsCcApiConnected(int count) => 'Connected · $count models';
+  String get modelsCcApiRefresh => 'Refresh models';
+  String get modelsCcApiRefreshFailed => 'Failed to refresh models';
+  String get modelsCcApiNeedsLogin => 'Log in again';
+  String get modelsCcApiNeedsLoginDetail => 'Sign-in required';
+  String get modelsCcApiUnavailable => 'CC API is temporarily unavailable';
+  String get modelsCcApiRetry => 'Retry';
+  String get modelsCcApiFailed => 'Temporarily unavailable';
+
   String get modelsFeaturedWhy => 'Why am I seeing this?';
 
   @override
   String get modelsFeaturedNote =>
-      'These sites are officially listed by BaoCode';
+      'These sites are officially listed by CCCode';
 
   @override
   String get modelsFeaturedNoteHow =>
@@ -6386,7 +6400,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get modelsImportInvalidDetail =>
-      'It needs a base URL (http or https) and a protocol BaoCode knows. Ask the site for a new link, or add the upstream by hand in Settings → Models.';
+      'It needs a base URL (http or https) and a protocol CCCode knows. Ask the website for a new link, or add the upstream by hand in Settings → Models.';
 
   @override
   String get modelsAddProvider => 'Add Upstream';
@@ -6571,7 +6585,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get modelsIconDescription =>
-      'Heads its models in the model picker: a maker\'s logo, the site\'s icon or a picture of your own. Unset, the maker\'s logo its base URL names.';
+      'Heads its models in the model picker: a maker\'s logo, the website\'s icon or a picture of your own. Unset, the maker\'s logo its base URL names.';
 
   @override
   String get modelsIconChange => 'Change Icon';
@@ -6724,7 +6738,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get modelsRolesDescription =>
-      'Which model Claude Code uses for each part of its work. Unset, the model picked stands in. All but the main model may be another upstream\'s: BaoCode\'s local proxy sends their requests there.';
+      'Which model Claude Code uses for each part of its work. Unset, the model picked stands in. All but the main model may be another upstream\'s: CCCode\'s local proxy sends their requests there.';
 
   @override
   String get modelsRoleUnset => 'Unset';
@@ -7048,7 +7062,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get updatesSettingsDescription =>
-      'BaoCode looks for new versions on baocode.dev.';
+      'CCCode looks for new versions on the website.';
 
   @override
   String get updateCurrentVersion => 'Current Version';
@@ -7068,31 +7082,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String get updateChecking => 'Checking for updates…';
 
   @override
-  String get updateUpToDate => 'BaoCode is up to date.';
+  String get updateUpToDate => 'CCCode is up to date.';
 
   @override
   String updateAvailable(String version) {
-    return 'BaoCode $version is available.';
+    return 'CCCode $version is available.';
   }
 
   @override
   String updateReady(String version) {
-    return 'BaoCode $version has been downloaded. Restart to update.';
+    return 'CCCode $version has been downloaded. Restart to update.';
   }
 
   @override
   String updateDownloading(String version) {
-    return 'Downloading BaoCode $version…';
+    return 'Downloading CCCode $version…';
   }
 
   @override
   String updateDownloadingProgress(String version, int percent) {
-    return 'Downloading BaoCode $version… $percent%';
+    return 'Downloading CCCode $version… $percent%';
   }
 
   @override
   String updateMandatory(String version) {
-    return 'This version of BaoCode is no longer supported. Update to $version to keep using it.';
+    return 'This version of CCCode is no longer supported. Update to $version to keep using it.';
   }
 
   @override
@@ -7110,7 +7124,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String updateFailed(String error) {
-    return 'Couldn\'t update BaoCode: $error';
+    return 'Couldn\'t update CCCode: $error';
   }
 
   @override
@@ -7124,11 +7138,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get updateUnsupported =>
-      'This build of BaoCode doesn\'t update itself.';
+      'This build of CCCode doesn\'t update itself.';
 
   @override
   String updateManual(String reason) {
-    return 'BaoCode can\'t update itself here ($reason). Download the new version from baocode.dev.';
+    return 'CCCode can\'t update itself here ($reason). Download the new version from the website.';
   }
 
   @override
@@ -7136,7 +7150,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String updateUnfinished(String version, String current) {
-    return 'BaoCode $version wasn\'t installed: this is still $current. Try again from Settings > Updates, or download it from baocode.dev.';
+    return 'CCCode $version wasn\'t installed: this is still $current. Try again from Settings > Updates, or download it from the website.';
   }
 
   @override
@@ -7155,7 +7169,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get updateModeDescription =>
-      'Whether BaoCode looks for new versions by itself (update.mode).';
+      'Whether CCCode looks for new versions by itself (update.mode).';
 
   @override
   String updateModeLabel(String name) {
@@ -7176,7 +7190,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get diagnosticsDescription =>
-      'Send BaoCode\'s error logs to its developers to help track down a problem. Nothing is sent until you upload.';
+      'Send CCCode\'s error logs to its developers to help track down a problem. Nothing is sent until you upload.';
 
   @override
   String get diagnosticsUpload => 'Upload…';
@@ -7227,7 +7241,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get diagnosticsUploadedDetail =>
-      'Give this ID to BaoCode\'s developers so they can find these logs.';
+      'Give this ID to CCCode\'s developers so they can find these logs.';
 
   @override
   String diagnosticsOmittedDumps(int count) {
@@ -7568,11 +7582,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get generalSettingsContextMenuDescription =>
-      'Adds \"Open with BaoCode\" (a new agent) and \"Open with Fast Ide\" (a new IDE window) to the context menu of files, folders and a folder\'s background.';
+      'Adds \"Open with CCCode\" (a new agent) and \"Open with Fast Ide\" (a new IDE window) to the context menu of files, folders and a folder\'s background.';
 
   @override
   String get generalSettingsContextMenuMacNote =>
-      'Finder\'s own setting is in System Settings\' extensions, where the BaoCode extension can also be turned on and off.';
+      'Finder\'s own setting is in System Settings\' extensions, where the CCCode extension can also be turned on and off.';
 
   @override
   String get generalSettingsContextMenuOn => 'On';
@@ -7788,7 +7802,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get updateButton => 'Update';
 
   @override
-  String get tipsSetupTitle => 'Set Up BaoCode';
+  String get tipsSetupTitle => 'Set Up CCCode';
 
   @override
   String tipsSetupCount(int done, int total) {
@@ -7822,7 +7836,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String tipsUpdated(String version, String features) {
-    return 'BaoCode was updated to $version. New: $features.';
+    return 'CCCode was updated to $version. New: $features.';
   }
 
   @override
@@ -7837,7 +7851,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tipContextMenuBody =>
-      'Open files and folders in BaoCode from their context menu.';
+      'Open files and folders in CCCode from their context menu.';
 
   @override
   String tipShellCommandTitle(String name) {
@@ -7846,7 +7860,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String tipShellCommandBody(String name) {
-    return 'Open folders in BaoCode from a terminal: $name <path>.';
+    return 'Open folders in CCCode from a terminal: $name <path>.';
   }
 
   @override
@@ -7864,14 +7878,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cmdShowSetupGuide => 'Show Setup Guide';
 
   @override
-  String get cmdStarOnGitHub => 'Star BaoCode on GitHub';
+  String get cmdStarOnGitHub => 'Star CCCode on GitHub';
 
   @override
-  String get starPromptMessage => 'Enjoying BaoCode?';
+  String get starPromptMessage => 'Enjoying CCCode?';
 
   @override
   String get starPromptDetail =>
-      'BaoCode is free and open source. If it helps you, a star on GitHub helps other people find it.';
+      'CCCode is free and open source. If it helps you, a star on GitHub helps other people find it.';
 
   @override
   String get starPromptStar => 'Star on GitHub';
@@ -8007,14 +8021,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get networkSettingsDescription =>
-      'How BaoCode and the Claude Code it starts reach the internet.';
+      'How CCCode and the Claude Code it starts reach the internet.';
 
   @override
   String get networkProxy => 'Proxy';
 
   @override
   String get networkProxyDescription =>
-      'The proxy for BaoCode and Claude Code (http.proxyMode). System Proxy follows the system\'s settings, such as Clash\'s system proxy. New sessions take a change; restart a running one for it.';
+      'The proxy for CCCode and Claude Code (http.proxyMode). System Proxy follows the system\'s settings, such as Clash\'s system proxy. New sessions take a change; restart a running one for it.';
 
   @override
   String networkProxyLabel(String name) {
@@ -8074,7 +8088,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get networkProxyStatusAutoConfig =>
-      'Direct: the system sets its proxy with an auto-config (PAC) file, which BaoCode doesn\'t follow. Turn on Clash\'s system proxy, or enter the address manually.';
+      'Direct: the system sets its proxy with an auto-config (PAC) file, which CCCode doesn\'t follow. Turn on Clash\'s system proxy, or enter the address manually.';
 
   @override
   String get networkProxyRefresh => 'Detect Again';
@@ -8156,7 +8170,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get extsCapabilityPartialDetail =>
-      'Its themes apply; the rest of it does nothing in BaoCode.';
+      'Its themes apply; the rest of it does nothing in CCCode.';
 
   @override
   String extsEngineIncompatible(String current, String requested) {
@@ -8367,7 +8381,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get extsCapabilityUnsupportedDetail =>
-      'It has no color or file icon theme: BaoCode only uses themes from extensions.';
+      'It has no color or file icon theme: CCCode only uses themes from extensions.';
 
   @override
   String get extsFindingCode => 'Its code does not run.';
@@ -8480,7 +8494,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get mobileSettingsDescription =>
-      'Follow and drive this computer\'s agents from BaoCode on your phone, over the local network or the internet. What goes between them is end-to-end encrypted.';
+      'Follow and drive this computer\'s agents from CCCode on your phone, over the local network or the internet. What goes between them is end-to-end encrypted.';
 
   @override
   String get mobileAllow => 'Allow Phones to Connect';
@@ -8545,7 +8559,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get mobileRelayDescription =>
-      'Reach this computer through BaoCode\'s relay when none of its addresses can be reached. Coming later.';
+      'Reach this computer through CCCode\'s relay when none of its addresses can be reached. Coming later.';
 
   @override
   String get mobileRelayUnavailable => 'Not Available Yet';
@@ -8555,7 +8569,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get mobilePairDescription =>
-      'Scan the code with BaoCode on the phone (Me → Paired computers → Pair a computer), or pick this computer under Nearby Computers there.';
+      'Scan the code with CCCode on the phone (Me → Paired computers → Pair a computer), or pick this computer under Nearby Computers there.';
 
   @override
   String get mobilePairShow => 'Show QR Code';
@@ -9117,7 +9131,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get stashImplement => 'Implement in BaoCode';
+  String get stashImplement => 'Implement in CCCode';
 
   @override
   String get stashImplementHow => 'How should the agent work on it?';
@@ -9234,7 +9248,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get stashSettingsDirectoryRestart =>
-      'Takes effect after BaoCode restarts.';
+      'Takes effect after CCCode restarts.';
 
   @override
   String get stashAll => 'All';
@@ -9370,7 +9384,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String accountsSignOutDetail(String forge) {
-    return 'The token is deleted from this computer. To revoke BaoCode\'s access altogether, revoke it in your $forge settings too.';
+    return 'The token is deleted from this computer. To revoke CCCode\'s access altogether, revoke it in your $forge settings too.';
   }
 
   @override
@@ -9416,7 +9430,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String accountsBrowserDetail(String host) {
-    return 'Enter this code on $host to let BaoCode access your account:';
+    return 'Enter this code on $host to let CCCode access your account:';
   }
 
   @override
@@ -9635,7 +9649,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get stashWelcomeAgent =>
-      'Click Implement in BaoCode, or mention it in a conversation; the conversation and the stash stay linked.';
+      'Click Implement in CCCode, or mention it in a conversation; the conversation and the stash stay linked.';
 
   @override
   String get stashWelcomeTrackTitle => 'See how it goes';
@@ -9707,7 +9721,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get browserSettingsNotRunningDescription =>
-      'Open a browser with BaoCode\'s extension: it connects automatically.';
+      'Open a browser with CCCode\'s extension: it connects automatically.';
 
   @override
   String get browserSettingsSandboxed =>
@@ -9715,7 +9729,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get browserSettingsSandboxedDescription =>
-      'Their sandbox keeps BaoCode\'s helper from running. Install the browser from its own .deb or .rpm package instead, such as Google Chrome from google.com/chrome.';
+      'Their sandbox keeps CCCode\'s helper from running. Install the browser from its own .deb or .rpm package instead, such as Google Chrome from google.com/chrome.';
 
   @override
   String browserSettingsConnected(String browser) {
@@ -9738,7 +9752,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get browserSettingsAppOld =>
-      'The extension is newer than this BaoCode. Update BaoCode.';
+      'The extension is newer than this CCCode. Update CCCode.';
 
   @override
   String get browserSettingsInstall => 'Get the Extension';
@@ -9771,7 +9785,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get browserHistoryDescription =>
-      'What the tabs shared with BaoCode do is kept as it happens, no recording needed: the pages, the requests, console errors and warnings. Agents look back at it when you ask (“it failed when I saved”). Kept on this computer; cookies and tokens are not.';
+      'What the tabs shared with CCCode do is kept as it happens, no recording needed: the pages, the requests, console errors and warnings. Agents look back at it when you ask (“it failed when I saved”). Kept on this computer; cookies and tokens are not.';
 
   @override
   String get browserHistoryDetailed => 'Detailed history';
@@ -9812,14 +9826,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get browserWelcomeLead =>
-      'With BaoCode\'s extension, agents open pages, read them, click and type in your own Chrome, signed in as you are.';
+      'With CCCode\'s extension, agents open pages, read them, click and type in your own Chrome, signed in as you are.';
 
   @override
   String get browserWelcomeSharedTitle => 'Only the tabs you share';
 
   @override
   String get browserWelcomeShared =>
-      'They work in the yellow BaoCode tab group alone; your other tabs stay yours.';
+      'They work in the yellow CCCode tab group alone; your other tabs stay yours.';
 
   @override
   String get browserWelcomeWatchTitle => 'Watch it work';
@@ -9853,7 +9867,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get browserWelcomeTry =>
-      'Try telling an agent: “Open baocode.dev and look at the download page.”';
+      'Try telling an agent: “Open the website and look at the download page.”';
 
   @override
   String get browserWelcomeUnpacked => 'Developer Mode Zip';
@@ -9875,7 +9889,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get modelWelcomeLead =>
-      'BaoCode runs your agents on a model of your choosing. Add an upstream, a service with an API key, and its models are ready to use.';
+      'CCCode runs your agents on a model of your choosing. Add an upstream, a service with an API key, and its models are ready to use.';
 
   @override
   String get modelWelcomeAnyTitle => 'Any upstream';
@@ -9932,7 +9946,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get claudeCoreHint =>
-      'This chat runs on BaoCode\'s built-in core. We recommend the Claude Code core for the fullest experience; it\'s downloaded for you if needed.';
+      'This chat runs on CCCode\'s built-in core. We recommend the Claude Code core for the fullest experience; it\'s downloaded for you if needed.';
 
   @override
   String get claudeCoreHintSwitch => 'Switch to Claude Code';
@@ -10091,7 +10105,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sshServerCoreBuiltinHint =>
-      'BaoCode\'s own core: it runs on the upstreams of Settings → Models.';
+      'CCCode\'s own core: it runs on the upstreams of Settings → Models.';
 
   @override
   String get sshServerCoreCliHint =>
@@ -10163,39 +10177,39 @@ class AppLocalizationsEn extends AppLocalizations {
       'The server could not be reached: check the address, port and network.';
 
   @override
-  String get channelSetupTitle => 'Welcome to BaoCode';
+  String get channelSetupTitle => 'Welcome to CCCode';
 
   @override
   String get channelSetupLead =>
-      'Finish your first-time setup on baocode.dev. It takes about 10 seconds.';
+      'Finish your first-time setup on the website. It takes about 10 seconds.';
 
   @override
   String get channelSetupStepTitle => 'Finish setup in your browser';
 
   @override
   String get channelSetupStep =>
-      'BaoCode opens baocode.dev in your browser. Once the page says it\'s done, BaoCode continues on its own.';
+      'CCCode opens the website in your browser. Once the page says it\'s done, CCCode continues on its own.';
 
   @override
   String get channelSetupWaitingTitle => 'Waiting for your browser…';
 
   @override
   String get channelSetupWaiting =>
-      'Once the page says it\'s done, BaoCode continues on its own. Closed the page by mistake? Open it again.';
+      'Once the page says it\'s done, CCCode continues on its own. Closed the page by mistake? Open it again.';
 
   @override
   String get channelSetupOpenFailedTitle => 'Your browser didn\'t open';
 
   @override
   String get channelSetupOpenFailed =>
-      'Copy this address and open it in your browser. Once the page says it\'s done, BaoCode continues on its own.';
+      'Copy this address and open it in your browser. Once the page says it\'s done, CCCode continues on its own.';
 
   @override
   String get channelSetupAddressCopied => 'Copied';
 
   @override
   String get channelSetupOffline =>
-      'Can\'t reach baocode.dev. You need to be online to finish setup.';
+      'Can\'t reach the website. You need to be online to finish setup.';
 
   @override
   String get channelSetupRetry => 'Retry';
@@ -10225,7 +10239,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get channelSetupLinkOther =>
-      'That link is for another BaoCode install. Use the page this BaoCode opened.';
+      'That link is for another CCCode install. Use the page this CCCode opened.';
 
   @override
   String get channelSetupTrouble => 'Having trouble?';
@@ -10242,7 +10256,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get channelSetupPrivate =>
-      'The page only tells BaoCode where you heard of it, like a video or a website.';
+      'The page only tells CCCode where you heard of it, like a video or a website.';
 
   @override
   String get channelSetupFindingTitle => 'Getting your channel ready…';
@@ -10251,18 +10265,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get channelSetupFinding => 'Just a moment.';
 
   @override
-  String get channelSetupSiteOfflineTitle => 'Can\'t reach baocode.dev';
+  String get channelSetupSiteOfflineTitle => 'Can\'t reach the website';
 
   @override
   String get channelSetupSiteOffline =>
-      'BaoCode needs to be online to read your channel. Check your connection and retry.';
+      'CCCode needs to be online to read your channel. Check your connection and retry.';
 
   @override
   String get channelSetupUnavailableTitle => 'This channel isn\'t available';
 
   @override
   String get channelSetupUnavailable =>
-      'The channel this installer came from doesn\'t have accounts set up yet. If you downloaded it through another channel, confirm where you came from in your browser; otherwise contact whoever gave you the installer, or download the standard edition from baocode.dev.';
+      'The channel this installer came from doesn\'t have accounts set up yet. If you downloaded it through another channel, confirm where you came from in your browser; otherwise contact whoever gave you the installer, or download the standard edition from the website.';
 
   @override
   String get channelSetupConfirmAgain => 'Confirm in Browser';
@@ -10308,7 +10322,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String channelAccountSignOutDetail(String channel) {
-    return 'You\'ll need to sign in to $channel again to keep using BaoCode.';
+    return 'You\'ll need to sign in to $channel again to keep using CCCode.';
   }
 
   @override
@@ -10570,7 +10584,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get stashImplementEmpty =>
-      'Write something first, then implement it in BaoCode';
+      'Write something first, then implement it in CCCode';
 
   @override
   String stashIssueDuplicateBanner(String issue, String stash) {

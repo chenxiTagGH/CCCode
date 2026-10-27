@@ -13,10 +13,10 @@ enum ChannelStage {
   /// Set up: reading what its channel's site lists.
   finding,
 
-  /// The site could not be read, nor was it before.
+  /// The CCCode website could not be read, nor was it before.
   offline,
 
-  /// Not a channel the site lists (or not one at all: the user did not
+  /// Not a channel the website lists (or not one at all: the user did not
   /// come from one), or one without an account site: not to be used, but
   /// asked of the browser once more ([ChannelGate.confirmAgain]).
   unavailable,
@@ -28,12 +28,12 @@ enum ChannelStage {
   ready,
 }
 
-/// Reads a channel's entry from the site: null for one not listed; throws
-/// when the site could not be read.
+/// Reads a channel's entry from the website: null for one not listed; throws
+/// when the website could not be read.
 typedef ChannelEntryFetch = Future<ChannelEntry?> Function(String id);
 
 /// The channel build's way in: set up ([setup], while it is not), its
-/// channel's account site read from the site (kept, for when it cannot be
+/// channel's account site read from the website (kept, for when it cannot be
 /// read), and the user signed in there ([account]). Every window shows the
 /// welcome till it is [ChannelStage.ready], and again once signed out.
 class ChannelGate extends ChangeNotifier {
@@ -73,7 +73,7 @@ class ChannelGate extends ChangeNotifier {
   bool _asked = false;
   String? _language;
 
-  /// The channel as the site lists it, once read.
+  /// The channel as the website lists it, once read.
   ChannelShown? get channel => _channel;
 
   /// The account on its site, once there is one.
@@ -102,7 +102,7 @@ class ChannelGate extends ChangeNotifier {
   }
 
   /// Reads the channel's entry, in [language] (`zh`, `en`), once set up:
-  /// what was kept, at once (done then), then the site's ([fetched]), kept
+  /// what was kept, at once (done then), then the website's ([fetched]), kept
   /// in its place.
   Future<void> find(String language) async {
     _language = language;
@@ -124,7 +124,7 @@ class ChannelGate extends ChangeNotifier {
     fetched = _fetch(id, language);
   }
 
-  /// [find] once more: the site not read, or the channel not listed, the
+  /// [find] once more: the website not read, or the channel not listed, the
   /// last time.
   Future<void> retry() async {
     if (_finding) return;
@@ -134,7 +134,7 @@ class ChannelGate extends ChangeNotifier {
 
   /// [ChannelStage.unavailable]: asks the browser where the user came from
   /// once more, as the setup did. They might have come by another channel
-  /// since, whose download replaces the one before (the site keeps the
+  /// since, whose download replaces the one before (the website keeps the
   /// latest in their browser). The setup's stage till it answers, then the
   /// channel it says.
   void confirmAgain() {
@@ -147,7 +147,7 @@ class ChannelGate extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// The site's entry read, after [find]: done once it is (or could not
+  /// The CCCode website's entry read, after [find]: done once it is (or could not
   /// be).
   Future<void> fetched = Future.value();
 

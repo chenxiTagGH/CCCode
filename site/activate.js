@@ -1,14 +1,14 @@
-// The channel build's first start: BaoCode opens
+// The channel build's first start: CCCode opens
 //
 //   https://baocode.dev/activate#i=<install id>
 //
 // and waits (`&again=<id>` too when it asks once more: its channel not one
 // with accounts, the visitor might have come by another since, which this
 // browser now keeps). This page sends stats.baocode.dev where the visitor came to
-// the site from, as site.js kept it in this browser, and BaoCode, asking
-// there, goes on. Should BaoCode not hear of it (its network, the server
-// down), the page hands it over itself: baocode://activate?…, opened or
-// pasted into BaoCode. Nothing kept in this browser: the link to open in
+// the site from, as site.js kept it in this browser, and CCCode, asking
+// there, goes on. Should CCCode not hear of it (its network, the server
+// down), the page hands it over itself: cccode://activate?…, opened or
+// pasted into CCCode. Nothing kept in this browser: the link to open in
 // the one that came to the site, or on without. The page's words are in
 // its HTML (each language's).
 (() => {
@@ -40,7 +40,7 @@
     sent = true;
     const source = kept?.source || 'none';
     const value = kept?.value || null;
-    const link = `baocode://activate?i=${id}&s=${source}${value ? `&c=${encodeURIComponent(value)}` : ''}`;
+    const link = `cccode://activate?i=${id}&s=${source}${value ? `&c=${encodeURIComponent(value)}` : ''}`;
     root.querySelector('[data-open]').href = link;
     root.querySelector('[data-link]').textContent = link;
     show('sending');

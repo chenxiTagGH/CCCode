@@ -54,8 +54,8 @@ void main() {
   final previous = SshHosts.instance;
 
   setUp(() {
-    dataDir = Directory.systemTemp.createTempSync('baocode-remote-data-');
-    project = Directory.systemTemp.createTempSync('baocode-remote-project-');
+    dataDir = Directory.systemTemp.createTempSync('cccode-remote-data-');
+    project = Directory.systemTemp.createTempSync('cccode-remote-project-');
     root = project.resolveSymbolicLinksSync();
     connector = MemoryConnector(dataDir.path);
     hosts = SshHosts.instance = SshHosts(connect: connector.call);
@@ -241,8 +241,8 @@ void main() {
 
       connector.failure = const SshConnectException(
         SshFailure.server,
-        'The BaoCode server for Linux x64 could not be downloaded',
-        detail: 'https://dl.baocode.dev/x.gz: HTTP 404',
+        'The CCCode server for Linux x64 could not be downloaded',
+        detail: './x.gz: HTTP 404',
       );
       await tester.runAsync(
         () => hosts['dev'].ready.then((_) {}, onError: (_) {}),
@@ -251,14 +251,14 @@ void main() {
       expect(
         find.text(
           'Could not connect to dev: '
-          'The BaoCode server for Linux x64 could not be downloaded',
+          'The CCCode server for Linux x64 could not be downloaded',
         ),
         findsOneWidget,
       );
       await tester.tap(find.text('Details'));
       await tester.pump();
       expect(
-        find.text('https://dl.baocode.dev/x.gz: HTTP 404'),
+        find.text('./x.gz: HTTP 404'),
         findsOneWidget,
       );
 
@@ -432,7 +432,7 @@ void main() {
       // The CLI there, asked for.
       ClaudeCore.current = () => ClaudeCore.cli;
       addTearDown(() => ClaudeCore.current = () => ClaudeCore.fallback);
-      home = Directory.systemTemp.createTempSync('baocode-remote-home-');
+      home = Directory.systemTemp.createTempSync('cccode-remote-home-');
       config = Directory(p.join(home.path, '.claude'))..createSync();
       fake = File(p.join(home.path, 'fake-claude'))
         ..writeAsStringSync(r'''#!/bin/sh
@@ -456,8 +456,8 @@ printf '%s\n' "$line"
       final environment = {
         'PATH': '/usr/bin:/bin',
         'HOME': home.path,
-        'BAOCODE_CLAUDE_PATH': fake.path,
-        'BAOCODE_CLAUDE_DATA_PATH': config.path,
+        'CCCODE_CLAUDE_PATH': fake.path,
+        'CCCODE_CLAUDE_DATA_PATH': config.path,
         'CLAUDE_CONFIG_DIR': config.path,
       };
       CliLocator.use(environment);
@@ -574,12 +574,12 @@ printf '%s\n' "$line"
       },
     );
 
-    test('a build named by BAOCODE_CLAUDE_PATH that is not there: says '
+    test('a build named by CCCODE_CLAUDE_PATH that is not there: says '
         'so, nothing installed instead', () async {
       final environment = {
         'PATH': '/usr/bin:/bin',
         'HOME': home.path,
-        'BAOCODE_CLAUDE_PATH': p.join(home.path, 'missing'),
+        'CCCODE_CLAUDE_PATH': p.join(home.path, 'missing'),
       };
       CliLocator.use(environment);
       ClaudeEnvironment.use(environment);
@@ -606,7 +606,7 @@ printf '%s\n' "$line"
     final self = ServerClaude.selfCommand;
 
     setUp(() async {
-      home = Directory.systemTemp.createTempSync('baocode-remote-core-');
+      home = Directory.systemTemp.createTempSync('cccode-remote-core-');
       api = await FakeApi.start(errands: (_) => Reply.text('A title'));
       ClaudeCore.current = () => ClaudeCore.builtin;
       // On the host, as its server saved in the app says.
@@ -635,7 +635,7 @@ printf '%s\n' "$line"
     Map<String, String> hostEnvironment({bool key = true}) => {
       'PATH': Platform.environment['PATH'] ?? '/usr/bin:/bin',
       'HOME': home.path,
-      'BAOCODE_CLAUDE_DATA_PATH': p.join(home.path, '.claude'),
+      'CCCODE_CLAUDE_DATA_PATH': p.join(home.path, '.claude'),
       if (key) ...{
         'ANTHROPIC_API_KEY': 'sk-host',
         'ANTHROPIC_BASE_URL': api.baseUrl,
@@ -716,7 +716,7 @@ printf '%s\n' "$line"
       Process.runSync('chmod', ['+x', fake.path]);
       final environment = {
         ...hostEnvironment(),
-        'BAOCODE_CLAUDE_PATH': fake.path,
+        'CCCODE_CLAUDE_PATH': fake.path,
       };
       CliLocator.use(environment);
       ClaudeEnvironment.use(environment);

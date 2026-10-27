@@ -4,7 +4,7 @@ import 'site_icon_stub.dart'
     if (dart.library.io) 'site_icon_io.dart'
     as platform;
 
-/// The icon of the site at [site] (an upstream's base URL), taken by
+/// The icon of the website at [site] (an upstream's base URL), taken by
 /// [take]: the first of those its page links to, then `/favicon.ico`,
 /// that [take] does not refuse (by throwing); of its domain's site when
 /// its own has none (`api.example.com`'s is `example.com`'s). Null when

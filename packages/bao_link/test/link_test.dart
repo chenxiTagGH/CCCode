@@ -198,7 +198,7 @@ void main() {
           DirectEndpoint('home.example.com', 443),
           DirectEndpoint('link.example.com', 443, secure: true),
         ],
-        relay: RelayEndpoint(Uri.parse('wss://relay.baocode.dev'), 'room'),
+        relay: RelayEndpoint(Uri.parse('wss://relay.the website'), 'room'),
       );
       final parsed = PairingOffer.parse(offer.uri);
       expect(parsed.name, offer.name);
@@ -236,7 +236,7 @@ void main() {
       expect(DirectEndpoint.parse('wss://link.example.com'), tls);
       expect(DirectEndpoint.parse('https://link.example.com/'), tls);
       expect(
-        DirectEndpoint.parse('WSS://link.example.com:443/baocode-link'),
+        DirectEndpoint.parse('WSS://link.example.com:443/cccode-link'),
         tls,
       );
       expect(

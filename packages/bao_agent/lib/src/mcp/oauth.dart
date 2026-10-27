@@ -197,7 +197,7 @@ class McpOAuth {
     if ((clientId == null || registeredFor != redirect) &&
         registration != null) {
       final registered = await _post(Uri.parse(registration), {
-        'client_name': 'BaoCode',
+        'client_name': 'CCCode',
         'redirect_uris': [redirect],
         'grant_types': ['authorization_code', 'refresh_token'],
         'response_types': ['code'],
@@ -247,7 +247,7 @@ class McpOAuth {
           request.response.headers.contentType = ContentType.html;
           request.response.write(
             ok
-                ? '<html><body style="font-family:sans-serif"><h3>Signed in to $name.</h3>You can close this window and return to BaoCode.</body></html>'
+                ? '<html><body style="font-family:sans-serif"><h3>Signed in to $name.</h3>You can close this window and return to CCCode.</body></html>'
                 : '<html><body style="font-family:sans-serif"><h3>Sign-in failed.</h3>${const HtmlEscape().convert(query['error_description'] ?? query['error'] ?? 'Unexpected response')}</body></html>',
           );
           await request.response.close();

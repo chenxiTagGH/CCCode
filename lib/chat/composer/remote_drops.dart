@@ -9,7 +9,7 @@ import 'composer_files.dart';
 /// its own under [folder], and their tags are of the copies.
 abstract final class RemoteDrops {
   /// Where on the host they go: the host is Linux or macOS.
-  static const folder = '/tmp/baocode-drops';
+  static const folder = '/tmp/cccode-drops';
 
   /// [folder], and as macOS resolves it: the agent may read what is in
   /// them without asking (see [ClaudeLaunch.readable]).

@@ -1,5 +1,5 @@
 // The perf app's scenarios: what the user and the agents do in each, and
-// which parts of it are measured (its phases). Each runs in a BaoCodeApp of
+// which parts of it are measured (its phases). Each runs in a CCCodeApp of
 // its own, on a Workspace whose agents are PerfTransport's.
 
 import 'dart:async';
@@ -121,7 +121,7 @@ class PerfContext {
   static ui.PointerDataPacketCallback? desktopPointers;
 
   static void log(String message) =>
-      stderr.writeln('BAOCODE_PERF_LOG $message');
+      stderr.writeln('CCCODE_PERF_LOG $message');
 
   /// Measures [body] as the phase [name].
   Future<void> phase(
@@ -699,17 +699,17 @@ final List<PerfScenario> _scenarios = [
   ),
   PerfScenario(
     'real.history',
-    'A real session, a Claude Code transcript (BAOCODE_PERF_TRANSCRIPT; '
-        'BAOCODE_PERF_TRANSCRIPT_TURNS, its first turns only), loaded turn '
+    'A real session, a Claude Code transcript (CCCODE_PERF_TRANSCRIPT; '
+        'CCCODE_PERF_TRANSCRIPT_TURNS, its first turns only), loaded turn '
         'by turn, the wheel spun through it, an answer streamed below it.',
     (c) async {
-      final path = Platform.environment['BAOCODE_PERF_TRANSCRIPT'];
-      c.check(path != null, 'BAOCODE_PERF_TRANSCRIPT names a transcript');
+      final path = Platform.environment['CCCODE_PERF_TRANSCRIPT'];
+      c.check(path != null, 'CCCODE_PERF_TRANSCRIPT names a transcript');
       if (path == null) return;
       final turns = readTranscript(
         path,
         limit: int.tryParse(
-          Platform.environment['BAOCODE_PERF_TRANSCRIPT_TURNS'] ?? '',
+          Platform.environment['CCCODE_PERF_TRANSCRIPT_TURNS'] ?? '',
         ),
       );
       await c.settle();

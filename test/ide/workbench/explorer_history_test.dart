@@ -200,7 +200,7 @@ void main() {
   ]) {
     final calls = <MethodCall>[];
     final messenger = tester.binding.defaultBinaryMessenger;
-    const channel = MethodChannel('baocode/window');
+    const channel = MethodChannel('cccode/window');
     messenger.setMockMethodCallHandler(channel, (call) async {
       calls.add(call);
       return answers.containsKey(call.method) ? answers[call.method] : true;

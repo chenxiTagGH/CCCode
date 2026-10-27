@@ -29,7 +29,7 @@ Future<Workspace> pumpApp(WidgetTester tester, {double width = 1400}) async {
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
   final workspace = Workspace.mock();
-  await tester.pumpWidget(BaoCodeApp(workspace: workspace));
+  await tester.pumpWidget(CCCodeApp(workspace: workspace));
   await tester.pump();
   return workspace;
 }
@@ -544,7 +544,7 @@ void main() {
     var room = <String, double>{'width': 400, 'height': 0};
     final grown = <Object?>[];
     tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
-      const MethodChannel('baocode/window'),
+      const MethodChannel('cccode/window'),
       (call) async {
         switch (call.method) {
           case 'windowRoom':
@@ -597,7 +597,7 @@ void main() {
       'the window grows past the narrow width', (tester) async {
     final grown = <Object?>[];
     tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
-      const MethodChannel('baocode/window'),
+      const MethodChannel('cccode/window'),
       (call) async {
         switch (call.method) {
           case 'windowRoom':

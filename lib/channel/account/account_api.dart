@@ -39,7 +39,7 @@ class AccountProfile {
   final String name;
   final String? email;
 
-  /// What is left on the account, in US dollars; null when the site does
+  /// What is left on the account, in US dollars; null when the website does
   /// not say.
   final double? balance;
 
@@ -70,7 +70,7 @@ class AccountKey {
     this.platform,
   });
 
-  /// The site's, as text.
+  /// The CCCode website's, as text.
   final String id;
   final String name;
 
@@ -78,7 +78,7 @@ class AccountKey {
   final String masked;
 
   /// The models the key is for (sub2api's group's platform: `anthropic`,
-  /// `openai`, `gemini`…), where the site says.
+  /// `openai`, `gemini`…), where the website says.
   final String? platform;
 
   /// [key] as a list shows it: its start and its end.
@@ -98,12 +98,12 @@ class AccountGroup {
     this.platform,
   });
 
-  /// What the site knows it by: sub2api's number, as text; new-api's name.
+  /// What the website knows it by: sub2api's number, as text; new-api's name.
   final String id;
   final String name;
   final String? description;
 
-  /// Its price against the site's own (1 the same); null where the site
+  /// Its price against the website's own (1 the same); null where the website
   /// gives none (new-api's `auto`, which picks one per call).
   final double? rate;
 
@@ -123,9 +123,9 @@ class AccountSignedOut implements Exception {
 }
 
 /// What stands in front of the account site (its firewall, its CDN's bot
-/// check) refused the app: a 403 that is not the site's own answer. Not a
+/// check) refused the app: a 403 that is not the website's own answer. Not a
 /// sign-out; the network the app is on (a VPN's or a proxy's address, say)
-/// is what the site does not let in.
+/// is what the website does not let in.
 class AccountBlocked implements Exception {
   const AccountBlocked(this.method, this.url);
 
@@ -158,7 +158,7 @@ class AccountError implements Exception {
 /// keeps: the panel's refresh credential ([credential]), traded for a
 /// short-lived access token as the panel's own pages trade it, and
 /// replaced by the one each trade gives back ([onCredential]). Signing out
-/// ends the session on the site too.
+/// ends the session on the website too.
 abstract class AccountAdapter {
   AccountAdapter({
     required this.site,
@@ -178,9 +178,9 @@ abstract class AccountAdapter {
   final void Function(String? credential)? onCredential;
   final DateTime Function() now;
 
-  /// What the login window opens: the site's sign-in page, `/login` on
+  /// What the login window opens: the website's sign-in page, `/login` on
   /// new-api's and sub2api's both (one signed in already is sent on from
-  /// there by the site).
+  /// there by the website).
   Uri get loginUrl => site.url.replace(path: '/login');
 
   /// While the login window is open, asked of it every second: the
@@ -190,7 +190,7 @@ abstract class AccountAdapter {
 
   Future<AccountProfile> profile();
 
-  /// The user's keys, newest first as the site lists them.
+  /// The user's keys, newest first as the website lists them.
   Future<List<AccountKey>> keys();
 
   /// [key] whole, to call the models with.
@@ -199,7 +199,7 @@ abstract class AccountAdapter {
   /// The groups the user may make a key in.
   Future<List<AccountGroup>> groups();
 
-  /// A new key named [name], in [group] (one the site would pick, without):
+  /// A new key named [name], in [group] (one the website would pick, without):
   /// the one made.
   Future<AccountKey> create(String name, {AccountGroup? group});
 
@@ -215,7 +215,7 @@ abstract class AccountAdapter {
     };
   }
 
-  /// Ends the session on the site, then forgets it; forgotten even if the
+  /// Ends the session on the website, then forgets it; forgotten even if the
   /// site cannot be reached.
   Future<void> signOut();
 

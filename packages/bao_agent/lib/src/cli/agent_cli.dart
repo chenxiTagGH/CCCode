@@ -6,7 +6,7 @@ import '../engine/engine.dart';
 import '../engine/session.dart';
 import '../util/json.dart';
 
-/// Claude Code's command line, as far as BaoCode starts it (`claude -p`,
+/// Claude Code's command line, as far as CCCode starts it (`claude -p`,
 /// with its flags): what a session is started with, read as the engine's
 /// options. So that the engine runs where a `claude` would, e.g. on a
 /// remote host, started with the same arguments.

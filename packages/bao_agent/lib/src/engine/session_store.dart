@@ -7,7 +7,7 @@ import '../util/ids.dart';
 import '../util/json.dart';
 
 /// The version written on every line, as Claude Code writes its own.
-const agentVersion = 'baocode-agent-1.0';
+const agentVersion = 'cccode-agent-1.0';
 
 /// A session's conversation, kept as Claude Code keeps its own: one JSON
 /// object a line in `<config>/projects/<cwd>/<session>.jsonl`, each message

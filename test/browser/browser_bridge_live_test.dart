@@ -1,6 +1,6 @@
 // The browser bridge end to end, in a real browser: a Chromium (Chrome for
 // Testing; branded Chrome no longer loads extensions from the command
-// line) with BaoCode's extension, its native messaging host (the debug
+// line) with CCCode's extension, its native messaging host (the debug
 // app's), and the agents' tools. Run by hand:
 //
 //   BAO_BROWSER_LIVE="/path/to/Google Chrome for Testing" \
@@ -22,8 +22,8 @@ import 'package:path/path.dart' as p;
 void main() {
   final chrome = Platform.environment['BAO_BROWSER_LIVE'];
   final host = p.absolute(
-    'build/macos/Build/Products/Debug/BaoCode.app/Contents/MacOS/'
-    'baocode-browser-host',
+    'build/macos/Build/Products/Debug/CCCode.app/Contents/MacOS/'
+    'cccode-browser-host',
   );
 
   test(
@@ -36,7 +36,7 @@ void main() {
           .writeAsStringSync(
             jsonEncode({
               'name': BrowserBridge.hostName,
-              'description': 'BaoCode',
+              'description': 'CCCode',
               'path': host,
               'type': 'stdio',
               'allowed_origins': [
@@ -98,7 +98,7 @@ void main() {
   like.addEventListener('click', () => { like.textContent = 'Liked'; });
   console.log('hello', {n: 1});
   console.warn('careful');
-  fetch('/api', {method: 'POST', body: JSON.stringify({q: 'baocode'})});
+  fetch('/api', {method: 'POST', body: JSON.stringify({q: 'cccode'})});
   fetch('/missing');
   setTimeout(() => { const end = performance.now() + 120; while (performance.now() < end); }, 0);
   setTimeout(() => { throw new Error('boom'); }, 10);
@@ -115,7 +115,7 @@ void main() {
       BrowserBridge.socketFolder = sockets.path;
       final bridge = BrowserBridge.instance;
       await bridge.start();
-      expect(bridge.otherApp, isFalse, reason: 'a BaoCode has the socket');
+      expect(bridge.otherApp, isFalse, reason: 'a CCCode has the socket');
       BrowserTools.register();
 
       final browser = await Process.start(
@@ -298,7 +298,7 @@ void main() {
         'tabId': tabId,
         'id': api![1],
       });
-      expect(request.first['text'], contains('{"q":"baocode"}'));
+      expect(request.first['text'], contains('{"q":"cccode"}'));
       expect(request.first['text'], contains('"echo"'));
       final document = RegExp(
         r'^(\S+) GET 200 Document',
@@ -320,7 +320,7 @@ void main() {
           (jsonDecode(File(har).readAsStringSync())['log']['entries'] as List)
               .cast<Map>();
       final post = entries.firstWhere((e) => e['request']['method'] == 'POST');
-      expect(post['request']['postData']['text'], '{"q":"baocode"}');
+      expect(post['request']['postData']['text'], '{"q":"cccode"}');
       expect(post['response']['content']['text'], contains('"echo"'));
       final image = await call('browser_network', {
         'tabId': tabId,
@@ -402,7 +402,7 @@ void main() {
       expect(seen.where((b) => b['type'] == 'image'), isNotEmpty);
       expect(BrowserWatching.current.value, isNull);
 
-      // What lets BaoCode grow without a new extension: the browser's APIs
+      // What lets CCCode grow without a new extension: the browser's APIs
       // within the tabs shared, frames' sessions, tabs the shared open.
       final connection = bridge.browsers.single;
       expect(

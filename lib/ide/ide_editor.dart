@@ -74,7 +74,7 @@ typedef IdeEditorPosition = ({
 });
 
 /// The Fast IDE editor: the painted Monaco port by default, with the Flutter
-/// TextField kept as a fallback (`--dart-define=BAOCODE_NATIVE_EDITOR=false`).
+/// TextField kept as a fallback (`--dart-define=CCCODE_NATIVE_EDITOR=false`).
 class IdeEditor extends StatefulWidget {
   const IdeEditor({
     super.key,
@@ -84,7 +84,7 @@ class IdeEditor extends StatefulWidget {
     required this.onLspStatus,
     required this.onPositionChanged,
     this.nativeEditorEnabled = const bool.fromEnvironment(
-      'BAOCODE_NATIVE_EDITOR',
+      'CCCODE_NATIVE_EDITOR',
       defaultValue: true,
     ),
     this.onOpenLocation,
@@ -104,7 +104,7 @@ class IdeEditor extends StatefulWidget {
   final ValueChanged<String> onLspStatus;
   final ValueChanged<IdeEditorPosition> onPositionChanged;
 
-  /// Opt out with --dart-define=BAOCODE_NATIVE_EDITOR=false, or override in
+  /// Opt out with --dart-define=CCCODE_NATIVE_EDITOR=false, or override in
   /// tests. The painted surface is a partial Monaco port; see PARITY.md.
   final bool nativeEditorEnabled;
 

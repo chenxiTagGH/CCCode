@@ -357,7 +357,7 @@ void main() {
         final note = notifications.notifications.single;
         expect(
           note.message,
-          'BaoCode was updated to 1.2.0. New: Title new, Title newer.',
+          'CCCode was updated to 1.2.0. New: Title new, Title newer.',
         );
         expect(note.primary.map((action) => action.label), [
           'Title new',

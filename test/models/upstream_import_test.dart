@@ -7,7 +7,7 @@ import 'package:baocode/models/upstream_import.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 String _link(Map<String, String> query) => Uri(
-  scheme: 'baocode',
+  scheme: 'cccode',
   host: 'provider',
   path: '/import',
   queryParameters: query,
@@ -72,11 +72,29 @@ void main() {
         isNull,
       );
       // Other links of the scheme, and other schemes.
-      expect(UpstreamImport.parse('baocode://agent?path=/tmp'), isNull);
+      expect(UpstreamImport.parse('cccode://agent?path=/tmp'), isNull);
+      expect(
+        UpstreamImport.parse(
+          'baocode://provider/import?url=https://a.example.com',
+        ),
+        isNull,
+      );
       expect(
         UpstreamImport.parse('https://provider/import?url=https://a.com'),
         isNull,
       );
+    });
+
+    test('rejects strict provider URI forms', () {
+      for (final link in [
+        '${_link({'url': 'https://a.example.com'})}:8443',
+        '${_link({'url': 'https://a.example.com'})}#fragment',
+        'cccode://provider:8443/import?url=https%3A%2F%2Fa.example.com',
+        'cccode://provider/import?url=%',
+        ' cccode://provider/import?url=https%3A%2F%2Fa.example.com',
+      ]) {
+        expect(UpstreamImport.parse(link), isNull, reason: link);
+      }
     });
 
     test('takes nothing else: an environment never comes in', () {
@@ -188,7 +206,7 @@ void main() {
       expect(list.single.logo, isNull);
     });
 
-    test('the list baocode.dev serves is whole: each entry shown, its logo '
+    test('the list the website serves is whole: each entry shown, its logo '
         'there, its id its own', () {
       final text = File('site/featured/upstreams.json').readAsStringSync();
       final raw = (jsonDecode(text) as Map)['upstreams'] as List;

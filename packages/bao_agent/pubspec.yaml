@@ -1,6 +1,6 @@
 name: bao_agent
 description: >-
-  BaoCode's own coding agent, written in Dart: a session speaks the same
+  CCCode's own coding agent, written in Dart: a session speaks the same
   stream-json protocol as `claude -p --input-format stream-json`, keeps its
   conversation where and as Claude Code keeps its own, and reads the same
   settings, CLAUDE.md, skills, subagents, commands, hooks, plugins and MCP

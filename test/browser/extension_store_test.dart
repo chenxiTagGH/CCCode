@@ -10,7 +10,7 @@ void main() {
   late Object? answer;
 
   setUp(() async {
-    // flutter test answers every request 400; the site here is real.
+    // flutter test answers every request 400; the website here is real.
     HttpOverrides.global = null;
     cache = await Directory.systemTemp.createTemp('extension_store');
     answer = null;
@@ -41,7 +41,7 @@ void main() {
     );
   }
 
-  test("the store's page is the site's, kept for when it does not answer, "
+  test("the store's page is the website's, kept for when it does not answer, "
       'and by the id before it ever did', () async {
     expect(await fetch(), ExtensionStore.fallback);
     expect(
@@ -51,13 +51,13 @@ void main() {
     );
 
     const listed =
-        'https://chromewebstore.google.com/detail/baocode/'
+        'https://chromewebstore.google.com/detail/cccode/'
         'jfjagocghaaheooicmdnhcholmgdkngk';
     answer = {'version': '0.1.0', 'store': listed};
     expect('${await fetch()}', listed);
     expect('${ExtensionStore.page}', listed);
 
-    // The site down: the page kept.
+    // The CCCode website down: the page kept.
     answer = null;
     expect('${await fetch()}', listed);
 

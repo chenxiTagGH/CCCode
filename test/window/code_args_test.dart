@@ -150,9 +150,54 @@ void main() {
     expect(
       LaunchRequest.of(const [
         CodeArgs.windowsLinkFlag,
-        'baocode://provider/import?url=https%3A%2F%2Fapi.example.com',
+        'cccode://provider/import?url=https%3A%2F%2Fapi.example.com',
       ]),
       LaunchRequest.none,
+    );
+  });
+
+  test('converts provider and activate cccode links into requests', () {
+    for (final link in [
+      'cccode://provider/import?url=https%3A%2F%2Fapi.example.com',
+      'cccode://activate?i=install&s=channel',
+    ]) {
+      expect(
+        CodeArgs.importRequest([CodeArgs.windowsLinkFlag, link]),
+        [CodeArgs.importRequestMarker, link],
+      );
+    }
+  });
+
+  test('rejects malformed Linux import link shapes', () {
+    for (final link in [
+      'cccode:provider/import?url=https%3A%2F%2Fapi.example.com',
+      'cccode:///import?url=https%3A%2F%2Fapi.example.com',
+      'cccode://provider/import',
+      'cccode://provider/import?',
+      'cccode://provider/import?url=%',
+      'baocode://provider/import?url=https%3A%2F%2Fapi.example.com',
+      'cccode://provider/other?url=https%3A%2F%2Fapi.example.com',
+      'cccode://provider/import?url=https%3A%2F%2Fapi.example.com#extra',
+      'cccode://provider/import?url=https%3A%2F%2Fapi.example.com\\\\extra',
+      'cccode://provider/import?url=https%3A%2F%2Fapi.example.com extra',
+      'cccode://activate:8443?i=install',
+      'cccode://activate?i=%',
+    ]) {
+      expect(
+        CodeArgs.importRequest([CodeArgs.windowsLinkFlag, link]),
+        isNull,
+        reason: link,
+      );
+    }
+    expect(CodeArgs.importRequest(const []), isNull);
+    expect(CodeArgs.importRequest(const [CodeArgs.windowsLinkFlag]), isNull);
+    expect(
+      CodeArgs.importRequest(const [
+        CodeArgs.windowsLinkFlag,
+        'cccode://provider/import?url=https%3A%2F%2Fapi.example.com',
+        'extra',
+      ]),
+      isNull,
     );
   });
 }

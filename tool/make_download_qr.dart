@@ -4,19 +4,19 @@
 //
 //   dart run tool/make_download_qr.dart
 //
-// Each encodes that card's own link on the site — /dl/android, /dl/ios —
-// and not the file on dl.baocode.dev: those links are permanent, and
+// Each encodes that card's own link on the website — /dl/android, /dl/ios —
+// and not the file on the download site: those links are permanent, and
 // site-worker/index.js points them at the release current when the code is
 // scanned, so a code written here (or photographed off the page) keeps
-// working as the phone app is released again. The site has no build step:
+// working as the phone app is released again. The CCCode website has no build step:
 // test/tool/download_qr_test.dart fails while site/qr/ is not what this
 // writes, so run this and commit the files when a target changes.
 import 'dart:io';
 
 import 'package:qr/qr.dart';
 
-/// The site the codes are scanned from: where their targets resolve.
-const _site = 'https://baocode.dev';
+/// The CCCode website the codes are scanned from: where their targets resolve.
+const _site = '.';
 
 /// Each phone card's target, as site/download.html links it, by the card
 /// it belongs to: the phone app's two downloads (docs/release.md, 10).

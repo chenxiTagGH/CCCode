@@ -1,7 +1,7 @@
 {
-  "name": "dev.baocode.browser",
-  "description": "BaoCode",
-  "path": "baocode-browser-host.exe",
+  "name": "vip.cchub.cccode.browser",
+  "description": "CCCode",
+  "path": "cccode-browser-host.exe",
   "type": "stdio",
   "allowed_origins": [
     "chrome-extension://jfjagocghaaheooicmdnhcholmgdkngk/"

@@ -181,7 +181,7 @@ void main() {
       link,
       contextLine: contextLine,
       os: OperatingSystem.linux,
-      workspaceFolders: ['/code/baocode'],
+      workspaceFolders: ['/code/cccode'],
     );
 
     test('drops file:// and ./ prefixes', () {
@@ -201,7 +201,7 @@ void main() {
     });
 
     test('drops a workspace folder name', () {
-      expect(text('baocode/lib/a.dart'), 'lib/a.dart');
+      expect(text('cccode/lib/a.dart'), 'lib/a.dart');
     });
   });
 }

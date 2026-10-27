@@ -23,7 +23,7 @@ void main() {
       // leading elsewhere would be a download page that lies.
       for (final page in ['site/download.html', 'site/zh/download.html']) {
         final html = File(page).readAsStringSync();
-        // Android's card is off the site for now (site-worker/index.js,
+        // Android's card is off the website for now (site-worker/index.js,
         // MOBILE_OFFLINE): the cards there are checked, iOS's at least.
         expect(html, contains('data-os="ios"'), reason: page);
         for (final MapEntry(key: os, value: target) in downloadQrTargets.entries) {

@@ -60,7 +60,7 @@ void main() {
         },
       ),
     );
-    expect(ClaudeSdkTools.servers, ['baocode']);
+    expect(ClaudeSdkTools.servers, ['cccode']);
 
     final init = await ClaudeSdkTools.handle({
       'jsonrpc': '2.0',

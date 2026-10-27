@@ -31,7 +31,7 @@ void main() {
 
   setUp(() {
     root = Directory.systemTemp
-        .createTempSync('baocode-lsp')
+        .createTempSync('cccode-lsp')
         .resolveSymbolicLinksSync();
     ClaudeEnvironment.use(Platform.environment);
     LspProcesses.registry = ChildProcessRegistry(

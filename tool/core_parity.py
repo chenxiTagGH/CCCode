@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""How BaoCode's own core (packages/bao_agent) stands against the Claude
+"""How CCCode's own core (packages/bao_agent) stands against the Claude
 Code CLI installed on this machine: what each sends the API for the same
 first message.
 

@@ -52,19 +52,22 @@ class AppDelegate: FlutterAppDelegate {
   /// Files and folders the system asks the app to open: the `code`
   /// command's (`open -b`), Finder's Open With, those dropped on the Dock
   /// icon (see CFBundleDocumentTypes in Info.plist); and the Finder
-  /// extension's `baocode://` URLs (see OpenRequests.request). At launch
+  /// extension's `cccode://` URLs (see OpenRequests.request). At launch
   /// they come before Flutter is ready for them, and wait (see
   /// OpenRequests).
   override func application(_ application: NSApplication, open urls: [URL]) {
-    let paths = urls.filter(\.isFileURL).map { $0.standardizedFileURL.path }
-    let requests = urls.compactMap(OpenRequests.request(from:))
-    if !paths.isEmpty || !requests.isEmpty {
+    let opened = urls.compactMap { url -> [String]? in
+      if url.isFileURL {
+        return [url.standardizedFileURL.path]
+      }
+      return OpenRequests.request(from: url)
+    }
+    if !opened.isEmpty {
       let atLaunch = OpenRequests.shared.atLaunch
       // A site's import alone asks in the main window: the app launches
       // for it as it does by itself.
-      let importsOnly = paths.isEmpty && requests.allSatisfy(OpenRequests.isImport)
-      if !paths.isEmpty { OpenRequests.shared.deliver(paths) }
-      for request in requests { OpenRequests.shared.deliver(request: request) }
+      let importsOnly = opened.allSatisfy(OpenRequests.isImport)
+      for request in opened { OpenRequests.shared.deliver(request) }
       if atLaunch && importsOnly {
         // Shown as at any launch (see MainFlutterWindow).
       } else if atLaunch {
@@ -96,22 +99,21 @@ class AppDelegate: FlutterAppDelegate {
 }
 
 /// The paths the system asks the app to open, for Flutter, over
-/// `baocode/open` (see open_requests.dart): kept until Flutter takes them
+/// `cccode/open` (see open_requests.dart): kept until Flutter takes them
 /// (`takePending`, which also says it is ready for each as it comes), sent
 /// as they come after that (`open`). The app's own, not the window's: the
 /// system can ask before the window has its channel.
 final class OpenRequests {
   static let shared = OpenRequests()
 
-  private var pending: [String] = []
-  /// Requests that came before Flutter was ready, each whole: they go after
-  /// the paths, as Flutter reads what follows a request's marker as its.
-  private var pendingRequests: [[String]] = []
+  /// Requests that came before Flutter was ready, each whole and in arrival
+  /// order, so paths and marker requests retain their ordering together.
+  private var pending: [[String]] = []
   private var ready = false
   private var channel: FlutterMethodChannel?
 
   /// What the app was launched for (`launchRequest`): `agent` for Open
-  /// with BaoCode, `ide` for anything else to open, by the first that came
+  /// with CCCode, `ide` for anything else to open, by the first that came
   /// before Flutter asked; nil for none.
   private var launchRequest: String?
   private var launchAsked = false
@@ -123,10 +125,10 @@ final class OpenRequests {
   /// Whether the app was launched to open something (see `launchRequest`).
   var launchedForRequest: Bool { launchRequest != nil }
 
-  /// Answers Flutter over [messenger]'s `baocode/open` (see
+  /// Answers Flutter over [messenger]'s `cccode/open` (see
   /// MainFlutterWindow.swift).
   func attach(to messenger: FlutterBinaryMessenger) {
-    let channel = FlutterMethodChannel(name: "baocode/open", binaryMessenger: messenger)
+    let channel = FlutterMethodChannel(name: "cccode/open", binaryMessenger: messenger)
     self.channel = channel
     channel.setMethodCallHandler { [weak self] call, result in
       guard let self else {
@@ -139,9 +141,8 @@ final class OpenRequests {
         self.launchAsked = true
         result(self.launchRequest)
       case "takePending":
-        result(self.pending + self.pendingRequests.flatMap { $0 })
+        result(self.pending.flatMap { $0 })
         self.pending = []
-        self.pendingRequests = []
         self.ready = true
         self.launchAsked = true
       case "stop":
@@ -154,26 +155,16 @@ final class OpenRequests {
     }
   }
 
-  /// Hands [paths] to Flutter, or keeps them until it is ready.
-  func deliver(_ paths: [String]) {
-    if atLaunch && launchRequest == nil { launchRequest = "ide" }
-    if ready, let channel {
-      channel.invokeMethod("open", arguments: paths)
-    } else {
-      pending.append(contentsOf: paths)
-    }
-  }
-
-  /// Hands a request (see [request(from:)]) to Flutter, or keeps it until
-  /// it is ready.
-  func deliver(request: [String]) {
+  /// Hands a path or marker request (see [request(from:)]) to Flutter, or
+  /// keeps it until it is ready. Each call is one ordered delivery unit.
+  func deliver(_ request: [String]) {
     if atLaunch && launchRequest == nil && !OpenRequests.isImport(request) {
       launchRequest = request.first == "\u{0}agent" ? "agent" : "ide"
     }
     if ready, let channel {
       channel.invokeMethod("open", arguments: request)
     } else {
-      pendingRequests.append(request)
+      pending.append(request)
     }
   }
 
@@ -185,26 +176,33 @@ final class OpenRequests {
     request.first == importMarker
   }
 
-  /// What a `baocode://` URL asks. The Finder extension's (see
+  /// What a `cccode://` URL asks. The Finder extension's (see
   /// FinderExtension/FinderSync.swift), as the request Explorer's menu
   /// makes on Windows (see open_requests.cpp and code_args.dart): `agent`,
-  /// Open with BaoCode, a new agent with the paths (its marker, then them);
+  /// Open with CCCode, a new agent with the paths (its marker, then them);
   /// `ide`, Open with Fast Ide, the paths in a new window as `code -n`
   /// opens them (the `code` command's marker, a folder to start from, `-n`,
-  /// then them). A site's (baocode.dev/import): `provider/import`, an
+  /// then them). A site's (the website/import): `provider/import`, an
   /// upstream to add, the link as it came after its marker, which Flutter
-  /// reads (upstream_import.dart); so too baocode.dev/activate's,
+  /// reads (upstream_import.dart); so too the website/activate's,
   /// `activate`, the channel build's setup (channel_setup.dart). Nil for
   /// any other URL, or one without absolute paths.
   static func request(from url: URL) -> [String]? {
-    guard url.scheme == "baocode",
-      let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+    guard url.scheme == "cccode",
+      !url.absoluteString.contains("\\"),
+      url.absoluteString.rangeOfCharacter(from: .whitespacesAndNewlines) == nil,
+      let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
+      components.user == nil,
+      components.password == nil,
+      components.port == nil,
+      components.fragment == nil,
+      components.query?.isEmpty == false
     else { return nil }
     if components.host == "provider" {
       return components.path == "/import" ? [importMarker, url.absoluteString] : nil
     }
     if components.host == "activate" {
-      return [importMarker, url.absoluteString]
+      return components.path.isEmpty ? [importMarker, url.absoluteString] : nil
     }
     let paths = (components.queryItems ?? [])
       .filter { $0.name == "path" }

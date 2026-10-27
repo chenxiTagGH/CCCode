@@ -324,10 +324,10 @@ void main() {
 
     test('registers the keybindings of commands the catalog lacks', () {
       service.registerExtraDefaults(const [
-        KeybindingEntry(command: 'baocode.extra', key: 'cmd+k cmd+x'),
+        KeybindingEntry(command: 'cccode.extra', key: 'cmd+k cmd+x'),
       ]);
-      expect(service.isSupported('baocode.extra'), isTrue);
-      expect(service.labelFor('baocode.extra'), '⌘K ⌘X');
+      expect(service.isSupported('cccode.extra'), isTrue);
+      expect(service.labelFor('cccode.extra'), '⌘K ⌘X');
     });
 
     test('resolves a key event, by its character too', () {

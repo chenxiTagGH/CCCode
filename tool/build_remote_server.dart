@@ -1,4 +1,4 @@
-// Builds baocode-server, the app's side on a remote host (see
+// Builds cccode-server, the app's side on a remote host (see
 // packages/bao_remote), for Linux and macOS on x64 and arm64. Run from
 // anywhere in the repository:
 //
@@ -17,12 +17,12 @@
 // Without them a host of that kind is refused (the app has no server for
 // it).
 //
-// It writes baocode-server-<platform> (linux-x64, linux-arm64, darwin-x64,
+// It writes cccode-server-<platform> (linux-x64, linux-arm64, darwin-x64,
 // darwin-arm64) and VERSION, which names this build: the app connects to a
-// host and puts the server in ~/.baocode-server/<VERSION>/ there unless it
+// host and puts the server in ~/.cccode-server/<VERSION>/ there unless it
 // is already. A debug run of the app finds build/remote/.
 //
-// Besides, each build gzipped (baocode-server-<platform>.gz) and
+// Besides, each build gzipped (cccode-server-<platform>.gz) and
 // servers.json, which says where each is downloaded from and its size and
 // SHA-256. The installers carry VERSION and servers.json only, not the
 // builds (tool/build_macos.dart, tool/build_windows.dart): the app
@@ -38,6 +38,7 @@ import 'package:crypto/crypto.dart';
 const _platforms = ['linux-x64', 'linux-arm64', 'darwin-x64', 'darwin-arm64'];
 
 /// Where the gzipped builds are downloaded from: `<base>/<VERSION>/<file>`.
+// Existing BaoCode download infrastructure; retain until a CCCode domain is supplied.
 const _downloadsBase = 'https://dl.baocode.dev/releases/remote';
 
 Future<void> main(List<String> arguments) async {
@@ -64,14 +65,14 @@ Future<void> main(List<String> arguments) async {
   final built = <String>[];
   for (final platform in _platforms) {
     final [os, arch] = platform.split('-');
-    final output = '${out.path}/baocode-server-$platform';
+    final output = '${out.path}/cccode-server-$platform';
     // Not left from an earlier run: servers.json names only those built.
     File(output).deleteIfExists();
     final dart = os == 'linux' || platform == host
         ? Platform.resolvedExecutable
         : option('--macos-$arch-dart');
     if (dart == null) {
-      _step('Not building baocode-server for macOS $arch');
+      _step('Not building cccode-server for macOS $arch');
       stdout.writeln(
         Platform.isMacOS
             ? '  Give an $arch Dart SDK\'s dart with --macos-$arch-dart.'
@@ -79,7 +80,7 @@ Future<void> main(List<String> arguments) async {
       );
       continue;
     }
-    _step('Compiling baocode-server for ${_describe(platform)}');
+    _step('Compiling cccode-server for ${_describe(platform)}');
     await _run(dart, [
       'compile',
       'exe',
@@ -87,7 +88,7 @@ Future<void> main(List<String> arguments) async {
       os == 'darwin' ? 'macos' : os,
       '--target-arch',
       arch,
-      '-Dbaocode.version=$version',
+      '-Dcccode.version=$version',
       '-o',
       output,
       source,
@@ -110,11 +111,11 @@ Future<void> main(List<String> arguments) async {
   _step('Compressing the builds for download');
   final files = <String, Object?>{};
   for (final platform in _platforms) {
-    final file = 'baocode-server-$platform.gz';
+    final file = 'cccode-server-$platform.gz';
     File('${out.path}/$file').deleteIfExists();
     if (!built.contains(platform)) continue;
     final bytes = GZipCodec(level: 9)
-        .encode(File('${out.path}/baocode-server-$platform').readAsBytesSync());
+        .encode(File('${out.path}/cccode-server-$platform').readAsBytesSync());
     File('${out.path}/$file').writeAsBytesSync(bytes);
     files[platform] = {
       'url': '$_downloadsBase/$name/$file',

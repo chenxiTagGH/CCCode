@@ -166,7 +166,7 @@ class ChannelAccount extends ChangeNotifier {
   static const providerId = 'channel';
 
   /// The key made for the user when they have none.
-  static const keyName = 'BaoCode';
+  static const keyName = 'CCCode';
 
   final ChannelAccountSite site;
 
@@ -218,7 +218,7 @@ class ChannelAccount extends ChangeNotifier {
   /// The key the app calls the models with.
   AccountKey? get inUse => _inUse;
 
-  /// Reading or changing something on the site.
+  /// Reading or changing something on the website.
   bool get busy => _busy;
 
   /// The login window is open.
@@ -255,7 +255,7 @@ class ChannelAccount extends ChangeNotifier {
     if (credential == null) _signedOut();
   }
 
-  /// Forgets all but the site: signed out (here, or by it).
+  /// Forgets all but the website: signed out (here, or by it).
   void _signedOut() {
     _profile = null;
     _keys = null;
@@ -296,7 +296,7 @@ class ChannelAccount extends ChangeNotifier {
     _ => null,
   };
 
-  /// Opens the login window on the site and waits for the user to sign in
+  /// Opens the login window on the website and waits for the user to sign in
   /// there (or close it): whether they did. Once signed in, their account
   /// is read, and a key put to use: the one in use before, else their
   /// first, else one made for them.
@@ -374,7 +374,7 @@ class ChannelAccount extends ChangeNotifier {
     }
   }
 
-  /// Makes a key named [name], in [group] (one the site picks, without):
+  /// Makes a key named [name], in [group] (one the website picks, without):
   /// the one made; null when it could not be.
   Future<AccountKey?> create(String name, {AccountGroup? group}) async {
     AccountKey? made;
@@ -466,7 +466,7 @@ class ChannelAccount extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Signs out, on the site too: the key in use no longer called.
+  /// Signs out, on the website too: the key in use no longer called.
   Future<void> signOut() async {
     _busy = true;
     notifyListeners();

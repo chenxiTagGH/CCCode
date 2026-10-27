@@ -5,11 +5,11 @@
 //   dart run tool/draft_release_notes.dart [x.y.z]
 //
 // A draft, not notes: the commit subjects (feat → New, perf → Improved,
-// fix → Fixed; not the site's, CI's, docs, tests or refactors) under the
+// fix → Fixed; not the website's, CI's, docs, tests or refactors) under the
 // headings the notes keep, to be rewritten for the people who use the app,
 // a few lines each, the Chinese ones in Chinese. They show as plain text
 // in Settings → Updates (from latest.json), and as Markdown in the GitHub
-// release and on the site (tool/build_changelog.dart): plain lines and `-`
+// release and on the website (tool/build_changelog.dart): plain lines and `-`
 // lists read well in all of them. A file already there is left alone.
 import 'dart:io';
 
@@ -57,8 +57,8 @@ void draftReleaseNotes(Directory root, String version) {
   }
   stdout
     ..writeln()
-    ..writeln('Rewrite them for the people who use BaoCode (the Chinese in')
-    ..writeln('Chinese), then make the site\'s changelog from them:')
+    ..writeln('Rewrite them for the people who use CCCode (the Chinese in')
+    ..writeln('Chinese), then make the website\'s changelog from them:')
     ..writeln()
     ..writeln('  dart run tool/build_changelog.dart');
 }

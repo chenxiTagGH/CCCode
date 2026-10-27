@@ -66,13 +66,13 @@ void main() {
   group('ForgeRef', () {
     test('GitHub and GitLab issues and pull requests, from their pages', () {
       final issue = ForgeRef.parse(
-        'https://github.com/baocode-dev/baocode/issues/92#issuecomment-1',
+        './issues/92#issuecomment-1',
       )!;
       expect(issue.repo.kind, ForgeKind.github);
-      expect(issue.repo.path, 'baocode-dev/baocode');
+      expect(issue.repo.path, 'cccode-dev/cccode');
       expect(issue.kind, ForgeItemKind.issue);
       expect(issue.number, 92);
-      expect(issue.fullTag, 'baocode-dev/baocode#92');
+      expect(issue.fullTag, 'cccode-dev/cccode#92');
 
       final pull = ForgeRef.parse('https://github.com/o/r/pull/7/files')!;
       expect(pull.kind, ForgeItemKind.pull);
@@ -113,11 +113,11 @@ void main() {
 
     test('a repository from its Git remote', () {
       expect(
-        ForgeRepo.fromRemote('git@github.com:baocode-dev/baocode.git'),
+        ForgeRepo.fromRemote('git@github.com:cccode-dev/cccode.git'),
         const ForgeRepo(
           kind: ForgeKind.github,
           host: 'github.com',
-          path: 'baocode-dev/baocode',
+          path: 'cccode-dev/cccode',
         ),
       );
       expect(

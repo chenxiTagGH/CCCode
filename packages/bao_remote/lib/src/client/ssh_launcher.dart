@@ -119,7 +119,7 @@ class SshConnectException implements Exception {
 /// The server builds the app carries, one per platform.
 abstract interface class RemoteServerBinaries {
   /// Names the build: where it goes on the host
-  /// (`~/.baocode-server/<version>/`), so that each build is put there once.
+  /// (`~/.cccode-server/<version>/`), so that each build is put there once.
   String get version;
 
   /// The build for [platform] (`linux-x64`, `darwin-arm64`, …; see
@@ -491,12 +491,12 @@ class SshLauncher {
   static const cancelledMessage = 'Signing in was cancelled.';
 
   /// Where the server's builds go on the host, from its home folder.
-  static const serverRoot = '.baocode-server';
+  static const serverRoot = '.cccode-server';
 
   String get _folder => '$serverRoot/${binaries.version}';
 
   /// The server's path on the host, from the home folder.
-  String get serverPath => '$_folder/baocode-server';
+  String get serverPath => '$_folder/cccode-server';
 
   /// `ssh`'s arguments to run [command] on [target], with [extra] options
   /// (see [hostKeyOptions]).
@@ -685,9 +685,9 @@ class SshLauncher {
   /// this build of the server is there, and whether it can unpack gzip.
   String get probeScript =>
       '''
-printf 'BAOCODE-PROBE %s %s\\n' "\$(uname -s)" "\$(uname -m)"
-if [ -x '$serverPath' ]; then echo BAOCODE-PRESENT; fi
-if command -v gzip >/dev/null 2>&1; then echo BAOCODE-GZIP; fi
+printf 'CCCODE-PROBE %s %s\\n' "\$(uname -s)" "\$(uname -m)"
+if [ -x '$serverPath' ]; then echo CCCODE-PRESENT; fi
+if command -v gzip >/dev/null 2>&1; then echo CCCODE-GZIP; fi
 exit 0
 ''';
 
@@ -741,7 +741,7 @@ exit 0
     );
     final lines = const LineSplitter().convert(probe.stdout);
     final header = lines.firstWhere(
-      (line) => line.startsWith('BAOCODE-PROBE '),
+      (line) => line.startsWith('CCCODE-PROBE '),
       orElse: () => '',
     );
     final parts = header.split(' ');
@@ -761,8 +761,8 @@ exit 0
         '$system $machine',
       );
     }
-    if (!lines.contains('BAOCODE-PRESENT')) {
-      progress('Installing the BaoCode server on ${target.text}');
+    if (!lines.contains('CCCODE-PRESENT')) {
+      progress('Installing the CCCode server on ${target.text}');
       final binary = await binaries.read(platform);
       if (binary == null) {
         throw SshConnectException(
@@ -770,7 +770,7 @@ exit 0
           'This build of the app has no server for ${describe(platform)}',
         );
       }
-      final gzip = lines.contains('BAOCODE-GZIP');
+      final gzip = lines.contains('CCCODE-GZIP');
       final upload = await _run(
         target,
         uploadCommand(_nonce(), gzip: gzip),
@@ -785,7 +785,7 @@ exit 0
         );
       }
     }
-    progress('Starting the BaoCode server on ${target.text}');
+    progress('Starting the CCCode server on ${target.text}');
     return _launch(target, extra);
   }
 

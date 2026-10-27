@@ -1,5 +1,5 @@
 # Builds the phone app: Android (APK), put on dl.baocode.dev, where
-# baocode.dev/download links to it (/dl/android); iOS, uploaded to
+# the website/download links to it (/dl/android); iOS, uploaded to
 # TestFlight. docs/release.md, 10.
 #
 #   git tag mobile-v0.1.0 && git push origin mobile-v0.1.0
@@ -9,7 +9,7 @@
 #                           build, and put the APK at dl.baocode.dev/test/…,
 #                           to send to testers (iOS to TestFlight all the same)
 #
-# The phone app is checked out from baocode-dev/mobile beside this one
+# The phone app is checked out from cccode-dev/mobile beside this one
 # (its pubspec.yaml takes bao_link and bao_editor from ../monad).
 name: Mobile
 
@@ -31,7 +31,7 @@ jobs:
   check:
     name: Check the version
     runs-on: ubuntu-latest
-    # The deploy key that reads baocode-dev/mobile is the release
+    # The deploy key that reads cccode-dev/mobile is the release
     # environment's, for mobile-* tags.
     environment: release
     outputs:
@@ -42,7 +42,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          repository: baocode-dev/mobile
+          repository: cccode-dev/mobile
           ssh-key: ${{ secrets.MOBILE_DEPLOY_KEY }}
           path: mobile
       - id: version
@@ -85,7 +85,7 @@ jobs:
           path: monad
       - uses: actions/checkout@v4
         with:
-          repository: baocode-dev/mobile
+          repository: cccode-dev/mobile
           ref: ${{ needs.check.outputs.commit }}
           ssh-key: ${{ secrets.MOBILE_DEPLOY_KEY }}
           path: mobile
@@ -103,22 +103,22 @@ jobs:
           ANDROID_KEYSTORE: ${{ secrets.ANDROID_KEYSTORE }}
         run: |
           echo "$ANDROID_KEYSTORE" | base64 --decode > "$RUNNER_TEMP/release.jks"
-          echo "BAOCODE_ANDROID_KEYSTORE=$RUNNER_TEMP/release.jks" >> "$GITHUB_ENV"
+          echo "CCCODE_ANDROID_KEYSTORE=$RUNNER_TEMP/release.jks" >> "$GITHUB_ENV"
       - name: Build the APK
         working-directory: mobile
         env:
           # One key for every APK published, so that each installs over the
           # last (android/app/build.gradle.kts).
-          BAOCODE_ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          CCCODE_ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
         run: |
           flutter build apk --release
           mkdir -p ../out
-          cp build/app/outputs/flutter-apk/app-release.apk "../out/BaoCode-$MARKETING-android.apk"
+          cp build/app/outputs/flutter-apk/app-release.apk "../out/CCCode-$MARKETING-android.apk"
       - uses: actions/upload-artifact@v4
         with:
           name: android
           if-no-files-found: error
-          path: out/BaoCode-*-android.apk
+          path: out/CCCode-*-android.apk
       - name: Forget the key
         if: always()
         run: rm -f "$RUNNER_TEMP/release.jks"
@@ -149,7 +149,7 @@ jobs:
           path: monad
       - uses: actions/checkout@v4
         with:
-          repository: baocode-dev/mobile
+          repository: cccode-dev/mobile
           ref: ${{ needs.check.outputs.commit }}
           ssh-key: ${{ secrets.MOBILE_DEPLOY_KEY }}
           path: mobile
@@ -213,7 +213,7 @@ jobs:
             <key>teamID</key><string>77SLP2NCVR</string>
             <key>signingStyle</key><string>manual</string>
             <key>provisioningProfiles</key>
-            <dict><key>dev.baocode.mobile</key><string>$IOS_PROFILE_NAME</string></dict>
+            <dict><key>dev.cccode.mobile</key><string>$IOS_PROFILE_NAME</string></dict>
             <key>uploadSymbols</key><true/>
           </dict>
           </plist>
@@ -225,15 +225,15 @@ jobs:
           flutter build ipa --release --build-number "$GITHUB_RUN_NUMBER" \
             --export-options-plist "$RUNNER_TEMP/ExportOptions.plist"
           mkdir -p ../out
-          cp build/ios/ipa/*.ipa "../out/BaoCode-$MARKETING-ios.ipa"
+          cp build/ios/ipa/*.ipa "../out/CCCode-$MARKETING-ios.ipa"
       - name: Upload to TestFlight
         run: |
-          xcrun altool --upload-app --type ios --file "out/BaoCode-$MARKETING-ios.ipa" \
+          xcrun altool --upload-app --type ios --file "out/CCCode-$MARKETING-ios.ipa" \
             --apiKey "$ASC_KEY_ID" --apiIssuer "$ASC_ISSUER"
           {
             echo "## iOS: $MARKETING ($GITHUB_RUN_NUMBER) uploaded to TestFlight"
             echo
-            echo "Apple processes it for a few minutes before testers see it (App Store Connect → BaoCode → TestFlight)."
+            echo "Apple processes it for a few minutes before testers see it (App Store Connect → CCCode → TestFlight)."
           } >> "$GITHUB_STEP_SUMMARY"
       - name: Forget the certificate and the key
         if: always()
@@ -276,7 +276,7 @@ jobs:
             echo "## For testers: the phone app $MARKETING, \`$GITHUB_REF_NAME\`"
             echo
           } >> "$GITHUB_STEP_SUMMARY"
-          for file in dist/BaoCode-*; do
+          for file in dist/CCCode-*; do
             name=$(basename "$file")
             aws s3 cp "$file" "s3://$R2_BUCKET/$dir/$name" --cache-control 'public, max-age=86400' \
               --content-type "$(content_type "$name")"
@@ -317,7 +317,7 @@ jobs:
               *)   echo application/octet-stream ;;
             esac
           }
-          for file in dist/BaoCode-*; do
+          for file in dist/CCCode-*; do
             aws s3 cp "$file" "s3://$R2_BUCKET/releases/mobile/$MARKETING/$(basename "$file")" \
               --cache-control 'public, max-age=31536000, immutable' \
               --content-type "$(content_type "$file")"
@@ -335,7 +335,7 @@ jobs:
               --arg sha "$sha" --argjson size "$size" '{url: $url, size: $size, sha256: $sha}'
           }
           jq -n --arg version "$VERSION" --arg date "$(date -u +%Y-%m-%dT%H:%M:%SZ)" --argjson beta "$beta" \
-            --argjson android "$(entry dist/BaoCode-$MARKETING-android.apk)" \
+            --argjson android "$(entry dist/CCCode-$MARKETING-android.apk)" \
             '{version: $version, pubDate: $date, beta: $beta, downloads: {android: $android}}' > latest.json
           cat latest.json
           jq -r '.downloads[] | "\(.url) \(.size)"' latest.json | while read -r url expected; do

@@ -13,7 +13,7 @@ class AgentPaths {
   }) : tempDir =
            tempDir ?? (Platform.isWindows ? Directory.systemTemp.path : '/tmp');
 
-  /// From [environment]: `CLAUDE_CONFIG_DIR` (or BaoCode's own variable for
+  /// From [environment]: `CLAUDE_CONFIG_DIR` (or CCCode's own variable for
   /// it), else `~/.claude`.
   factory AgentPaths.from(
     Map<String, String> environment, {
@@ -24,7 +24,7 @@ class AgentPaths {
     final config =
         configDir ??
         [
-          environment['BAOCODE_CLAUDE_DATA_PATH'],
+          environment['CCCODE_CLAUDE_DATA_PATH'],
           environment['CLAUDE_CONFIG_DIR'],
         ].whereType<String>().where((dir) => dir.isNotEmpty).firstOrNull ??
         p.join(home, '.claude');

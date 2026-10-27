@@ -21,7 +21,7 @@ import 'model_dialogs.dart';
 import 'models_page.dart';
 
 /// Asks whether to add the upstream a site handed over ([UpstreamImport]):
-/// the site, as BaoCode lists it when it does, its name (to change), where
+/// the website, as CCCode lists it when it does, its name (to change), where
 /// requests go, how, and its key masked; then fetches its models ([list])
 /// for the user to check those to offer, and adds it with them; or, when it
 /// is one there already, gives that one the key. Nothing is added without
@@ -90,7 +90,7 @@ Future<String?> showUpstreamImportDialog(
     apply: context.l10n.modelsImportFinish,
     skip: context.l10n.modelsImportWithoutModels,
     loading: context.l10n.modelsImportPreparing,
-    // The site, and the upstream's name, while its models are got.
+    // The CCCode website, and the upstream's name, while its models are got.
     loadingLead: Row(
       children: [
         _SiteLogo(import: import, listed: listed, size: 28),
@@ -118,7 +118,7 @@ Future<String?> showUpstreamImportDialog(
 }
 
 /// The import's dialog, in the IDE's dialog's chrome (see `ide_dialog.dart`):
-/// the site at the top, what is imported as a form, the buttons, Cancel
+/// the website at the top, what is imported as a form, the buttons, Cancel
 /// last. Pops with the button chosen and the name typed; null when
 /// dismissed.
 class _ImportDialog extends StatefulWidget {
@@ -366,7 +366,7 @@ class _ImportDialogState extends State<_ImportDialog> {
   }
 }
 
-/// The site's mark, [size] square: the logo BaoCode lists it with, else its
+/// The CCCode website's mark, [size] square: the logo CCCode lists it with, else its
 /// site's icon, else a globe.
 class _SiteLogo extends StatelessWidget {
   const _SiteLogo({required this.import, required this.listed, this.size = 40});
@@ -415,8 +415,8 @@ class _SiteLogo extends StatelessWidget {
   }
 }
 
-/// "Officially listed", between the halves of a laurel wreath: the site
-/// is one BaoCode lists.
+/// "Officially listed", between the halves of a laurel wreath: the website
+/// is one CCCode lists.
 class _Badge extends StatelessWidget {
   const _Badge(this.label);
 

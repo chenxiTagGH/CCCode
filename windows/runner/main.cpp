@@ -30,7 +30,7 @@ constexpr unsigned int kMinClientHeight = 540;
 // runs: a second one started (the `code` command, Explorer's Open with)
 // finds it taken, and hands its paths to the first (see OpenRequests).
 // Local\ is the user's session, so another user's copy is another's.
-constexpr wchar_t kSingleInstanceMutex[] = L"Local\\BaoCode.SingleInstance";
+constexpr wchar_t kSingleInstanceMutex[] = L"Local\\CCCode.SingleInstance";
 
 // Places |size| in the centre of the monitor under |origin|, capped to that
 // monitor's work area. |size| and |placed| are in logical pixels: Create
@@ -87,7 +87,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
   // scenarios in the environment): it runs beside the user's own copy, on
   // a data folder of its own.
   const bool perf_run =
-      ::GetEnvironmentVariableW(L"BAOCODE_PERF_SCENARIOS", nullptr, 0) > 0;
+      ::GetEnvironmentVariableW(L"CCCODE_PERF_SCENARIOS", nullptr, 0) > 0;
   const HANDLE single_instance =
       perf_run ? nullptr
                : ::CreateMutexW(nullptr, FALSE, kSingleInstanceMutex);
@@ -117,10 +117,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
   // Drawn by Skia, as on macOS (FLTEnableImpeller in its Info.plist), not by
   // Impeller, Flutter's default here since 3.47: through ANGLE, Impeller
   // took several times as long to draw the chat's frames, and the UI
-  // thread twice as long to build them (tool/perf, 2026-10). BAOCODE_IMPELLER=1
+  // thread twice as long to build them (tool/perf, 2026-10). CCCODE_IMPELLER=1
   // brings it back, to compare.
   project.set_impeller_switch(
-      ::GetEnvironmentVariableW(L"BAOCODE_IMPELLER", nullptr, 0) > 0
+      ::GetEnvironmentVariableW(L"CCCODE_IMPELLER", nullptr, 0) > 0
           ? flutter::ImpellerSwitch::Enabled
           : flutter::ImpellerSwitch::Disabled);
 
@@ -134,7 +134,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
   Win32Window::Size size(kDefaultWidth, kDefaultHeight);
   Win32Window::Point placed = origin;
   PlaceOnMonitor(origin, &size, &placed);
-  if (!window.Create(L"BaoCode", placed, size)) {
+  if (!window.Create(L"CCCode", placed, size)) {
     return EXIT_FAILURE;
   }
   window.SetMinimumSize(Win32Window::Size(kMinClientWidth, kMinClientHeight));

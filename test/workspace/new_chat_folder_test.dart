@@ -14,7 +14,7 @@ import 'package:baocode/remote/open_remote.dart';
 import 'package:baocode/workspace/new_chat_folder_bar.dart';
 import 'package:baocode/workspace/workspace.dart';
 
-const _window = MethodChannel('baocode/window');
+const _window = MethodChannel('cccode/window');
 const _desktop = '/Users/me/Desktop';
 
 final _mac = TargetPlatformVariant.only(TargetPlatform.macOS);
@@ -42,7 +42,7 @@ Future<Workspace> _pumpNew(WidgetTester tester) async {
     NewChatFolderBar.pickDirectory = pick;
   });
   final workspace = Workspace.mock();
-  await tester.pumpWidget(BaoCodeApp(workspace: workspace));
+  await tester.pumpWidget(CCCodeApp(workspace: workspace));
   workspace.create();
   await tester.pump();
   return workspace;
@@ -70,10 +70,10 @@ void main() {
     tester,
   ) async {
     final workspace = await _pumpNew(tester);
-    expect(workspace.selected.project.name, 'baocode');
+    expect(workspace.selected.project.name, 'cccode');
     expect(_bar, findsOneWidget);
     expect(
-      find.descendant(of: _bar, matching: find.text('baocode')),
+      find.descendant(of: _bar, matching: find.text('cccode')),
       findsOneWidget,
     );
     expect(find.text('Open from Finder'), findsOneWidget);
@@ -91,7 +91,7 @@ void main() {
     workspace.hideProject(hidden);
     await tester.pump();
 
-    await tester.tap(find.descendant(of: _bar, matching: find.text('baocode')));
+    await tester.tap(find.descendant(of: _bar, matching: find.text('cccode')));
     await tester.pumpAndSettle();
     expect(find.text('cursor-docs'), findsNothing);
   }, variant: _mac);
@@ -101,7 +101,7 @@ void main() {
   ) async {
     final workspace = await _pumpNew(tester);
     final was = workspace.selected;
-    await tester.tap(find.descendant(of: _bar, matching: find.text('baocode')));
+    await tester.tap(find.descendant(of: _bar, matching: find.text('cccode')));
     await tester.pumpAndSettle();
     await tester.tap(find.text('No folder'));
     await tester.pumpAndSettle();

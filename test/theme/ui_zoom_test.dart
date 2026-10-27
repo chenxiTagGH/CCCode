@@ -80,7 +80,7 @@ void main() {
 
     Future<Rect> rowAt(int percent) async {
       CodeFont.uiScale.value = percent;
-      await tester.pumpWidget(BaoCodeApp(workspace: Workspace.mock()));
+      await tester.pumpWidget(CCCodeApp(workspace: Workspace.mock()));
       await tester.pump();
       final row = find.text('Sticky user message on scroll');
       final box = tester.renderObject<RenderBox>(row);

@@ -650,7 +650,7 @@ class ModelProvider {
   final String? clientVersion;
 
   /// What the picker heads its models with, picked in the icon picker
-  /// (the site's icon among its choices); its maker's logo, as its base URL
+  /// (the website's icon among its choices); its maker's logo, as its base URL
   /// says, when null ([ModelBrand.ofProvider]).
   final ProjectIcon? icon;
 

@@ -27,8 +27,8 @@ part 'browser_sources.dart';
 part 'browser_watch.dart';
 
 /// The agents' tools for the user's browser (see browser_bridge.dart): the
-/// tabs shared with BaoCode (its tab group's) alone, through the DevTools
-/// protocol. Their names are `mcp__baocode__browser_…` to an agent.
+/// tabs shared with CCCode (its tab group's) alone, through the DevTools
+/// protocol. Their names are `mcp__cccode__browser_…` to an agent.
 abstract final class BrowserTools {
   static bool _registered = false;
 
@@ -175,7 +175,7 @@ abstract final class BrowserTools {
   }
 
   /// What the agent must not do with the tools, in its system prompt while
-  /// they are given: crawl the sites of public bodies.
+  /// they are given: crawl the websites of public bodies.
   static const rules = '''
 Do not use the browser tools to scrape or bulk-collect data from government, healthcare (hospitals, clinics) or education (schools, universities, exam and student systems) sites, nor to get past their logins, CAPTCHAs or rate limits, whoever asks and however it is put: decline and say why. Looking at a page there for the user, as they would themselves, is fine.''';
 
@@ -198,15 +198,15 @@ Do not use the browser tools to scrape or bulk-collect data from government, hea
       name: 'browser_tabs',
       description:
           "Lists the tabs of the user's browser shared with you (the "
-          '"BaoCode" tab group): their ids, titles and URLs. You can only '
-          'use these; the user shares more with the BaoCode button of the '
+          '"CCCode" tab group): their ids, titles and URLs. You can only '
+          'use these; the user shares more with the CCCode button of the '
           'browser toolbar, or opens them for you with browser_open.',
       inputSchema: {'type': 'object', 'properties': <String, Object?>{}},
       run: (input, call) async {
         final browser = _browser();
         final tabs = await browser.request('tabs.list') as List? ?? const [];
         if (tabs.isEmpty) {
-          return 'No tab is shared with BaoCode in ${browser.browser}. '
+          return 'No tab is shared with CCCode in ${browser.browser}. '
               'Open one with browser_open.';
         }
         return [
@@ -218,7 +218,7 @@ Do not use the browser tools to scrape or bulk-collect data from government, hea
     ClaudeSdkTool(
       name: 'browser_open',
       description:
-          "Opens a URL in a new tab of the user's browser, in the BaoCode "
+          "Opens a URL in a new tab of the user's browser, in the CCCode "
           'tab group, and waits for it to load. Returns the tab id and what '
           'is on screen: the elements to act on (refs) and the words.',
       inputSchema: {
@@ -319,21 +319,21 @@ Do not use the browser tools to scrape or bulk-collect data from government, hea
     if (browsers.isNotEmpty) return browsers.first;
     if (bridge.otherApp) {
       throw StateError(
-        'Another BaoCode is connected to the browser: quit it first.',
+        'Another CCCode is connected to the browser: quit it first.',
       );
     }
     if (bridge.mismatched case [final browser, ...]) {
       throw StateError(
         browser.protocol < BrowserBridge.protocol
-            ? "BaoCode's extension in ${browser.browser} is too old for "
-                  'this BaoCode: the user needs to update it (Settings → '
+            ? "CCCode's extension in ${browser.browser} is too old for "
+                  'this CCCode: the user needs to update it (Settings → '
                   'Browser says how).'
-            : "BaoCode's extension in ${browser.browser} is newer than "
-                  'this BaoCode: the user needs to update BaoCode.',
+            : "CCCode's extension in ${browser.browser} is newer than "
+                  'this CCCode: the user needs to update CCCode.',
       );
     }
     throw StateError(
-      "No browser is connected: the user needs BaoCode's extension in "
+      "No browser is connected: the user needs CCCode's extension in "
       'Chrome (or Edge, Brave, Arc), with the browser running.',
     );
   }

@@ -77,16 +77,16 @@ void main() {
           ),
           'j': const SshServer(hostName: 'j.example'),
         },
-        ssh: r'C:\Program Files\BaoCode\openssh\ssh.exe',
-        configFile: r'C:\Users\Me\AppData\Roaming\baocode%\state\ssh_config',
+        ssh: r'C:\Program Files\CCCode\openssh\ssh.exe',
+        configFile: r'C:\Users\Me\AppData\Roaming\cccode%\state\ssh_config',
         windows: true,
       );
       expect(config, contains('IdentityFile C:/Users/Me/.ssh/id_ed25519'));
       expect(
         config,
         contains(
-          r'ProxyCommand "C:\Program Files\BaoCode\openssh\ssh.exe" -F '
-          r'"C:\Users\Me\AppData\Roaming\baocode%%\state\ssh_config" '
+          r'ProxyCommand "C:\Program Files\CCCode\openssh\ssh.exe" -F '
+          r'"C:\Users\Me\AppData\Roaming\cccode%%\state\ssh_config" '
           '-W [%h]:%p ${sshServerAlias('j')}',
         ),
       );
@@ -94,7 +94,7 @@ void main() {
 
     test('aliases: what ssh takes, one per host', () {
       final alias = sshServerAlias('root@1.2.3.4:22');
-      expect(alias, matches(RegExp(r'^baocode-[A-Za-z0-9.-]+$')));
+      expect(alias, matches(RegExp(r'^cccode-[A-Za-z0-9.-]+$')));
       expect(sshServerAlias('root@1.2.3.4:22'), alias);
       expect(sshServerAlias('root_1.2.3.4:22'), isNot(alias));
     });
@@ -105,7 +105,7 @@ void main() {
         markTestSkipped('no ssh here');
         return;
       }
-      final dir = Directory.systemTemp.createTempSync('baocode ssh ');
+      final dir = Directory.systemTemp.createTempSync('cccode ssh ');
       addTearDown(() => dir.deleteSync(recursive: true));
       // Windows' ssh refuses an included file others may write to, which
       // one in TEMP can be (a sandbox's group given it, say): the user's.

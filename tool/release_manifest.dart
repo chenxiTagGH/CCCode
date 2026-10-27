@@ -3,13 +3,13 @@
 // docs/auto-update.md). Run from anywhere in the repository:
 //
 //   dart run tool/release_manifest.dart \
-//     --windows build/installers/BaoCode-1.2.0-setup.exe \
-//     --macos-arm64 build/installers/BaoCode-1.2.0-mac-arm64.zip \
-//     --macos-x64 build/installers/BaoCode-1.2.0-mac-x64.zip \
-//     [--dmg-arm64 build/installers/BaoCode-1.2.0-arm64.dmg] \
-//     [--dmg-x64 build/installers/BaoCode-1.2.0-x64.dmg] \
-//     [--linux-x64 build/installers/BaoCode-1.2.0-linux-amd64.deb] \
-//     [--linux-arm64 build/installers/BaoCode-1.2.0-linux-arm64.deb] \
+//     --windows build/installers/CCCode-1.2.0-setup.exe \
+//     --macos-arm64 build/installers/CCCode-1.2.0-mac-arm64.zip \
+//     --macos-x64 build/installers/CCCode-1.2.0-mac-x64.zip \
+//     [--dmg-arm64 build/installers/CCCode-1.2.0-arm64.dmg] \
+//     [--dmg-x64 build/installers/CCCode-1.2.0-x64.dmg] \
+//     [--linux-x64 build/installers/CCCode-1.2.0-linux-amd64.deb] \
+//     [--linux-arm64 build/installers/CCCode-1.2.0-linux-arm64.deb] \
 //     [--notes-en <text or file>] [--notes-zh <text or file>] \
 //     [--minimum-version 1.0.0] [--version 1.2.0+12] \
 //     [--manifest build/installers/latest.json]
@@ -19,14 +19,14 @@
 // --dmg-arm64-channel, --linux-x64-channel…): signed for its own platform
 // keys (`windows-x64-channel`…), which the channel build alone updates from
 // (each edition updates to itself), and given to the download page as
-// `downloads.<os>.channel`, for whoever came through the site.
+// `downloads.<os>.channel`, for whoever came through the website.
 //
 //   dart run tool/release_manifest.dart --generate-key <file>
 //   dart run tool/release_manifest.dart --public-key
 //
 // The private key is a file holding 32 random bytes, base64; its path is
-// in BAOCODE_UPDATE_SIGNING_KEY. Never in the repository: whoever has it
-// can make every installed BaoCode run their program.
+// in CCCODE_UPDATE_SIGNING_KEY. Never in the repository: whoever has it
+// can make every installed CCCode run their program.
 //
 // The version is pubspec.yaml's unless given. A manifest already there for
 // the same version keeps the other platforms' entries, so the Windows and the
@@ -50,6 +50,7 @@ import 'package:baocode/update/version.dart';
 import 'package:crypto/crypto.dart' as crypto;
 
 /// Where the downloads go: `<base>/<1.2.0>/<file>`.
+// Existing BaoCode release infrastructure; retain until a CCCode domain is supplied.
 const _releasesBase = 'https://dl.baocode.dev/releases';
 
 /// [name]'s link, for the file whose SHA-256 is [sha256].
@@ -70,7 +71,7 @@ const _channel = '-channel';
 const _editions = ['', _channel];
 
 /// Where the private key's path is given.
-const _keyVariable = 'BAOCODE_UPDATE_SIGNING_KEY';
+const _keyVariable = 'CCCODE_UPDATE_SIGNING_KEY';
 
 const _usage = '''
 Usage:
@@ -105,7 +106,7 @@ Future<void> main(List<String> arguments) async {
       'The key in \$$_keyVariable is not the one the app checks against.\n'
       '  its public key:   $publicKey\n'
       '  the app expects:  $updatePublicKey (lib/update/update_signature.dart)\n'
-      'Releases signed with it would be refused by every installed BaoCode.',
+      'Releases signed with it would be refused by every installed CCCode.',
     );
   }
 

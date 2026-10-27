@@ -1,8 +1,8 @@
-// The keybindings BaoCode comes with, written as VS Code's Default Keyboard
+// The keybindings CCCode comes with, written as VS Code's Default Keyboard
 // Shortcuts (JSON) writes them, and the commands a keybinding may run.
 //
 // The keys are upstream's defaults for the same commands (VS Code
-// 6a598d4a13031703d483d103c1d934a36ad27971), but where BaoCode differs: ⌘J
+// 6a598d4a13031703d483d103c1d934a36ad27971), but where CCCode differs: ⌘J
 // toggles the chat (upstream: the panel), and ⌃9 / Alt+9 opens the last
 // editor as well as the ninth.
 
@@ -38,27 +38,27 @@ const toggleAutoSaveCommandId = 'workbench.action.toggleAutoSave';
 const checkForUpdatesCommandId = 'update.checkForUpdate';
 
 /// Show Setup Guide: the setup checklist back (see FeatureTipsController).
-const showSetupGuideCommandId = 'baocode.tips.showSetupGuide';
+const showSetupGuideCommandId = 'cccode.tips.showSetupGuide';
 
 /// Reset Feature Tips: forgets what was done with the tips, the checklist
 /// and their notifications showing again as at a first launch.
-const resetFeatureTipsCommandId = 'baocode.tips.reset';
+const resetFeatureTipsCommandId = 'cccode.tips.reset';
 
-/// Star BaoCode on GitHub: the ask StarPrompt makes after the first
+/// Star CCCode on GitHub: the ask StarPrompt makes after the first
 /// conversations, any time.
-const starOnGitHubCommandId = 'baocode.starOnGitHub';
+const starOnGitHubCommandId = 'cccode.starOnGitHub';
 
 /// Connect Your Browser…: what the agents do with the user's browser, and
 /// its extension to get (showBrowserWelcome), as after the update.
-const browserWelcomeCommandId = 'baocode.browser.welcome';
+const browserWelcomeCommandId = 'cccode.browser.welcome';
 
 /// Meet Stash…: what Stash is, and the shortcut that notes a stash down
 /// (showStashWelcome), as the first time its page shows.
-const stashWelcomeCommandId = 'baocode.stash.welcome';
+const stashWelcomeCommandId = 'cccode.stash.welcome';
 
 /// Set Up a Model…: what an upstream is, and adding one (showModelWelcome),
 /// as when a session first has no model to run on.
-const modelWelcomeCommandId = 'baocode.models.welcome';
+const modelWelcomeCommandId = 'cccode.models.welcome';
 
 /// A command a keybinding may run, as the Keyboard Shortcuts page lists it.
 @immutable
@@ -73,7 +73,7 @@ class CommandInfo {
   String get label => category == null ? title : '$category: $title';
 }
 
-/// Every command BaoCode has, by id: those a keybinding can run. One not
+/// Every command CCCode has, by id: those a keybinding can run. One not
 /// here (another editor's, in an imported `keybindings.json`) is kept but
 /// shown as not supported.
 final Map<String, CommandInfo> commandCatalog = {
@@ -162,7 +162,7 @@ final Map<String, CommandInfo> commandCatalog = {
     ),
     const CommandInfo(
       starOnGitHubCommandId,
-      'Star BaoCode on GitHub',
+      'Star CCCode on GitHub',
       category: 'Help',
     ),
     const CommandInfo(
@@ -402,17 +402,17 @@ final Map<String, CommandInfo> commandCatalog = {
       category: 'Preferences',
     ),
     const CommandInfo(
-      'baocode.ide.toggleFormatOnSave',
+      'cccode.ide.toggleFormatOnSave',
       'Toggle Format on Save',
       category: 'Preferences',
     ),
     const CommandInfo(
-      'baocode.ide.retryLanguageServices',
+      'cccode.ide.retryLanguageServices',
       'Retry Language Services',
       category: 'Developer',
     ),
     const CommandInfo(
-      'baocode.ide.backToChat',
+      'cccode.ide.backToChat',
       'Back to Chat',
       category: 'View',
     ),

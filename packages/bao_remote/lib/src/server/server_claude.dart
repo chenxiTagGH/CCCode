@@ -42,7 +42,7 @@ class ServerClaude {
   /// Names another build to run on the host instead of those installed,
   /// e.g. set in the user's environment there to try a fork. (In the app,
   /// it is a setting.)
-  static const pathVariable = 'BAOCODE_CLAUDE_PATH';
+  static const pathVariable = 'CCCODE_CLAUDE_PATH';
 
   static ({String path, String undo})? _named(Map<String, String> env) =>
       switch (env[pathVariable]) {
@@ -53,7 +53,7 @@ class ServerClaude {
         _ => null,
       };
 
-  /// The server's argument that has it run BaoCode's own core instead
+  /// The server's argument that has it run CCCode's own core instead
   /// (bin/baocode_server.dart): `agent`, then the CLI's arguments.
   static const agentCommand = 'agent';
 
@@ -64,7 +64,7 @@ class ServerClaude {
     if (Platform.script.path.endsWith('.dart')) Platform.script.toFilePath(),
   ];
 
-  /// Claude Code as BaoCode's own core: this server run as [agentCommand]
+  /// Claude Code as CCCode's own core: this server run as [agentCommand]
   /// with the CLI's [arguments], in [cwd], with the user's environment
   /// there, [cleared] emptied and [environment] over it, and flag
   /// [settings] in a file only the user reads. Without a key it says how

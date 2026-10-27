@@ -67,13 +67,13 @@ void main() {
   test('Claude Code may read the folder they are kept in', () {
     expect(
       ClaudeLaunch.readRule(
-        '/Users/me/Library/Application Support/baocode/pastes',
+        '/Users/me/Library/Application Support/cccode/pastes',
       ),
-      'Read(//Users/me/Library/Application Support/baocode/pastes/**)',
+      'Read(//Users/me/Library/Application Support/cccode/pastes/**)',
     );
     expect(
-      ClaudeLaunch.readRule(r'C:\Users\me\AppData\Roaming\baocode\pastes'),
-      'Read(//c/Users/me/AppData/Roaming/baocode/pastes/**)',
+      ClaudeLaunch.readRule(r'C:\Users\me\AppData\Roaming\cccode\pastes'),
+      'Read(//c/Users/me/AppData/Roaming/cccode/pastes/**)',
     );
     expect(
       const ClaudeLaunch(cwd: '/p', readable: ['/data/pastes']).settings,

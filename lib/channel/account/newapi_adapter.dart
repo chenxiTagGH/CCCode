@@ -250,7 +250,7 @@ class NewApiAdapter extends AccountAdapter {
           },
         );
       } on Object {
-        // Forgotten here all the same; it ends on the site in time.
+        // Forgotten here all the same; it ends on the website in time.
       }
     }
     _access = null;

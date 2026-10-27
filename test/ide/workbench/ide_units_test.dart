@@ -261,7 +261,7 @@ void main() {
   });
 
   test('local listing skips excluded folders and reads the branch', () async {
-    final dir = await Directory.systemTemp.createTemp('baocode-ide-index-');
+    final dir = await Directory.systemTemp.createTemp('cccode-ide-index-');
     addTearDown(() => dir.delete(recursive: true));
     final root = dir.path;
     Future<void> write(String relative, String text) async {
@@ -299,7 +299,7 @@ void main() {
 
   test('a repository inside the project is listed by its own Git, unless '
       'the project ignores it (#68)', () async {
-    final dir = await Directory.systemTemp.createTemp('baocode-ide-nested-');
+    final dir = await Directory.systemTemp.createTemp('cccode-ide-nested-');
     addTearDown(() => dir.delete(recursive: true));
     final root = dir.path;
     Future<void> write(String relative, String text) async {

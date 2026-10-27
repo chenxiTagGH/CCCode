@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Download BaoCode</title>
-<meta name="description" content="Download BaoCode for macOS, Windows and Linux, and the beta for iPhone and iPad.">
+<title>Download CCCode</title>
+<meta name="description" content="Download CCCode for macOS, Windows and Linux, and the beta for iPhone and iPad.">
 <link rel="icon" href="icon.png">
 <link rel="stylesheet" href="style.css">
 <script src="/head.js"></script>
@@ -26,15 +26,15 @@
   <symbol id="ic-git-fork" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><path d="M18 9v2c0 .6-.4 1-1 1H7c-.6 0-1-.4-1-1V9m6 3v3"/></g></symbol>
 </svg>
 <header class="top">
-  <a class="brand" href="/"><img src="icon.png" alt="">BaoCode</a>
+  <a class="brand" href="/"><img src="icon.png" alt="">CCCode</a>
   <a href="download.html" aria-current="page">Download</a>
   <a href="/changelog">Changelog</a>
-  <a href="https://github.com/baocode-dev/baocode"><svg class="ic" aria-hidden="true"><use href="#ic-github"/></svg>GitHub</a>
+  <a href="https://github.com/chenxiTagGH/CCCode"><svg class="ic" aria-hidden="true"><use href="#ic-github"/></svg>GitHub</a>
   <a class="lang" href="/zh/download" hreflang="zh" lang="zh-CN">中文</a>
 </header>
 
 <main class="page">
-  <h1>Download BaoCode</h1>
+  <h1>Download CCCode</h1>
   <p class="meta"><span data-version>Version 1.6.0</span><span>Free and open source</span></p>
 
   <div class="platforms" data-platforms>
@@ -63,7 +63,7 @@
     </section>
   </div>
 
-  <h2 class="plain" id="phone">BaoCode on your phone <span class="beta">Beta</span></h2>
+  <h2 class="plain" id="phone">CCCode on your phone <span class="beta">Beta</span></h2>
   <p class="meta"><span>iPhone and iPad</span><span>Through TestFlight</span></p>
   <div class="platforms" data-phones>
     <section class="platform" data-os="ios">
@@ -77,7 +77,7 @@
       </div>
     </section>
   </div>
-  <p>Follow and drive your computer’s agents from your phone, over the local network or the internet, end-to-end encrypted. To pair, open Settings → Mobile in BaoCode on your computer, turn on Allow Phones to Connect, click Show QR Code, and scan it from the app. This is a beta: expect rough edges. <a href="/mobile-privacy">Privacy</a>.</p>
+  <p>Follow and drive your computer’s agents from your phone, over the local network or the internet, end-to-end encrypted. To pair, open Settings → Mobile in CCCode on your computer, turn on Allow Phones to Connect, click Show QR Code, and scan it from the app. This is a beta: expect rough edges. <a href="/mobile-privacy">Privacy</a>.</p>
   <p>Reading this on a computer? Hover over the card — or tap it on a phone or a tablet — for a QR code to scan with your iPhone or iPad.</p>
 
   <h2 class="plain" id="browser">The browser extension <span class="beta">Beta</span></h2>
@@ -98,28 +98,28 @@
       </div>
     </section>
   </div>
-  <p>Lets BaoCode’s agents use your own browser, signed in as you are: open pages, read them, click and type, while you watch them do it in the side panel. They only see the tabs you share with them, those in the yellow BaoCode tab group; your other tabs stay yours. Everything stays on your computer. On macOS and Windows. <a href="/browser-privacy">Privacy</a>.</p>
+  <p>Lets CCCode’s agents use your own browser, signed in as you are: open pages, read them, click and type, while you watch them do it in the side panel. They only see the tabs you share with them, those in the yellow CCCode tab group; your other tabs stay yours. Everything stays on your computer. On macOS and Windows. <a href="/browser-privacy">Privacy</a>.</p>
   <p>To load the zip in developer mode: unzip it into a folder you’ll keep (the browser loads it from there each time), open <code>chrome://extensions</code>, turn on Developer mode in the top right, click Load unpacked and choose the folder. For a new version, unzip it over the old one and click the reload arrow on the extension’s card.</p>
-  <p>Then, in BaoCode, open Settings → Browser to check it’s connected.</p>
+  <p>Then, in CCCode, open Settings → Browser to check it’s connected.</p>
 
   <h2 class="plain">Before you start</h2>
-  <p>BaoCode runs Claude Code where it’s installed, with your settings and sign-in. Where it isn’t, BaoCode runs on a model provider you add, and the first time it shows you how. Then open a folder and start a chat.</p>
+  <p>CCCode runs Claude Code where it’s installed, with your settings and sign-in. Where it isn’t, CCCode runs on a model provider you add, and the first time it shows you how. Then open a folder and start a chat.</p>
   <p>Not sure which Mac you have? Choose About This Mac in the Apple menu: a Chip line means Apple silicon, a Processor line means Intel.</p>
-  <p>On a Mac, drag BaoCode into Applications. It isn’t notarised by Apple yet, so the first time you open it macOS stops it: open System Settings, then Privacy &amp; Security, and click Open Anyway beside BaoCode. Only the first time.</p>
-  <p>On Linux, open the .deb with your software installer, or run <code>sudo apt install ./BaoCode-*.deb</code> in the folder it downloaded to. BaoCode is then in your applications, and <code>baocode</code> opens it from a terminal. Not sure which processor you have? <code>uname -m</code> says <code>x86_64</code> for x64 and <code>aarch64</code> for arm64.</p>
+  <p>On a Mac, drag CCCode into Applications. It isn’t notarised by Apple yet, so the first time you open it macOS stops it: open System Settings, then Privacy &amp; Security, and click Open Anyway beside CCCode. Only the first time.</p>
+  <p>On Linux, open the .deb with your software installer, or run <code>sudo apt install ./CCCode-*.deb</code> in the folder it downloaded to. CCCode is then in your applications, and <code>cccode</code> opens it from a terminal. Not sure which processor you have? <code>uname -m</code> says <code>x86_64</code> for x64 and <code>aarch64</code> for arm64.</p>
 
   <h2 class="plain">Updating</h2>
-  <p>BaoCode updates itself in the background and asks before restarting; on Linux it asks for your password to install. If it sent you here, it couldn’t update itself: download the new version above and install it over the old one. Your settings and conversations are kept.</p>
+  <p>CCCode updates itself in the background and asks before restarting; on Linux it asks for your password to install. If it sent you here, it couldn’t update itself: download the new version above and install it over the old one. Your settings and conversations are kept.</p>
   <p>What changed in each version: <a href="/changelog">the changelog</a>.</p>
 
 </main>
 
 <!-- Opened by download.js once a download starts, once a browser. -->
 <dialog class="star" data-star aria-labelledby="star-title">
-  <h2 class="plain" id="star-title">Thanks for downloading BaoCode</h2>
-  <p>Your download has started. BaoCode is free and open source; if you like it, a star on GitHub helps other people find it.</p>
+  <h2 class="plain" id="star-title">Thanks for downloading CCCode</h2>
+  <p>Your download has started. CCCode is free and open source; if you like it, a star on GitHub helps other people find it.</p>
   <div class="get">
-    <a class="button primary" href="https://github.com/baocode-dev/baocode" target="_blank" rel="noopener" data-star-go><svg class="ic" aria-hidden="true"><use href="#ic-github"/></svg>Star on GitHub</a>
+    <a class="button primary" href="https://github.com/chenxiTagGH/CCCode" target="_blank" rel="noopener" data-star-go><svg class="ic" aria-hidden="true"><use href="#ic-github"/></svg>Star on GitHub</a>
     <button class="button" type="button" data-star-close>Maybe later</button>
   </div>
 </dialog>

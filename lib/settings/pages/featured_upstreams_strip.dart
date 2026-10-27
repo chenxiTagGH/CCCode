@@ -20,7 +20,7 @@ import 'settings_widgets.dart';
 /// Settings → Models' row of upstreams that added the one-click import
 /// ([FeaturedUpstream]): a card of each, in an order of chance each time it
 /// shows, scrolled sideways and faded out at an edge with more past it.
-/// A card's hover has the site in full; "Why am I seeing this?" under
+/// A card's hover has the website in full; "Why am I seeing this?" under
 /// them, a click on it, how a site gets listed too ([_Why]).
 ///
 /// A user with an upstream at a listed site's [hosts] (one imported from
@@ -30,7 +30,7 @@ import 'settings_widgets.dart';
 ///
 /// Nothing at all, not the space above it either, until the list is got,
 /// nor where none could be. What shows at once is the list kept last time;
-/// the new one, as baocode.dev answers (see [FeaturedUpstream.load]).
+/// the new one, as the website answers (see [FeaturedUpstream.load]).
 class FeaturedUpstreamsStrip extends StatefulWidget {
   const FeaturedUpstreamsStrip({
     super.key,
@@ -38,7 +38,8 @@ class FeaturedUpstreamsStrip extends StatefulWidget {
     this.follow,
     this.hosts = const [],
     this.random,
-    this.open = _openUrl,
+    this.open = openUrl,
+    this.leading,
   });
 
   /// Those listed; the app's ([FeaturedUpstream.load]) when null.
@@ -58,7 +59,11 @@ class FeaturedUpstreamsStrip extends StatefulWidget {
   /// Opens a card's link.
   final void Function(Uri url) open;
 
+  /// A fixed card shown before the scrollable remote cards.
+  final Widget? leading;
+
   static void _openUrl(Uri url) => unawaited(openExternal('$url'));
+  static void openUrl(Uri url) => _openUrl(url);
 
   /// How tall a card is.
   static const cardHeight = 52.0;
@@ -120,8 +125,8 @@ class _FeaturedUpstreamsStripState extends State<FeaturedUpstreamsStrip> {
 
   @override
   Widget build(BuildContext context) {
-    // Nothing until the list is got, nor where none could be.
-    if (_upstreams.isEmpty) return const SizedBox.shrink();
+    // A fixed leading card may show even while remote cards are loading.
+    if (_upstreams.isEmpty && widget.leading == null) return const SizedBox.shrink();
     final language = Localizations.localeOf(context).languageCode;
     // One leads, of the newest of their upstreams at a listed site.
     final theirs = [
@@ -137,7 +142,7 @@ class _FeaturedUpstreamsStripState extends State<FeaturedUpstreamsStrip> {
         title: upstream.name,
         subtitle: about ?? upstream.url.host,
         hover: [upstream.name, ?about, upstream.url.host].join('\n'),
-        // The site in full: its name, the line about it, where a click goes.
+        // The CCCode website in full: its name, the line about it, where a click goes.
         hoverContent: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 280),
           child: Column(
@@ -207,7 +212,11 @@ class _FeaturedUpstreamsStripState extends State<FeaturedUpstreamsStrip> {
       height: FeaturedUpstreamsStrip.cardHeight,
       child: Row(
         children: [
-          // Theirs stay put; the rest scroll by them.
+          // Fixed cards stay put; the rest scroll by them.
+          if (widget.leading != null) ...[
+            widget.leading!,
+            const SizedBox(width: 8),
+          ],
           for (final upstream in theirs) ...[
             card(upstream),
             const SizedBox(width: 8),
@@ -241,11 +250,13 @@ class _FeaturedUpstreamsStripState extends State<FeaturedUpstreamsStrip> {
       children: [
         const SizedBox(height: 10),
         scrolled,
-        const SizedBox(height: 4),
-        Align(
-          alignment: Alignment.centerLeft,
-          child: _Why(onJoin: () => widget.open(join)),
-        ),
+        if (_upstreams.isNotEmpty) ...[
+          const SizedBox(height: 4),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: _Why(onJoin: () => widget.open(join)),
+          ),
+        ],
       ],
     );
   }

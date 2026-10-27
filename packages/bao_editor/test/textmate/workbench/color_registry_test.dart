@@ -116,7 +116,7 @@ void main() {
           .whereType<String>()
           .where((name) => !removedThemes.contains(name))
           .toSet(),
-      // VS Code's themes, not BaoCode's own.
+      // VS Code's themes, not CCCode's own.
       {
         ...manifest.themes
             .where((t) => t.extension != 'theme-bao')
@@ -262,18 +262,18 @@ void main() {
     final registry = getColorRegistry();
     final count = registry.getColors().length;
     const defaults = ColorDefaults.all(ColorLiteral('#010203'));
-    registerColor('baocode.test', defaults);
+    registerColor('cccode.test', defaults);
     registerColor(ids.first, defaults);
     try {
       expect(registry.getColors().length, count + 1);
       expect(registry.getColors().first.id, ids.first);
-      expect(registry.getColors().last.id, 'baocode.test');
+      expect(registry.getColors().last.id, 'cccode.test');
       final theme = ColorThemeData.createLoadedEmptyTheme('vs', 'vs');
       expect(ColorFormatCSS.formatHex(theme.getColor(ids.first)!), '#010203');
-      registry.updateDefaultColor('baocode.missing', defaults);
-      expect(registry.getColor('baocode.missing'), isNull);
+      registry.updateDefaultColor('cccode.missing', defaults);
+      expect(registry.getColor('cccode.missing'), isNull);
     } finally {
-      registry.deregisterColor('baocode.test');
+      registry.deregisterColor('cccode.test');
       registry.registerColor(ids.first, colorRegistryData.first.defaults);
     }
     expect(registry.getColors().map((c) => c.id).toList(), ids);

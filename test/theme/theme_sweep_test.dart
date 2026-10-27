@@ -37,8 +37,8 @@ Future<List<ColorThemeData>> _themes() async {
 }
 
 /// Where to write what each theme paints, to look at (e.g.
-/// `BAOCODE_THEME_SNAPSHOTS=/tmp/themes flutter test test/theme/`).
-final _snapshots = Platform.environment['BAOCODE_THEME_SNAPSHOTS'];
+/// `CCCODE_THEME_SNAPSHOTS=/tmp/themes flutter test test/theme/`).
+final _snapshots = Platform.environment['CCCODE_THEME_SNAPSHOTS'];
 
 Future<void> _snapshot(WidgetTester tester, String name) async {
   final directory = _snapshots;
@@ -74,7 +74,7 @@ void main() {
         ..restore(setting: theme.settingsId, data: theme.toStorage());
       expect(service.colorThemeId, theme.settingsId);
       final name = theme.settingsId.replaceAll(RegExp(r'[^A-Za-z0-9]+'), '_');
-      // As BaoCodeApp does, which the workbench here is outside of.
+      // As CCCodeApp does, which the workbench here is outside of.
       terminalColorTheme.value = TerminalColorTheme.resolve(
         service.colors.get,
         type: service.colors.type,
@@ -118,7 +118,7 @@ void main() {
       await tester.sendKeyEvent(LogicalKeyboardKey.escape);
       await tester.pumpWidget(const SizedBox());
 
-      await tester.pumpWidget(BaoCodeApp(workspace: Workspace.mock()));
+      await tester.pumpWidget(CCCodeApp(workspace: Workspace.mock()));
       await tester.pump();
       expect(tester.takeException(), isNull, reason: theme.settingsId);
       await _snapshot(tester, 'chat_$name');

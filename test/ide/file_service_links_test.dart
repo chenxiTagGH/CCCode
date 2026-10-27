@@ -15,8 +15,8 @@ void main() {
   late IdeFileService files;
 
   setUp(() {
-    project = Directory.systemTemp.createTempSync('baocode-links-');
-    outside = Directory.systemTemp.createTempSync('baocode-links-outside-');
+    project = Directory.systemTemp.createTempSync('cccode-links-');
+    outside = Directory.systemTemp.createTempSync('cccode-links-outside-');
     files = IdeFileService(project.path);
   });
   tearDown(() {

@@ -10,7 +10,7 @@ class _Process implements RemoteProcess {
 }
 
 /// What runs Claude Code on a remote host, as its server saved in the app
-/// says: the CLI where the host has one, else BaoCode's own core.
+/// says: the CLI where the host has one, else CCCode's own core.
 void main() {
   final previous = SshHosts.instance;
   late SshHosts hosts;

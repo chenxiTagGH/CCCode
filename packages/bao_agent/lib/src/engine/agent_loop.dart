@@ -678,7 +678,7 @@ class AgentLoop {
   static String _describe(ApiError error) {
     if (error.authentication) {
       return 'API Error: ${error.status ?? ''} ${error.message} · Check the '
-              'API key (or the provider set up in BaoCode)'
+              'API key (or the provider set up in CCCode)'
           .replaceAll('  ', ' ');
     }
     if (error.promptTooLong) return 'Prompt is too long';

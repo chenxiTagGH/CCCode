@@ -615,7 +615,7 @@ class RemoteClient {
   /// Starts Claude Code there with [arguments] in [cwd]: [settings] (flag
   /// settings with a key) written to a file only the user reads and given
   /// as `--settings`, the variables named in [cleared] set empty, then
-  /// [environment] over its own. [core] `builtin` runs BaoCode's own core
+  /// [environment] over its own. [core] `builtin` runs CCCode's own core
   /// there instead (a server of before runs the CLI). Throws
   /// ClaudeUnavailable when the CLI is to run and is not installed there.
   Future<RemoteProcess> startClaude({

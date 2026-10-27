@@ -39,7 +39,7 @@ void Answer();
 void LoopEnded();
 
 // From another copy of the app, started while this one runs (Explorer's
-// Open with BaoCode, the `code` command): the copy running did not take
+// Open with CCCode, the `code` command): the copy running did not take
 // what it was handed, or has no window left. Its threads are written down
 // as above, from this copy, which is still able to.
 void ReportRunningCopy();

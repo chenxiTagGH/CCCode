@@ -33,7 +33,7 @@ Future<Workspace> _pumpApp(WidgetTester tester, {double height = 900}) async {
   KeybindingService.instance = KeybindingService();
   addTearDown(() => KeybindingService.instance = KeybindingService());
   final workspace = Workspace.mock();
-  await tester.pumpWidget(BaoCodeApp(workspace: workspace));
+  await tester.pumpWidget(CCCodeApp(workspace: workspace));
   await tester.pump();
   return workspace;
 }
@@ -140,7 +140,7 @@ void main() {
 
     // What the app menu's Preferences… sends (MainFlutterWindow.swift).
     await tester.binding.defaultBinaryMessenger.handlePlatformMessage(
-      'baocode/window',
+      'cccode/window',
       const StandardMethodCodec().encodeMethodCall(
         const MethodCall('menuCommand', openSettingsCommandId),
       ),

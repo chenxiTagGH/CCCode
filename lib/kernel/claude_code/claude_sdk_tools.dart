@@ -86,8 +86,8 @@ Map<String, Object?> claudeSdkText(String text) => {
 
 /// The app's server and its tools (registered as their features start).
 abstract final class ClaudeSdkTools {
-  /// The server's name: its tools are `mcp__baocode__<name>` to the agent.
-  static const server = 'baocode';
+  /// The server's name: its tools are `mcp__cccode__<name>` to the agent.
+  static const server = 'cccode';
 
   static final Map<String, ClaudeSdkTool> _tools = {};
 
@@ -109,7 +109,7 @@ abstract final class ClaudeSdkTools {
       ? _instructions.remove(feature)
       : _instructions[feature] = text;
 
-  /// The tool an agent calls [name] (`mcp__baocode__<name>`), if one of
+  /// The tool an agent calls [name] (`mcp__cccode__<name>`), if one of
   /// this server's.
   static ClaudeSdkTool? called(String name) {
     const prefix = 'mcp__${server}__';

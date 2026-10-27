@@ -1,24 +1,24 @@
-# BaoCode
+# CCCode
 
 [English](README.md) · [简体中文](README_CN.md) · [日本語](README_JA.md) · [Français](README_FR.md) · **Español**
 
 Una interfaz de escritorio fácil de usar para [Claude Code](https://github.com/anthropics/claude-code), con un IDE integrado que responde en milisegundos.
 
-[Sitio web](https://baocode.dev) · [Descargar](https://baocode.dev/download) · [Historial de cambios](https://baocode.dev/changelog)
+[Sitio web](.) · [Descargar](./download) · [Historial de cambios](./changelog)
 
-![Ventana principal de BaoCode: agentes agrupados por proyecto, dos conversaciones en paralelo y selector de modelo](site/shots/main.png)
+![Ventana principal de CCCode: agentes agrupados por proyecto, dos conversaciones en paralelo y selector de modelo](site/shots/main.png)
 
 > Presentación en español del README en inglés. Si hay diferencias, consulta [English](README.md). Los sitios y documentos enlazados no necesariamente están traducidos al español.
 
-## Por qué BaoCode
+## Por qué CCCode
 
-Usamos Claude Code todos los días. El terminal es un buen lugar para ejecutarlo, pero no para leer sus resultados: los diffs largos desaparecen de la pantalla, cuesta volver a encontrar los pasos anteriores y revisar los cambios exige cambiar de aplicación. BaoCode es la ventana que queríamos para trabajar con él.
+Usamos Claude Code todos los días. El terminal es un buen lugar para ejecutarlo, pero no para leer sus resultados: los diffs largos desaparecen de la pantalla, cuesta volver a encontrar los pasos anteriores y revisar los cambios exige cambiar de aplicación. CCCode es la ventana que queríamos para trabajar con él.
 
-BaoCode no tiene un agente propio, por diseño. Claude Code es el agente, con su ecosistema de herramientas, skills, plugins, servidores MCP, subagentes y hooks. BaoCode ofrece una interfaz legible y hace que las funciones complementarias estén listas para usar. Ejecuta el Claude Code que ya tienes instalado, con tu configuración y tu `CLAUDE.md`.
+CCCode no tiene un agente propio, por diseño. Claude Code es el agente, con su ecosistema de herramientas, skills, plugins, servidores MCP, subagentes y hooks. CCCode ofrece una interfaz legible y hace que las funciones complementarias estén listas para usar. Ejecuta el Claude Code que ya tienes instalado, con tu configuración y tu `CLAUDE.md`.
 
 ## Funciones
 
-- **Una interfaz hecha para leer.** Las lecturas de archivos, búsquedas y comandos se contraen en una sola línea. Puedes conservar o deshacer los cambios de Claude por archivo. Los puntos de control se guardan en el directorio de datos de BaoCode, nunca en el `.git` del repositorio.
+- **Una interfaz hecha para leer.** Las lecturas de archivos, búsquedas y comandos se contraen en una sola línea. Puedes conservar o deshacer los cambios de Claude por archivo. Los puntos de control se guardan en el directorio de datos de CCCode, nunca en el `.git` del repositorio.
 - **Objetivos.** Escribe `/goal` y lo que quieres lograr: Claude continúa trabajando hasta cumplirlo. El objetivo y su progreso aparecen encima del campo de entrada.
 - **Entrada de texto enriquecido.** El código copiado del editor se inserta como referencia a su archivo y sus líneas. Las imágenes pegadas y los archivos arrastrados se colocan donde quieras dentro de la frase.
 - **IDE rápido.** Incluye editor, terminal y control de código fuente con un grafo de commits. Claude Code puede redactar los mensajes de commit. Admite mapas de atajos y servidores de lenguaje.
@@ -31,9 +31,9 @@ BaoCode no tiene un agente propio, por diseño. Claude Code es el agente, con su
 
 ## Velocidad
 
-BaoCode es una aplicación nativa que dibuja directamente su interfaz en la GPU. Estos valores proceden del README en inglés; no se han vuelto a medir para esta traducción. Los resultados reales dependen del hardware, la versión y el uso.
+CCCode es una aplicación nativa que dibuja directamente su interfaz en la GPU. Estos valores proceden del README en inglés; no se han vuelto a medir para esta traducción. Los resultados reales dependen del hardware, la versión y el uso.
 
-| Indicador | BaoCode |
+| Indicador | CCCode |
 | --- | --- |
 | Inicio | ≈ 0,18 s |
 | Memoria, una ventana inactiva | ≈ 120 MB |
@@ -47,7 +47,7 @@ BaoCode es una aplicación nativa que dibuja directamente su interfaz en la GPU.
 
 ## Compilar desde el código fuente
 
-BaoCode es una aplicación Flutter; requiere el SDK de Dart `^3.13.4`.
+CCCode es una aplicación Flutter; requiere el SDK de Dart `^3.13.4`.
 
 ```sh
 flutter pub get
@@ -57,8 +57,8 @@ flutter run -d macos        # Windows: flutter run -d windows
 Para crear las distribuciones en `build/installers/`:
 
 ```sh
-dart run tool/build_macos.dart            # BaoCode-<version>-{arm64,x64}.dmg y BaoCode-<version>-mac-{arm64,x64}.zip
-dart run tool/build_windows.dart          # BaoCode-<version>-setup.exe (requiere Inno Setup)
+dart run tool/build_macos.dart            # CCCode-<version>-{arm64,x64}.dmg y CCCode-<version>-mac-{arm64,x64}.zip
+dart run tool/build_windows.dart          # CCCode-<version>-setup.exe (requiere Inno Setup)
 dart run tool/build_remote_server.dart    # servidor SSH remoto para Linux x64 y arm64
 ```
 
@@ -77,7 +77,7 @@ La CI compila y publica las versiones cuando se envía un tag `v*`. Consulta [do
 | [packages/bao_remote](packages/bao_remote) | Componente del host remoto servido por SSH |
 | [macos/](macos), [windows/](windows), [linux/](linux) | Ejecutores nativos |
 | [tool/](tool) | Scripts de compilación, empaquetado y publicación |
-| [site/](site) | Código del sitio [baocode.dev](https://baocode.dev) |
+| [site/](site) | Código del sitio [website](site) |
 | [docs/](docs) | Notas de diseño |
 
 ## Comentarios
@@ -86,6 +86,6 @@ Se agradecen las issues y las Pull Requests. Comente primero el cambio en una is
 
 ## Licencia
 
-BaoCode se distribuye bajo la [GNU General Public License v3.0](LICENSE) (GPL-3.0-only). Los paquetes de editor y terminal de [packages/](packages) (bao_editor, bao_xterm, bao_pty) usan la licencia MIT. Los componentes de terceros conservan sus propias licencias, disponibles junto a su código fuente.
+CCCode se distribuye bajo la [GNU General Public License v3.0](LICENSE) (GPL-3.0-only). Los paquetes de editor y terminal de [packages/](packages) (bao_editor, bao_xterm, bao_pty) usan la licencia MIT. Los componentes de terceros conservan sus propias licencias, disponibles junto a su código fuente.
 
-BaoCode es un proyecto independiente, sin afiliación con Anthropic ni respaldo de esa empresa.
+CCCode es un proyecto independiente, sin afiliación con Anthropic ni respaldo de esa empresa.

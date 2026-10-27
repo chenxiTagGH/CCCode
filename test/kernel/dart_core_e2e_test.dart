@@ -1,4 +1,4 @@
-// The app's Claude Code kernel on BaoCode's own core: the engine in its
+// The app's Claude Code kernel on CCCode's own core: the engine in its
 // isolate, the Messages API on this machine. What the UI is driven by,
 // end to end, with no CLI.
 import 'dart:async';
@@ -36,7 +36,7 @@ void main() {
 
   setUp(() async {
     root = Directory.systemTemp
-        .createTempSync('baocode-core-e2e-')
+        .createTempSync('cccode-core-e2e-')
         .resolveSymbolicLinksSync();
     cwd = p.join(root, 'project');
     config = p.join(root, 'config');

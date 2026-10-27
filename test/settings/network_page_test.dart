@@ -22,7 +22,7 @@ void main() {
   late Map<String, Object> answers;
 
   setUp(() async {
-    data = await Directory.systemTemp.createTemp('baocode-network');
+    data = await Directory.systemTemp.createTemp('cccode-network');
     settings = UserSettings(p.join(data.path, 'settings.json'));
     await settings.load();
     route = ProxyRoute(

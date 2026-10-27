@@ -16,7 +16,7 @@ import 'package:baocode/workspace/workspace_dialog.dart';
 
 import 'project_workspace_test.dart' show FakeWorkspaceDirectories;
 
-const _window = MethodChannel('baocode/window');
+const _window = MethodChannel('cccode/window');
 const _desktop = '/Users/me/Desktop';
 
 final _mac = TargetPlatformVariant.only(TargetPlatform.macOS);
@@ -55,7 +55,7 @@ Future<Workspace> _pumpNew(WidgetTester tester) async {
     kernels: [MockKernels.claudeCode],
     workspaceDirectories: FakeWorkspaceDirectories(),
   );
-  await tester.pumpWidget(BaoCodeApp(workspace: workspace));
+  await tester.pumpWidget(CCCodeApp(workspace: workspace));
   workspace.create(project: workspace.projects.first);
   await tester.pump();
   return workspace;

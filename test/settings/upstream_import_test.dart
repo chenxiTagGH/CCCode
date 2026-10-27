@@ -67,7 +67,7 @@ void main() {
       );
     });
 
-    testWidgets("a card's hover has the site in full; a click on why they "
+    testWidgets("a card's hover has the website in full; a click on why they "
         'show, how a site gets listed: a button to the page for it', (
       tester,
     ) async {
@@ -114,7 +114,7 @@ void main() {
       expect(find.text('alpha.example.com'), findsNothing);
 
       // Why they show, at a click, not a hover.
-      const why = 'These sites are officially listed by BaoCode';
+      const why = 'These sites are officially listed by CCCode';
       await gesture.moveTo(
         tester.getCenter(find.text('Why am I seeing this?')),
       );
@@ -127,7 +127,7 @@ void main() {
       expect(find.text(why), findsNothing);
       await click(find.text('Why am I seeing this?'));
       await click(find.text('List My Site Too'));
-      expect(opened.last, Uri.parse('https://baocode.dev/upstreams'));
+      expect(opened.last, Uri.parse('./upstreams'));
       expect(find.text(why), findsNothing);
     });
 
@@ -220,7 +220,7 @@ void main() {
     });
 
     testWidgets('Settings → Models shows the list kept at once, the new one '
-        'as baocode.dev answers, a site of theirs then leading', (
+        'as the website answers, a site of theirs then leading', (
       tester,
     ) async {
       tester.view.physicalSize = const Size(1000, 1400);
@@ -497,7 +497,7 @@ void main() {
     }
 
     const link =
-        'baocode://provider/import?v=1&name=Alpha&protocol=anthropic'
+        'cccode://provider/import?v=1&name=Alpha&protocol=anthropic'
         '&url=https%3A%2F%2Fapi.alpha.example.com&key=sk-alpha-1234567890';
 
     testWidgets('nothing is added unless the user says yes', (tester) async {
@@ -524,7 +524,7 @@ void main() {
       );
       await tester.tap(find.text('go'));
       await tester.pumpAndSettle();
-      // As BaoCode lists the site.
+      // As CCCode lists the website.
       expect(find.text('Alpha API'), findsOneWidget);
       expect(find.text('Officially listed'), findsOneWidget);
       expect(find.text('Alpha API, cheaply'), findsOneWidget);
@@ -564,7 +564,7 @@ void main() {
               onPressed: () => showUpstreamImportDialog(
                 context,
                 UpstreamImport.parse(
-                  'baocode://provider/import?v=1&protocol=anthropic'
+                  'cccode://provider/import?v=1&protocol=anthropic'
                   '&url=https%3A%2F%2Fapi.gamma.example.com%2Fv1&name=Gamma',
                 )!,
                 providers: providers,
