@@ -241,6 +241,19 @@ void main() {
     expect(stopwatch.elapsed, greaterThanOrEqualTo(const Duration(seconds: 1)));
   });
 
+  test('first login preserves the new session when model sync fails', () async {
+    final fixture = await makeFixture(
+      loginRefreshToken: 'refresh-1',
+      accountKeys: [fakeKey(id: '7', name: 'CCCode')],
+      revealedKey: 'sk-cccode',
+      models: const [],
+      preloadSession: false,
+    );
+
+    expect(await fixture.connector.connect(), isFalse);
+    expect(fixture.store.session, 'refresh-2');
+  });
+
   test('model refresh failure preserves the previous provider models', () async {
     final fixture = await makeFixture(
       loginRefreshToken: 'refresh-1',
@@ -297,8 +310,10 @@ void main() {
       models: const [RemoteModel('claude-sonnet-4-5')],
       preloadSession: true,
     );
+    final chooser = (List<AccountKey> keys) async =>
+        keys.singleWhere((key) => key.id == '9');
 
-    expect(await fixture.connector.connect(), isTrue);
+    expect(await fixture.connector.connect(chooseKey: chooser), isTrue);
     expect(fixture.revealedKeyId, '9');
   });
 

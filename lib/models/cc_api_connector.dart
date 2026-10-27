@@ -367,14 +367,22 @@ class CcApiConnector {
       _status = CcApiConnectionStatus.connected;
       return true;
     } on _CcApiSelectionCancelled {
-      rethrow;
-    } on Object {
-      // Refresh may rotate and invalidate the prior session before a later
-      // profile/key/model request fails. Keep the rotated credential when
-      // this is a genuine synchronization failure; cancellation is excluded.
-      if (!committed && rotatedSession != null) {
+      if (rotatedSession != null) {
         try {
           await store.writeSession(rotatedSession);
+        } catch (_) {
+          // Preserve cancellation; the rotated token is best effort.
+        }
+      }
+      rethrow;
+    } on Object {
+      // A first login must remain usable after a genuine sync failure. A
+      // refresh rotation may also invalidate the prior session, so retain the
+      // newest credential whenever one was issued. These writes are best
+      // effort and never replace the original error.
+      if (!committed && (previousSession == null || rotatedSession != null)) {
+        try {
+          await store.writeSession(rotatedSession ?? session);
         } catch (_) {
           // Preserve the original synchronization error.
         }
