@@ -4,7 +4,7 @@
 
 [Claude Code](https://github.com/anthropics/claude-code) のための、使いやすいデスクトップ UI。ミリ秒単位で応答する高速な IDE を内蔵しています。
 
-[公式サイト](.) · [ダウンロード](./download) · [変更履歴](./changelog)
+[公式サイト](https://baocode.dev) · [ダウンロード](https://baocode.dev/download) · [変更履歴](https://baocode.dev/changelog)
 
 ![CCCode のメイン画面：プロジェクト別のエージェント、並列表示された二つの会話、モデル選択](site/shots/main.png)
 

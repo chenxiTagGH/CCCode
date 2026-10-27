@@ -4,7 +4,7 @@
 
 Une interface de bureau conviviale pour [Claude Code](https://github.com/anthropics/claude-code), avec un IDE intégré qui répond en quelques millisecondes.
 
-[Site web](.) · [Télécharger](./download) · [Historique des versions](./changelog)
+[Site web](https://baocode.dev) · [Télécharger](https://baocode.dev/download) · [Historique des versions](https://baocode.dev/changelog)
 
 ![Fenêtre principale de CCCode : agents regroupés par projet, deux conversations côte à côte et sélecteur de modèle](site/shots/main.png)
 
