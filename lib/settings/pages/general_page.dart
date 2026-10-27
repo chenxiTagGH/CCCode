@@ -99,6 +99,10 @@ class GeneralSettingsPage extends StatelessWidget {
     value == MainWindow.fallback ? null : value.name,
   );
 
+  @visibleForTesting
+  static bool validAttributionEmail(String value) =>
+      RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$').hasMatch(value.trim());
+
   /// The `window.*` settings' rows: each its label, description, and
   /// values (the first the default) as settings.json has them and named.
   List<Widget> _windowRows(BuildContext context) {
@@ -324,6 +328,43 @@ class GeneralSettingsPage extends StatelessWidget {
                           ? SettingsText.path
                           : SettingsText.description,
                     ),
+                    if (current == CommitAttribution.cccode) ...[
+                      const SizedBox(height: 8),
+                      SettingsTextField(
+                        value: switch (
+                          settings?[CommitAttribution.nameSettingKey]
+                        ) {
+                          final String value when value.trim().isNotEmpty =>
+                            value,
+                          _ => CommitAttribution.defaultName,
+                        },
+                        semanticLabel: l10n.generalSettingsAttributionName,
+                        onSubmitted: (value) => _write(
+                          CommitAttribution.nameSettingKey,
+                          value.isEmpty ? null : value,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      SettingsTextField(
+                        value: switch (
+                          settings?[CommitAttribution.emailSettingKey]
+                        ) {
+                          final String value when value.trim().isNotEmpty =>
+                            value,
+                          _ => CommitAttribution.defaultEmail,
+                        },
+                        semanticLabel: l10n.generalSettingsAttributionEmail,
+                        hint: l10n.generalSettingsAttributionEmailHint,
+                        onSubmitted: (value) {
+                          if (validAttributionEmail(value)) {
+                            _write(
+                              CommitAttribution.emailSettingKey,
+                              value.isEmpty ? null : value,
+                            );
+                          }
+                        },
+                      ),
+                    ],
                   ],
                   trailing: SettingsDropdown(
                     current: name,

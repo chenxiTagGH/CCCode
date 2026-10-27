@@ -3529,6 +3529,19 @@ class AppLocalizationsEn extends AppLocalizations {
       'Who the commits and pull requests an agent writes credit. Applies to agents started after a change; Claude Code only for now.';
 
   @override
+  String get generalSettingsAttributionName => 'CCCode attribution name';
+
+  @override
+  String get generalSettingsAttributionEmail => 'CCCode attribution email';
+
+  @override
+  String get generalSettingsAttributionEmailHint => 'name@example.com';
+
+  @override
+  String get generalSettingsAttributionEmailInvalid =>
+      'Enter a valid email address.';
+
+  @override
   String get generalSettingsClaudeCore => 'Core';
 
   @override

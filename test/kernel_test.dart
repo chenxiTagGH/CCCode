@@ -4403,7 +4403,7 @@ void main() {
           ClaudeLaunch(cwd: '/p', attribution: attribution);
       expect(flagSettings(launch(CommitAttribution.cccode)), {
         'attribution': {
-          'commit': 'Co-Authored-By: CCCode <noreply@the website>',
+          'commit': 'Co-Authored-By: CCCode <noreply@ccapitoken.cc>',
           'pr': '🤖 Generated with [CCCode](.)',
         },
       });

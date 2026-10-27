@@ -3391,6 +3391,18 @@ class AppLocalizationsZh extends AppLocalizations {
       'Agent 在它写的提交和 Pull Request 中添加的署名。更改对之后启动的 Agent 生效；目前仅支持 Claude Code。';
 
   @override
+  String get generalSettingsAttributionName => 'CCCode 署名名称';
+
+  @override
+  String get generalSettingsAttributionEmail => 'CCCode 署名邮箱';
+
+  @override
+  String get generalSettingsAttributionEmailHint => 'name@example.com';
+
+  @override
+  String get generalSettingsAttributionEmailInvalid => '请输入有效的邮箱地址。';
+
+  @override
   String get generalSettingsClaudeCore => '内核';
 
   @override

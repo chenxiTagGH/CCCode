@@ -2376,15 +2376,15 @@
     },
     {
       "extension": "theme-bao",
-      "id": "Bao Dark",
-      "label": "Bao Dark",
+      "id": "CC Dark",
+      "label": "CC Dark",
       "uiTheme": "vs-dark",
       "path": "themes/theme-bao/themes/bao-dark-color-theme.json"
     },
     {
       "extension": "theme-bao",
-      "id": "Bao Light",
-      "label": "Bao Light",
+      "id": "CC Light",
+      "label": "CC Light",
       "uiTheme": "vs",
       "path": "themes/theme-bao/themes/bao-light-color-theme.json"
     }

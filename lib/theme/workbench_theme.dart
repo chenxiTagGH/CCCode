@@ -55,10 +55,10 @@ export 'package:bao_editor/monaco/vs/platform/theme/common/theme.dart'
         isHighContrast;
 
 /// `ThemeSettingDefaults`: the default theme of each color scheme. Ours are
-/// Bao Dark and Bao Light, not upstream's Dark 2026 and Light 2026.
+/// CC Dark and CC Light, not upstream's Dark 2026 and Light 2026.
 abstract final class ThemeSettingDefaults {
-  static const colorThemeDark = 'Bao Dark';
-  static const colorThemeLight = 'Bao Light';
+  static const colorThemeDark = 'CC Dark';
+  static const colorThemeLight = 'CC Light';
   static const colorThemeHcDark = 'Default High Contrast';
   static const colorThemeHcLight = 'Default High Contrast Light';
 }
@@ -71,12 +71,16 @@ String migrateThemeSettingsId(String settingsId) => switch (settingsId) {
   'Default Light Modern' => 'Light Modern',
   'Default Dark+' => 'Dark+',
   'Default Light+' => 'Light+',
+  'Bao Dark' ||
+  'CC Dark' ||
   'Experimental Dark' ||
   'VS Code Dark' ||
   'Dark 2026' ||
   'Visual Studio Dark' ||
   'Monokai' ||
   'Abyss' => ThemeSettingDefaults.colorThemeDark,
+  'Bao Light' ||
+  'CC Light' ||
   'Experimental Light' ||
   'VS Code Light' ||
   'Light 2026' ||

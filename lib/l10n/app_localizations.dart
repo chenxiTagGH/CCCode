@@ -5966,6 +5966,11 @@ abstract class AppLocalizations {
   /// **'Who the commits and pull requests an agent writes credit. Applies to agents started after a change; Claude Code only for now.'**
   String get generalSettingsCommitAttributionDescription;
 
+  String get generalSettingsAttributionName;
+  String get generalSettingsAttributionEmail;
+  String get generalSettingsAttributionEmailHint;
+  String get generalSettingsAttributionEmailInvalid;
+
   /// Settings → General → Claude Code row: what runs Claude Code sessions, CCCode's built-in core (written in Dart) or the Claude Code CLI.
   ///
   /// In en, this message translates to:

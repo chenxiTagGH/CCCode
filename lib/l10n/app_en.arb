@@ -2380,6 +2380,10 @@
   "generalSettingsTitle": "General",
   "generalSettingsCommitAttribution": "Commit Attribution",
   "generalSettingsCommitAttributionDescription": "Who the commits and pull requests an agent writes credit. Applies to agents started after a change; Claude Code only for now.",
+  "generalSettingsAttributionName": "CCCode attribution name",
+  "generalSettingsAttributionEmail": "CCCode attribution email",
+  "generalSettingsAttributionEmailHint": "name@example.com",
+  "generalSettingsAttributionEmailInvalid": "Enter a valid email address.",
   "generalSettingsClaudeCore": "Core",
   "@generalSettingsClaudeCore": {
     "description": "Settings → General → Claude Code row: what runs Claude Code sessions, CCCode's built-in core (written in Dart) or the Claude Code CLI."

@@ -10,11 +10,11 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   test('starts in the kept theme and loads it', () async {
-    final kept = WorkbenchThemeService()..restore(setting: 'Bao Dark');
+    final kept = WorkbenchThemeService()..restore(setting: 'CC Dark');
     await kept.initialize();
     final themes = WorkbenchThemeService()
-      ..restore(setting: 'Bao Dark', data: kept.colorTheme.toStorage());
-    expect(themes.colorThemeId, 'Bao Dark');
+      ..restore(setting: 'CC Dark', data: kept.colorTheme.toStorage());
+    expect(themes.colorThemeId, 'CC Dark');
     expect(themes.colors.dark, isTrue);
     expect(themes.colors.get('editor.background'), isNotNull);
     final restored = themes.colorTheme;
@@ -22,13 +22,13 @@ void main() {
 
     await themes.initialize();
     expect(themes.colorTheme.isLoaded, isTrue);
-    expect(themes.colorTheme.settingsId, 'Bao Dark');
+    expect(themes.colorTheme.settingsId, 'CC Dark');
     expect(
       themes.colors['editor.background'],
       WorkbenchColors(restored)['editor.background'],
     );
     final ids = [for (final theme in themes.colorThemes) theme.id];
-    expect(ids, containsAll(['Bao Dark', 'Bao Light', 'Dark Modern']));
+    expect(ids, containsAll(['CC Dark', 'CC Light', 'Dark Modern']));
     // Not listed: the Bao themes' bases and the themes they replace.
     for (final gone in [
       'Dark 2026',
@@ -41,14 +41,14 @@ void main() {
       expect(ids, isNot(contains(gone)));
     }
     expect(
-      themes.colorThemes.firstWhere((t) => t.id == 'Bao Light').type,
+      themes.colorThemes.firstWhere((t) => t.id == 'CC Light').type,
       ColorScheme.light,
     );
   });
 
   test('extensions\' contributed colors resolve with their defaults, and go '
       'with them', () async {
-    final themes = WorkbenchThemeService()..restore(setting: 'Bao Dark');
+    final themes = WorkbenchThemeService()..restore(setting: 'CC Dark');
     await themes.initialize();
     var notified = 0;
     themes.addListener(() => notified++);
@@ -95,15 +95,15 @@ void main() {
   });
 
   test('the initial colors paint until the theme loads', () async {
-    final themes = WorkbenchThemeService()..restore(setting: 'Bao Light');
-    expect(themes.colorThemeId, 'Bao Light');
+    final themes = WorkbenchThemeService()..restore(setting: 'CC Light');
+    expect(themes.colorThemeId, 'CC Light');
     expect(
       themes.colors['editor.background'],
       const Color(0xFFFFFFFF),
       reason: 'COLOR_THEME_LIGHT_INITIAL_COLORS',
     );
     await themes.initialize();
-    expect(themes.colorTheme.settingsId, 'Bao Light');
+    expect(themes.colorTheme.settingsId, 'CC Light');
     expect(themes.colors.dark, isFalse);
   });
 
@@ -122,7 +122,7 @@ void main() {
     expect(await accent('Kimbie Dark'), const Color(0xFFA57A4C));
     expect(await accent('Solarized Light'), const Color(0xFFB49471));
     expect(
-      await accent('Bao Dark'),
+      await accent('CC Dark'),
       WorkbenchThemeService.instance.colors['textLink.foreground'],
     );
   });
@@ -156,14 +156,14 @@ void main() {
   test('a theme gone falls back to the default', () async {
     final themes = WorkbenchThemeService()..restore(setting: 'No Such Theme');
     await themes.initialize();
-    expect(themes.colorTheme.settingsId, 'Bao Dark');
+    expect(themes.colorTheme.settingsId, 'CC Dark');
   });
 
   test('with no theme kept, Bao Dark is the default', () async {
     final themes = WorkbenchThemeService()..restore();
-    expect(themes.colorThemeId, 'Bao Dark');
+    expect(themes.colorThemeId, 'CC Dark');
     await themes.initialize();
-    expect(themes.colorTheme.settingsId, 'Bao Dark');
+    expect(themes.colorTheme.settingsId, 'CC Dark');
     expect(themes.colors.dark, isTrue);
   });
 
@@ -182,7 +182,7 @@ void main() {
         ..restore(setting: 'Visual Studio Light', data: data);
       expect(themes.colorTheme.type, ColorScheme.light);
       await themes.initialize();
-      expect(themes.colorTheme.settingsId, 'Bao Light');
+      expect(themes.colorTheme.settingsId, 'CC Light');
     },
   );
 
@@ -198,21 +198,27 @@ void main() {
         '"colorMap":{"editor.background":"#f5f5f5"},"watch":false}';
     final light = WorkbenchThemeService()
       ..restore(setting: 'Quiet Light', data: data);
-    expect(light.colorThemeId, 'Bao Light');
+    expect(light.colorThemeId, 'CC Light');
     await light.initialize();
-    expect(light.colorTheme.settingsId, 'Bao Light');
+    expect(light.colorTheme.settingsId, 'CC Light');
     expect(light.colors.dark, isFalse);
 
     final dark = WorkbenchThemeService()..restore(setting: 'Monokai');
     await dark.initialize();
-    expect(dark.colorTheme.settingsId, 'Bao Dark');
+    expect(dark.colorTheme.settingsId, 'CC Dark');
   });
 
-  test('old setting ids are migrated', () {
+  test('CC theme defaults replace Bao names and migrate both names', () {
+    expect(ThemeSettingDefaults.colorThemeDark, 'CC Dark');
+    expect(ThemeSettingDefaults.colorThemeLight, 'CC Light');
+    expect(migrateThemeSettingsId('Bao Dark'), 'CC Dark');
+    expect(migrateThemeSettingsId('Bao Light'), 'CC Light');
+    expect(migrateThemeSettingsId('CC Dark'), 'CC Dark');
+    expect(migrateThemeSettingsId('CC Light'), 'CC Light');
     expect(migrateThemeSettingsId('Default Dark Modern'), 'Dark Modern');
-    expect(migrateThemeSettingsId('VS Code Light'), 'Bao Light');
-    expect(migrateThemeSettingsId('Light 2026'), 'Bao Light');
-    expect(migrateThemeSettingsId('Quiet Light'), 'Bao Light');
+    expect(migrateThemeSettingsId('VS Code Light'), 'CC Light');
+    expect(migrateThemeSettingsId('Light 2026'), 'CC Light');
+    expect(migrateThemeSettingsId('Quiet Light'), 'CC Light');
     for (final dark in [
       'VS Code Dark',
       'Dark 2026',
@@ -220,7 +226,7 @@ void main() {
       'Monokai',
       'Abyss',
     ]) {
-      expect(migrateThemeSettingsId(dark), 'Bao Dark');
+      expect(migrateThemeSettingsId(dark), 'CC Dark');
     }
     expect(migrateThemeSettingsId('Kimbie Dark'), 'Kimbie Dark');
   });
@@ -234,8 +240,8 @@ void main() {
     themes.addListener(() => changes++);
 
     // A preview shows the theme without keeping it.
-    await themes.setColorTheme('Bao Light', preview: true);
-    expect(themes.colorThemeId, 'Bao Light');
+    await themes.setColorTheme('CC Light', preview: true);
+    expect(themes.colorThemeId, 'CC Light');
     expect(changes, 1);
     expect(store.preferences['colorTheme'], isNull);
 
@@ -260,7 +266,7 @@ void main() {
     expect(restarted.colorTheme.tokenColors, isNotEmpty);
 
     // Its type too: the window and Monarch's theme follow it.
-    await themes.setColorTheme('Bao Light');
+    await themes.setColorTheme('CC Light');
     await pumpEventQueue();
     final light = WorkbenchThemeService()
       ..restore(
@@ -294,7 +300,7 @@ void main() {
       WorkbenchThemeScope(builder: (_) => const _Probe()),
     );
     seen.add(_Probe.last!);
-    await tester.runAsync(() => themes.setColorTheme('Bao Light'));
+    await tester.runAsync(() => themes.setColorTheme('CC Light'));
     await tester.pump();
     seen.add(_Probe.last!);
     expect(seen.first, isNot(seen.last));

@@ -172,6 +172,8 @@ Future<void> main(List<String> arguments) async {
     // Read as each agent starts.
     CommitAttribution.current = () =>
         CommitAttribution.parse(files.settings[CommitAttribution.settingKey]);
+    CommitAttribution.currentValue = () =>
+        CommitAttribution.normalized(files.settings.values);
     // Read as each message is sent.
     QueuedMessages.current = () =>
         QueuedMessages.parse(files.settings[QueuedMessages.settingKey]);
