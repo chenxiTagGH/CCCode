@@ -8,7 +8,7 @@ DONE_WITH_CONCERNS
 
 - `f338c2d4` — `chore(site): remove featured upstream listings`
 - `ee2d8a4d` — `test(settings): use isolated upstream logo fixture`
-- Pending commit below — align fixture host used by the widget.
+- `4e349a53` — `test(settings): align upstream fixture host`
 
 ## Files changed
 
