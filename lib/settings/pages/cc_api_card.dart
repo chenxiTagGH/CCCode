@@ -33,7 +33,8 @@ class _CcApiCardState extends State<CcApiCard> {
   @override
   void didUpdateWidget(covariant CcApiCard oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.connector != oldWidget.connector) _working = false;
+    // Keep the lock held by an in-flight operation even if its connector is
+    // replaced; the old operation still mutates shared provider state.
   }
 
   Future<void> _connect() async {
@@ -47,7 +48,7 @@ class _CcApiCardState extends State<CcApiCard> {
             : Future<AccountKey?>.value(null),
       );
     } finally {
-      if (mounted && identical(widget.connector, connector)) {
+      if (mounted) {
         setState(() => _working = false);
         widget.onChanged();
       }
@@ -65,7 +66,7 @@ class _CcApiCardState extends State<CcApiCard> {
             : Future<AccountKey?>.value(null),
       );
     } finally {
-      if (mounted && identical(widget.connector, connector)) {
+      if (mounted) {
         setState(() => _working = false);
         widget.onChanged();
       }
