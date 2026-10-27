@@ -512,6 +512,7 @@ class _SettingsTextFieldState extends State<SettingsTextField> {
     // Shows the kept value when it changes elsewhere, never over a typing.
     if (!_focus.hasFocus && _controller.text != widget.value) {
       _controller.text = widget.value;
+      _error = null;
     }
   }
 

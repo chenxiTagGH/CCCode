@@ -103,7 +103,7 @@ class GeneralSettingsPage extends StatelessWidget {
 
   @visibleForTesting
   static bool validAttributionEmail(String value) =>
-      RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$').hasMatch(value.trim());
+      value.trim().isEmpty || CommitAttribution.isValidEmail(value);
 
   /// The `window.*` settings' rows: each its label, description, and
   /// values (the first the default) as settings.json has them and named.
@@ -371,8 +371,7 @@ class GeneralSettingsPage extends StatelessWidget {
                       ),
                       if (settings?[CommitAttribution.emailSettingKey]
                               case final String email
-                              when email.trim().isNotEmpty &&
-                                  !validAttributionEmail(email))
+                              when !validAttributionEmail(email))
                         Text(
                           l10n.generalSettingsAttributionEmailInvalid,
                           style: SettingsText.description.copyWith(

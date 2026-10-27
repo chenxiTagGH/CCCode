@@ -94,3 +94,21 @@ Addressed review findings after the initial commit:
 - Localization generated files were updated manually to match the ARB additions because `flutter gen-l10n` could not be run without Flutter. They should be regenerated and checked in a Flutter-enabled environment.
 - The task required preserving the package name; `pubspec.yaml` remains unchanged with package name `baocode`.
 - Existing `agent` and `none` attribution behavior and enum values remain intact.
+
+## Re-review follow-up
+
+Addressed the remaining validation and regression findings:
+
+- Custom attribution names now reject control characters, including newlines, and normalize invalid values to the safe default before trailer generation.
+- `CommitAttribution.isValidEmail` is the single canonical validator shared by normalization and General settings UI; malformed values such as `name<>@example.com` and `name,other@example.com` are rejected.
+- Empty email clears the persisted custom email and restores `noreply@ccapitoken.cc`; empty names similarly fall back to `CCCode`.
+- Settings text fields clear stale validation errors when a valid external value updates the controller.
+- Added focused regression coverage for newline injection, malformed email, clearing, legacy snapshot color preservation, and current custom transport trailer generation.
+
+## Re-review commands and exact results
+
+- `jq empty packages/bao_editor/tool/textmate_themes/theme-bao/themes/bao-dark-color-theme.json packages/bao_editor/tool/textmate_themes/theme-bao/themes/bao-light-color-theme.json packages/bao_editor/assets/textmate/manifest.json` — passed with no output.
+- `node --check packages/bao_editor/tool/generate_textmate_assets.mjs` — passed with no output.
+- `git diff --check` — passed with no output.
+- `flutter test test/kernel/commit_attribution_test.dart test/theme/workbench_theme_test.dart test/settings/general_page_test.dart` — unavailable: `(eval):1: command not found: flutter`, exit code `127`.
+- `dart format lib/kernel/commit_attribution.dart lib/settings/pages/general_page.dart lib/settings/pages/settings_widgets.dart lib/theme/workbench_theme.dart test/kernel/commit_attribution_test.dart test/theme/workbench_theme_test.dart test/settings/general_page_test.dart` — unavailable: `(eval):1: command not found: dart`, exit code `127`.

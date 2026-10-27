@@ -208,6 +208,17 @@ void main() {
     expect(dark.colorTheme.settingsId, 'CC Dark');
   });
 
+  test('legacy Bao snapshot data keeps its colors after migration', () {
+    const data =
+        '{"id":"theme-bao-dark","label":"Bao Dark","settingsId":"Bao Dark",'
+        '"themeTokenColors":[],"semanticTokenRules":[],"themeSemanticHighlighting":false,'
+        '"colorMap":{"editor.background":"#123456"},"watch":false}';
+    final themes = WorkbenchThemeService()
+      ..restore(setting: 'CC Dark', data: data);
+    expect(themes.colorThemeId, 'CC Dark');
+    expect(themes.colors['editor.background'], const Color(0xff123456));
+  });
+
   test('CC theme defaults replace Bao names and migrate both names', () {
     expect(ThemeSettingDefaults.colorThemeDark, 'CC Dark');
     expect(ThemeSettingDefaults.colorThemeLight, 'CC Light');

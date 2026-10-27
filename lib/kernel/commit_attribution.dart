@@ -24,7 +24,12 @@ enum CommitAttribution {
   static const defaultName = 'CCCode';
   static const defaultEmail = 'noreply@ccapitoken.cc';
 
-  static const _emailPattern = r'^[^\s@]+@[^\s@]+\.[^\s@]+$';
+  static final _emailPattern = RegExp(
+    r'^[A-Za-z0-9.!#$%&*+/=?^_`{|}~-]+@'
+    r'[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?'
+    r'(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)+$',
+  );
+  static final _controlCharacters = RegExp(r'[\x00-\x1F\x7F]');
 
   static const baoCodeCommit =
       'Co-Authored-By: CCCode <noreply@ccapitoken.cc>';
@@ -34,14 +39,21 @@ enum CommitAttribution {
   static CommitAttribution parse(Object? setting) =>
       values.where((value) => value.name == setting).firstOrNull ?? fallback;
 
+  static bool isValidEmail(String value) => _emailPattern.hasMatch(value.trim());
+
+  static bool isValidName(String value) {
+    final trimmed = value.trim();
+    return trimmed.isNotEmpty && !_controlCharacters.hasMatch(trimmed);
+  }
+
   static CommitAttributionValue normalized(Map<String, Object?> settings) {
     final name = switch (settings[nameSettingKey]) {
-      final String value when value.trim().isNotEmpty => value.trim(),
+      final String value when isValidName(value) => value.trim(),
       _ => defaultName,
     };
     final email = switch (settings[emailSettingKey]) {
-      final String value when RegExp(_emailPattern).hasMatch(value.trim()) =>
-        value.trim(),
+      final String value when value.trim().isEmpty => defaultEmail,
+      final String value when isValidEmail(value) => value.trim(),
       _ => defaultEmail,
     };
     return (name: name, email: email);
