@@ -45,8 +45,10 @@ ProviderProtocol detectCcApiProtocol({
   final platformValue = platform?.trim().toLowerCase() ?? '';
   final modelValue = modelId?.trim().toLowerCase() ?? '';
   final value = '$platformValue $modelValue';
-  if (value.contains('openai-responses')) return ProviderProtocol.openaiResponses;
-  if (value.contains('openai-chat')) return ProviderProtocol.openaiChat;
+  if (_hasToken(value, 'openai-responses')) {
+    return ProviderProtocol.openaiResponses;
+  }
+  if (_hasToken(value, 'openai-chat')) return ProviderProtocol.openaiChat;
   if (platformValue == 'anthropic' || _hasToken(modelValue, 'claude')) {
     return ProviderProtocol.anthropic;
   }

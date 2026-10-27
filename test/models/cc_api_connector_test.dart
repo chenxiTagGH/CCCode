@@ -27,6 +27,14 @@ void main() {
       detectCcApiProtocol(modelId: 'legitimate-gptlike-vendor'),
       ProviderProtocol.anthropic,
     );
+    expect(
+      detectCcApiProtocol(modelId: 'vendor-openai-responses-model'),
+      ProviderProtocol.anthropic,
+    );
+    expect(
+      detectCcApiProtocol(modelId: 'vendor-openai-chat-model'),
+      ProviderProtocol.anthropic,
+    );
   });
 
   test('parses and merges explicit model protocol metadata', () {
