@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../l10n/l10n.dart';
+import '../../channel/account/account_api.dart';
 import '../../models/cc_api_connector.dart';
 import '../../theme/codicons.dart';
 import '../../theme/workbench_theme.dart' show themeColors;
@@ -40,7 +41,9 @@ class _CcApiCardState extends State<CcApiCard> {
     final connector = widget.connector;
     setState(() => _working = true);
     try {
-      await connector.connect();
+      await connector.connect(
+        chooseKey: (keys) => showCcApiKeyPicker(context, keys),
+      );
     } finally {
       if (mounted && identical(widget.connector, connector)) {
         setState(() => _working = false);
@@ -54,7 +57,9 @@ class _CcApiCardState extends State<CcApiCard> {
     final connector = widget.connector;
     setState(() => _working = true);
     try {
-      await connector.refresh();
+      await connector.refresh(
+        chooseKey: (keys) => showCcApiKeyPicker(context, keys),
+      );
     } finally {
       if (mounted && identical(widget.connector, connector)) {
         setState(() => _working = false);
@@ -141,6 +146,64 @@ class _CcApiCardState extends State<CcApiCard> {
       ),
     );
   }
+}
+
+Future<AccountKey?> showCcApiKeyPicker(
+  BuildContext context,
+  List<AccountKey> keys,
+) => showDialog<AccountKey>(
+  context: context,
+  builder: (context) => _CcApiKeyPicker(keys),
+);
+
+class _CcApiKeyPicker extends StatefulWidget {
+  const _CcApiKeyPicker(this.keys);
+
+  final List<AccountKey> keys;
+
+  @override
+  State<_CcApiKeyPicker> createState() => _CcApiKeyPickerState();
+}
+
+class _CcApiKeyPickerState extends State<_CcApiKeyPicker> {
+  AccountKey? selected;
+
+  @override
+  Widget build(BuildContext context) => AlertDialog(
+    title: const Text('Choose CC API key'),
+    content: SizedBox(
+      width: 420,
+      child: ListView(
+        shrinkWrap: true,
+        children: [
+          for (final key in widget.keys)
+            RadioListTile<AccountKey>(
+              value: key,
+              groupValue: selected,
+              onChanged: (value) => setState(() => selected = value),
+              title: Text(key.name),
+              subtitle: Text([
+                key.masked,
+                if (key.platform case final platform? when platform.isNotEmpty)
+                  platform,
+              ].join(' · ')),
+            ),
+        ],
+      ),
+    ),
+    actions: [
+      TextButton(
+        onPressed: () => Navigator.of(context).pop(),
+        child: const Text('Cancel'),
+      ),
+      FilledButton(
+        onPressed: selected == null
+            ? null
+            : () => Navigator.of(context).pop(selected),
+        child: const Text('Choose'),
+      ),
+    ],
+  );
 }
 
 class CcCodeLogo extends StatelessWidget {

@@ -16,6 +16,10 @@ class _WindowClosed {
   const _WindowClosed();
 }
 
+class _CcApiSelectionCancelled implements Exception {
+  const _CcApiSelectionCancelled();
+}
+
 /// The connection lifecycle of the CC API connector.
 enum CcApiConnectionStatus {
   disconnected,
@@ -30,6 +34,38 @@ typedef CcApiModelLister = Future<List<RemoteModel>> Function(
   ModelProvider provider,
   String? key,
 );
+
+typedef CcApiKeyChooser = Future<AccountKey?> Function(List<AccountKey> keys);
+
+ProviderProtocol detectCcApiProtocol({
+  String? platform,
+  String? modelId,
+  ProviderProtocol fallback = ProviderProtocol.anthropic,
+}) {
+  final platformValue = platform?.trim().toLowerCase() ?? '';
+  final modelValue = modelId?.trim().toLowerCase() ?? '';
+  final value = '$platformValue $modelValue';
+  if (value.contains('openai-responses')) return ProviderProtocol.openaiResponses;
+  if (value.contains('openai-chat')) return ProviderProtocol.openaiChat;
+  if (platformValue == 'anthropic' || _hasToken(modelValue, 'claude')) {
+    return ProviderProtocol.anthropic;
+  }
+  if (platformValue == 'openai' ||
+      _hasToken(modelValue, 'gpt') ||
+      RegExp(r'\b(?:o1|o3|o4)-').hasMatch(modelValue)) {
+    return platformValue == 'openai'
+        ? ProviderProtocol.openaiChat
+        : ProviderProtocol.openaiResponses;
+  }
+  if (platformValue == 'gemini' || _hasToken(modelValue, 'gemini')) {
+    return ProviderProtocol.openaiChat;
+  }
+  return fallback;
+}
+
+bool _hasToken(String value, String token) => RegExp(
+  '(^|[-_./:])${RegExp.escape(token)}(?=\\u0024|[-_./:])',
+).hasMatch(value);
 
 /// Synchronizes a CC API account and its Anthropic-compatible models.
 class CcApiConnector {
@@ -60,7 +96,7 @@ class CcApiConnector {
   CcApiConnectionStatus get status => _status;
   Object? get error => _error;
 
-  Future<bool> connect() async {
+  Future<bool> connect({CcApiKeyChooser? chooseKey}) async {
     if (_status == CcApiConnectionStatus.connecting) return false;
     _status = CcApiConnectionStatus.connecting;
     _error = null;
@@ -74,7 +110,10 @@ class CcApiConnector {
         }
         await store.writeSession(session);
       }
-      return await _synchronize(session);
+      return await _synchronize(session, chooseKey: chooseKey);
+    } on _CcApiSelectionCancelled {
+      _status = CcApiConnectionStatus.disconnected;
+      return false;
     } on AccountSignedOut {
       try {
         await store.writeSession(null);
@@ -90,7 +129,7 @@ class CcApiConnector {
     }
   }
 
-  Future<bool> refresh() async {
+  Future<bool> refresh({CcApiKeyChooser? chooseKey}) async {
     if (_status == CcApiConnectionStatus.connecting) return false;
     _status = CcApiConnectionStatus.connecting;
     _error = null;
@@ -100,7 +139,10 @@ class CcApiConnector {
         _status = CcApiConnectionStatus.needsLogin;
         return false;
       }
-      return await _synchronize(session);
+      return await _synchronize(session, chooseKey: chooseKey);
+    } on _CcApiSelectionCancelled {
+      _status = CcApiConnectionStatus.disconnected;
+      return false;
     } on AccountSignedOut {
       try {
         await store.writeSession(null);
@@ -144,7 +186,7 @@ class CcApiConnector {
     }
   }
 
-  Future<bool> _synchronize(String session) async {
+  Future<bool> _synchronize(String session, {CcApiKeyChooser? chooseKey}) async {
     String? rotatedSession;
     Future<void> rotationQueue = Future<void>.value();
     var committed = false;
@@ -170,21 +212,22 @@ class CcApiConnector {
       final oldDefault = providers.defaultModel;
     final oldState = store.readState();
     final oldSession = session;
-    final provider = (before ?? const ModelProvider(id: providerId, name: providerName))
-        .copyWith(
-          name: providerName,
-          protocol: ProviderProtocol.anthropic,
-          baseUrl: site.url.toString(),
-          enabled: true,
-          disableNonessentialTraffic: true,
-        );
     final profile = await adapter.profile();
     await rotationQueue;
     final keys = await adapter.keys();
     await rotationQueue;
     final currentKey = await providers.key(providerId);
-    var selected = _selectKey(keys, currentKey);
+    var selected = await _selectKey(keys, currentKey, chooseKey: chooseKey);
     selected ??= await adapter.create('CCCode');
+    final protocol = detectCcApiProtocol(platform: selected.platform);
+    final provider = (before ?? const ModelProvider(id: providerId, name: providerName))
+        .copyWith(
+          name: providerName,
+          protocol: protocol,
+          baseUrl: site.url.toString(),
+          enabled: true,
+          disableNonessentialTraffic: true,
+        );
     final whole = await adapter.reveal(selected);
     final listed = await listModels(provider, whole);
     if (listed.isEmpty) {
@@ -192,7 +235,24 @@ class CcApiConnector {
     }
     final merged = mergeModelList(
       before?.models ?? const [],
-      listed,
+      [
+        for (final model in listed)
+          model.protocol == null
+              ? RemoteModel(
+                  model.id,
+                  label: model.label,
+                  contextWindow: model.contextWindow,
+                  efforts: model.efforts,
+                  images: model.images,
+                  kind: model.kind,
+                  protocol: detectCcApiProtocol(
+                    platform: selected.platform,
+                    modelId: model.id,
+                    fallback: protocol,
+                  ),
+                )
+              : model,
+      ],
       enable: {
         for (final model in listed)
           if (!(model.kind ?? guessModelKind(model.id)).generatesImages &&
@@ -297,10 +357,11 @@ class CcApiConnector {
     }
   }
 
-  AccountKey? _selectKey(
+  Future<AccountKey?> _selectKey(
     List<AccountKey> keys,
-    String? currentKey,
-  ) {
+    String? currentKey, {
+    CcApiKeyChooser? chooseKey,
+  }) async {
     // The whole key is not in metadata, but its masked form can be matched
     // against the current provider key only after reveal; prefer stored id.
     final metadata = store.readState()?['provider-key'];
@@ -315,9 +376,15 @@ class CcApiConnector {
       final same = keys.where((key) => key.id == id).firstOrNull;
       if (same != null) return same;
     }
-    final named = keys.where((key) => key.name == 'CCCode').firstOrNull;
-    if (named != null) return named;
-    return keys.firstOrNull;
+    if (keys.length == 1) return keys.single;
+    if (keys.length > 1) {
+      final selected = chooseKey == null ? null : await chooseKey(keys);
+      if (selected == null) throw const _CcApiSelectionCancelled();
+      final match = keys.where((key) => key.id == selected.id).firstOrNull;
+      if (match == null) throw const _CcApiSelectionCancelled();
+      return match;
+    }
+    return null;
   }
 
   static String? _defaultOf(ModelProvider provider, String? before) {

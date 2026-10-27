@@ -15,6 +15,33 @@ import 'package:baocode/settings/jsonc_file.dart';
 import 'package:baocode/settings/user_settings.dart';
 
 void main() {
+  test('detects CC API protocols from platform and model identity', () {
+    expect(detectCcApiProtocol(platform: 'anthropic'), ProviderProtocol.anthropic);
+    expect(detectCcApiProtocol(platform: 'openai'), ProviderProtocol.openaiResponses);
+    expect(detectCcApiProtocol(platform: 'gemini'), ProviderProtocol.openaiChat);
+    expect(detectCcApiProtocol(modelId: 'claude-sonnet-4-5'), ProviderProtocol.anthropic);
+    expect(detectCcApiProtocol(modelId: 'gpt-5.6-terra'), ProviderProtocol.openaiResponses);
+    expect(detectCcApiProtocol(modelId: 'gemini-2.5-pro'), ProviderProtocol.openaiChat);
+    expect(detectCcApiProtocol(modelId: 'vendor-model'), ProviderProtocol.anthropic);
+    expect(
+      detectCcApiProtocol(modelId: 'legitimate-gptlike-vendor'),
+      ProviderProtocol.anthropic,
+    );
+  });
+
+  test('parses and merges explicit model protocol metadata', () {
+    final models = parseModelList({
+      'data': [
+        {'id': 'gpt-5.6-terra', 'protocol': 'openai-responses'},
+      ],
+    });
+    expect(models.single.protocol, ProviderProtocol.openaiResponses);
+    expect(
+      mergeModelList(const [], models).single.protocol,
+      ProviderProtocol.openaiResponses,
+    );
+  });
+
   test('GlobalCcApiStore keeps session secret and metadata in separate fakes', () async {
     final files = FakeJsoncStorage();
     final storage = GlobalStorage('memory.json', storage: files);
@@ -42,6 +69,50 @@ void main() {
     final storage = GlobalStorage('memory.json', storage: FakeJsoncStorage());
     final store = GlobalCcApiStore(storage, secrets: ThrowingSecretStore());
     expect(await store.readSession(), isNull);
+  });
+
+  test('new login with multiple keys requires explicit selection', () async {
+    final fixture = await makeFixture(
+      loginRefreshToken: 'refresh-1',
+      accountKeys: [
+        fakeKey(id: '1', name: 'Anthropic', platform: 'anthropic'),
+        fakeKey(id: '2', name: 'OpenAI', platform: 'openai'),
+      ],
+      revealedKey: 'sk-openai',
+      models: const [RemoteModel('gpt-5.6-terra')],
+      preloadSession: true,
+    );
+    fixture.chooseKey = (keys) async => keys.singleWhere((key) => key.id == '2');
+
+    expect(await fixture.connector.connect(chooseKey: fixture.chooseKey), isTrue);
+    expect(fixture.revealedKeyId, '2');
+    expect(
+      fixture.providers.provider('cc-api')!.protocol,
+      ProviderProtocol.openaiChat,
+    );
+    expect(
+      fixture.providers.provider('cc-api')!.models.single.protocol,
+      ProviderProtocol.openaiResponses,
+    );
+  });
+
+  test('cancelled key selection preserves the previous provider', () async {
+    final fixture = await makeFixture(
+      loginRefreshToken: 'refresh-1',
+      accountKeys: [
+        fakeKey(id: '1', name: 'one'),
+        fakeKey(id: '2', name: 'two'),
+      ],
+      existingModels: const [ProviderModel(id: 'old-model')],
+      existingKey: 'old-key',
+      existingDefault: '@cc-api/old-model',
+      preloadSession: true,
+    );
+    final before = await fixture.snapshot();
+
+    expect(await fixture.connector.refresh(chooseKey: (_) async => null), isFalse);
+    expect(await fixture.snapshot(), before);
+    expect(fixture.revealedKeyId, isNull);
   });
 
   test('successful connection saves provider identity, protocol, and rotated session', () async {
@@ -321,6 +392,7 @@ Future<ConnectorFixture> makeFixture({
     AccountGroup(id: '7', name: 'Claude', platform: 'anthropic'),
   ],
   List<String?> loginTokens = const [],
+  CcApiKeyChooser? chooseKey,
 }) async {
   final providers = ModelProviders.memory(
     secrets: MemorySecretStore(
@@ -347,6 +419,7 @@ Future<ConnectorFixture> makeFixture({
   final store = FakeCcApiStore()
     ..session = preloadSession ? loginRefreshToken : null;
   final fixture = ConnectorFixture._(providers, window, store);
+  fixture.chooseKey = chooseKey;
   fixture.connector = CcApiConnector(
     providers: providers,
     store: store,
@@ -475,6 +548,7 @@ class ConnectorFixture {
   final FakeCcApiStore store;
   late CcApiConnector connector;
   bool listModelsInvoked = false;
+  CcApiKeyChooser? chooseKey;
   String? revealedKeyId;
   Map<String, Object?>? createdKeyRequest;
   String createdKey = 'sk-created';

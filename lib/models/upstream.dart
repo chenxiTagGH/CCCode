@@ -15,6 +15,7 @@ class RemoteModel {
     this.efforts,
     this.images,
     this.kind,
+    this.protocol,
   });
 
   final String id;
@@ -30,6 +31,9 @@ class RemoteModel {
   /// What it is for, where the upstream says (OpenRouter's output
   /// modalities, SiliconFlow's type); else it goes by its name.
   final ModelKind? kind;
+
+  /// The explicit endpoint protocol, when the upstream says one.
+  final ProviderProtocol? protocol;
 }
 
 /// How [ModelProvider.baseUrl] is read, as each protocol's SDK has it:
@@ -271,10 +275,27 @@ List<RemoteModel> parseModelList(Object? json) {
       }
     }
     models.add(
-      RemoteModel(id, label: label, contextWindow: window, kind: _kindOf(item)),
+      RemoteModel(
+        id,
+        label: label,
+        contextWindow: window,
+        kind: _kindOf(item),
+        protocol: _protocolOf(item),
+      ),
     );
   }
   return models;
+}
+
+ProviderProtocol? _protocolOf(Map item) {
+  for (final key in const ['protocol', 'protocol_type', 'api_protocol', 'api_type']) {
+    final value = item[key];
+    final protocol = ProviderProtocol.forModels
+        .where((candidate) => candidate.id == value)
+        .firstOrNull;
+    if (protocol != null) return protocol;
+  }
+  return null;
 }
 
 /// What a listed model is for, where its entry says: what it answers with
@@ -332,6 +353,9 @@ List<ProviderModel> mergeModelList(
           kind: model.kindSet == null && _listedKind(remote) != null
               ? () => _listedKind(remote)
               : null,
+          protocol: model.protocol == null && remote.protocol != null
+              ? () => remote.protocol
+              : null,
           enabled: enable.contains(model.id) ? true : null,
         )
       else if (model.custom)
@@ -351,6 +375,7 @@ List<ProviderModel> mergeModelList(
         images: remote.images ?? true,
         enabled: enable.contains(remote.id),
         kind: _listedKind(remote),
+        protocol: remote.protocol,
       ),
     );
   }
