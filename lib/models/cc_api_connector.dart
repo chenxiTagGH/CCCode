@@ -54,8 +54,10 @@ ProviderProtocol detectCcApiProtocol({
   if (platformValue == 'anthropic' || _hasToken(modelValue, 'claude')) {
     return ProviderProtocol.anthropic;
   }
-  final modelFamily = _hasToken(modelValue, 'gpt') ||
-      RegExp(r'\b(?:o1|o3|o4)-').hasMatch(modelValue);
+  final modelFamily = _hasModelFamilyToken(modelValue, 'gpt') ||
+      _hasModelFamilyToken(modelValue, 'o1') ||
+      _hasModelFamilyToken(modelValue, 'o3') ||
+      _hasModelFamilyToken(modelValue, 'o4');
   if (modelFamily) return ProviderProtocol.openaiResponses;
   if (platformValue == 'openai') return ProviderProtocol.openaiChat;
   if (platformValue == 'gemini' || _hasToken(modelValue, 'gemini')) {
@@ -66,6 +68,10 @@ ProviderProtocol detectCcApiProtocol({
 
 bool _hasExplicitProtocolMarker(String value, String marker) => RegExp(
   '(^|\\s)${RegExp.escape(marker)}(?=/|\\s|\\u0024)',
+).hasMatch(value);
+
+bool _hasModelFamilyToken(String value, String token) => RegExp(
+  '(^|[-_./:\\s])${RegExp.escape(token)}(?=\\d|[-_./:\\s]|\\u0024)',
 ).hasMatch(value);
 
 bool _hasToken(String value, String token) => RegExp(

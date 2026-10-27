@@ -289,7 +289,9 @@ List<RemoteModel> parseModelList(Object? json) {
 
 ProviderProtocol? _protocolOf(Map item) {
   for (final key in const ['protocol', 'protocol_type', 'api_protocol', 'api_type']) {
-    final value = item[key];
+    final value = item[key] is String
+        ? (item[key] as String).trim().toLowerCase()
+        : null;
     final protocol = ProviderProtocol.forModels
         .where((candidate) => candidate.id == value)
         .firstOrNull;

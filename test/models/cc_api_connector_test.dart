@@ -25,6 +25,12 @@ void main() {
     expect(detectCcApiProtocol(platform: 'gemini'), ProviderProtocol.openaiChat);
     expect(detectCcApiProtocol(modelId: 'claude-sonnet-4-5'), ProviderProtocol.anthropic);
     expect(detectCcApiProtocol(modelId: 'gpt-5.6-terra'), ProviderProtocol.openaiResponses);
+    expect(detectCcApiProtocol(modelId: 'gpt5'), ProviderProtocol.openaiResponses);
+    expect(detectCcApiProtocol(modelId: 'vendor/gpt-5'), ProviderProtocol.openaiResponses);
+    expect(detectCcApiProtocol(modelId: 'o1'), ProviderProtocol.openaiResponses);
+    expect(detectCcApiProtocol(modelId: 'o3'), ProviderProtocol.openaiResponses);
+    expect(detectCcApiProtocol(modelId: 'o4'), ProviderProtocol.openaiResponses);
+    expect(detectCcApiProtocol(modelId: 'vendor-gptish'), ProviderProtocol.anthropic);
     expect(detectCcApiProtocol(modelId: 'gemini-2.5-pro'), ProviderProtocol.openaiChat);
     expect(
       detectCcApiProtocol(modelId: 'openai-responses/gpt-5'),
@@ -56,7 +62,7 @@ void main() {
   test('parses and merges explicit model protocol metadata', () {
     final models = parseModelList({
       'data': [
-        {'id': 'gpt-5.6-terra', 'protocol': 'openai-responses'},
+        {'id': 'gpt-5.6-terra', 'protocol': '  OPENAI-RESPONSES  '},
       ],
     });
     expect(models.single.protocol, ProviderProtocol.openaiResponses);
