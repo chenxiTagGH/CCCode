@@ -2,42 +2,78 @@
 
 ## Status
 
-DONE_WITH_CONCERNS
+IMPLEMENTED_WITH_TEST_TOOLING_CONCERN
+
+Task 1 theme renaming and customizable commit attribution are implemented and committed. The focused Flutter tests and Dart formatter could not run because neither `flutter` nor `dart` is installed or available on `PATH` in this environment.
 
 ## Commit
 
-- `f338c2d4` — `chore(site): remove featured upstream listings`
-- `ee2d8a4d` — `test(settings): use isolated upstream logo fixture`
-- `4e349a53` — `test(settings): align upstream fixture host`
+- Hash: `cc27acf6eb3fcd8f474d7950c1f856ea585ff06c`
+- Message: `feat: customize CCCode attribution and theme names`
+- Commit attribution: `Co-Authored-By: Claude Code <noreply@anthropic.com>`
 
 ## Files changed
 
-- Modified `/Users/tangchenxi/Desktop/Chenxi/vibeCoding/CCCode/site/featured/upstreams.json` to the valid empty featured list:
-  - `{"version": 1, "upstreams": []}`
-- Deleted `/Users/tangchenxi/Desktop/Chenxi/vibeCoding/CCCode/site/featured/ymeng.png`.
-- Deleted `/Users/tangchenxi/Desktop/Chenxi/vibeCoding/CCCode/site/featured/ifruit.png`.
-- Modified `/Users/tangchenxi/Desktop/Chenxi/vibeCoding/CCCode/test/models/upstream_import_test.dart` with regression assertions that `ymeng` and `ifruit` are absent from the website-served list.
-- Modified `/Users/tangchenxi/Desktop/Chenxi/vibeCoding/CCCode/test/settings/upstream_import_test.dart` to use the existing isolated fixture `/Users/tangchenxi/Desktop/Chenxi/vibeCoding/CCCode/test/fixtures/icons/tall.png` instead of the deleted featured logo, with the widget site host aligned to `api.fixture.example.com`.
+- `/Users/tangchenxi/Desktop/Chenxi/vibeCoding/CCCode/lib/theme/workbench_theme.dart`
+  - Renamed default IDs to `CC Dark` and `CC Light`.
+  - Migrates both legacy `Bao Dark`/`Bao Light` and the new IDs, plus existing removed theme IDs.
+- `/Users/tangchenxi/Desktop/Chenxi/vibeCoding/CCCode/lib/kernel/commit_attribution.dart`
+  - Preserved `CommitAttribution.cccode`, `.agent`, and `.none`.
+  - Added `chat.commitAttributionName` and `chat.commitAttributionEmail` keys.
+  - Added normalized name/email values with defaults `CCCode` and `noreply@ccapitoken.cc`.
+  - Added basic email validation and normalized commit trailer generation.
+- `/Users/tangchenxi/Desktop/Chenxi/vibeCoding/CCCode/lib/kernel/claude_code/claude_code_transport.dart`
+  - Uses the normalized current CCCode attribution trailer for transport.
+- `/Users/tangchenxi/Desktop/Chenxi/vibeCoding/CCCode/lib/main.dart`
+  - Wires normalized attribution values to current settings for new sessions.
+- `/Users/tangchenxi/Desktop/Chenxi/vibeCoding/CCCode/lib/settings/pages/general_page.dart`
+  - Added editable CCCode attribution name and email fields while retaining the dropdown choices.
+  - Invalid email submissions are rejected.
+- `/Users/tangchenxi/Desktop/Chenxi/vibeCoding/CCCode/lib/l10n/app_en.arb`
+- `/Users/tangchenxi/Desktop/Chenxi/vibeCoding/CCCode/lib/l10n/app_zh.arb`
+- `/Users/tangchenxi/Desktop/Chenxi/vibeCoding/CCCode/lib/l10n/app_localizations.dart`
+- `/Users/tangchenxi/Desktop/Chenxi/vibeCoding/CCCode/lib/l10n/app_localizations_en.dart`
+- `/Users/tangchenxi/Desktop/Chenxi/vibeCoding/CCCode/lib/l10n/app_localizations_zh.dart`
+  - Added English and Chinese labels/hints for attribution name and email fields. Generated outputs were updated consistently, but the generator itself was unavailable.
+- `/Users/tangchenxi/Desktop/Chenxi/vibeCoding/CCCode/packages/bao_editor/assets/textmate/manifest.json`
+- `/Users/tangchenxi/Desktop/Chenxi/vibeCoding/CCCode/packages/bao_editor/assets/textmate/themes/theme-bao/themes/bao-dark-color-theme.json`
+- `/Users/tangchenxi/Desktop/Chenxi/vibeCoding/CCCode/packages/bao_editor/assets/textmate/themes/theme-bao/themes/bao-light-color-theme.json`
+  - Renamed bundled theme IDs and labels to `CC Dark`/`CC Light`.
+- `/Users/tangchenxi/Desktop/Chenxi/vibeCoding/CCCode/lib/ide/ide_color_theme_picker.dart`
+- `/Users/tangchenxi/Desktop/Chenxi/vibeCoding/CCCode/lib/ide/lsp_ui/semantic_tokens.dart`
+  - Updated dependent default theme references.
+- `/Users/tangchenxi/Desktop/Chenxi/vibeCoding/CCCode/test/theme/workbench_theme_test.dart`
+  - Added/updated theme default and migration assertions.
+- `/Users/tangchenxi/Desktop/Chenxi/vibeCoding/CCCode/test/kernel/commit_attribution_test.dart`
+  - Added normalization/default/custom/invalid-email tests.
+- `/Users/tangchenxi/Desktop/Chenxi/vibeCoding/CCCode/test/settings/general_page_test.dart`
+  - Added focused email validation tests.
+- `/Users/tangchenxi/Desktop/Chenxi/vibeCoding/CCCode/test/kernel_test.dart`
+  - Updated the existing default transport expectation to the new email.
 
-## Tests and commands
+## Commands and exact results
 
-1. Added the two regression assertions before changing the data.
-2. `flutter test test/models/upstream_import_test.dart`
-   - Result: could not run; exact shell failure: `(eval):1: command not found: flutter` (exit code 127).
-   - This was attempted before data removal as required by the brief, but Flutter is unavailable in the environment.
-3. Replaced the JSON data and deleted the two unused logos.
-4. `flutter test test/models/upstream_import_test.dart`
-   - Result: could not run; exact shell failure: `(eval):1: command not found: flutter` (exit code 127).
-5. `flutter test test/settings/upstream_import_test.dart`
-   - Result: could not run; exact shell failure: `(eval):1: command not found: flutter` (exit code 127).
-6. `jq empty /Users/tangchenxi/Desktop/Chenxi/vibeCoding/CCCode/site/featured/upstreams.json`
-   - Result: passed with no output.
-7. `git diff --check`
-   - Result: passed with no output before both commits.
-8. Reviewed the final diff, fixed the stale deleted-logo fixture, and committed the requested files.
-9. `git status --short`
-   - Result: clean after commit.
+1. `flutter test test/theme/workbench_theme_test.dart test/kernel/commit_attribution_test.dart`
+   - Failed to start: `(eval):1: command not found: flutter`
+   - Exit code: `127`
+2. `dart format lib/theme/workbench_theme.dart lib/kernel/commit_attribution.dart lib/kernel/claude_code/claude_code_transport.dart lib/settings/pages/general_page.dart lib/main.dart lib/ide/ide_color_theme_picker.dart lib/ide/lsp_ui/semantic_tokens.dart test/theme/workbench_theme_test.dart test/kernel/commit_attribution_test.dart test/settings/general_page_test.dart`
+   - Failed to start: `(eval):1: command not found: dart`
+   - Exit code: `127`
+3. `flutter test test/theme/workbench_theme_test.dart test/settings/general_page_test.dart test/kernel/commit_attribution_test.dart`
+   - Failed to start: `(eval):1: command not found: flutter`
+   - Exit code: `127`
+4. `jq empty lib/l10n/app_en.arb lib/l10n/app_zh.arb packages/bao_editor/assets/textmate/manifest.json packages/bao_editor/assets/textmate/themes/theme-bao/themes/bao-dark-color-theme.json packages/bao_editor/assets/textmate/themes/theme-bao/themes/bao-light-color-theme.json`
+   - Passed with no output.
+5. `git diff --check`
+   - Passed with no output before commit.
+6. `git status --short && git rev-parse HEAD`
+   - Working tree is clean after commit.
+   - Commit: `cc27acf6eb3fcd8f474d7950c1f856ea585ff06c`
 
 ## Concerns
 
-The focused Flutter regression tests could not be executed because the `flutter` executable is not installed or available on `PATH`. The JSON syntax and Git diff checks passed. Both tests remain ready to run in a Flutter-enabled environment.
+- Focused Flutter tests were not executable because Flutter is unavailable. No test pass is claimed.
+- `dart format` was not executable because Dart is unavailable. The touched Dart files were manually kept in the repository's existing formatting style, but formatter verification remains outstanding.
+- Localization generated files were updated manually to match the ARB additions because `flutter gen-l10n` could not be run without Flutter. They should be regenerated and checked in a Flutter-enabled environment.
+- The task required preserving the package name; `pubspec.yaml` remains unchanged with package name `baocode`.
+- Existing `agent` and `none` attribution behavior and enum values remain intact.
