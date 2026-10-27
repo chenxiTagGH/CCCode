@@ -526,6 +526,32 @@ void main() {
     expect(workspace.preferredEditor, Editor.fastIde);
   });
 
+  test('IntelliJ IDEA has the desktop launcher metadata', () {
+    expect(Editor.intellijIdea.macApp, 'IntelliJ IDEA');
+    expect(Editor.intellijIdea.command, 'idea');
+    expect(Editor.intellijIdea.macOSOnly, isFalse);
+  });
+
+  testWidgets('IntelliJ IDEA is available on macOS', (tester) async {
+    expect(Editor.availableEditors, contains(Editor.intellijIdea));
+  }, variant: TargetPlatformVariant.only(TargetPlatform.macOS));
+
+  testWidgets('IntelliJ IDEA is available on Windows', (tester) async {
+    expect(Editor.availableEditors, contains(Editor.intellijIdea));
+  }, variant: TargetPlatformVariant.only(TargetPlatform.windows));
+
+  testWidgets('IntelliJ IDEA is not available on Linux', (tester) async {
+    expect(Editor.availableEditors, isNot(contains(Editor.intellijIdea)));
+  }, variant: TargetPlatformVariant.only(TargetPlatform.linux));
+
+  testWidgets('IntelliJ IDEA can be restored as the selected editor', (
+    tester,
+  ) async {
+    final store = MemoryPreferenceStore({'editor': 'intellijIdea'});
+    final workspace = await pumpLoaded(tester, preferences: store);
+    expect(workspace.preferredEditor, Editor.intellijIdea);
+  });
+
   testWidgets('choices are kept between runs: a new agent starts with the '
       'last ones, a kept session with its own', (tester) async {
     final store = MemoryPreferenceStore({

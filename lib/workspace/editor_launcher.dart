@@ -23,6 +23,13 @@ enum Editor {
     macApp: 'Visual Studio Code',
     icon: Codicons.vscode,
   ),
+  intellijIdea(
+    'IntelliJ IDEA',
+    'idea',
+    macApp: 'IntelliJ IDEA',
+    icon: Codicons.tools,
+    linuxUnsupported: true,
+  ),
   cursor('Cursor', 'cursor', macApp: 'Cursor', icon: Codicons.cursor),
   zed('Zed', 'zed', macApp: 'Zed', icon: Codicons.zap),
   xcode('Xcode', null, macApp: 'Xcode', icon: Codicons.tools, macOSOnly: true),
@@ -47,6 +54,7 @@ enum Editor {
     this.macApp,
     this.windowsLabel,
     this.macOSOnly = false,
+    this.linuxUnsupported = false,
     this.builtIn = false,
   });
 
@@ -67,6 +75,9 @@ enum Editor {
 
   /// Whether only macOS has it.
   final bool macOSOnly;
+
+  /// Whether Linux does not provide this app's launcher.
+  final bool linuxUnsupported;
 
   /// Whether it is CCCode's own ([fastIde]), shown instead of launched.
   final bool builtIn;
@@ -89,7 +100,9 @@ enum Editor {
   };
 
   /// Whether the platform has it at all.
-  bool get available => !macOSOnly || !AppPlatform.isWindows;
+  bool get available =>
+      (!macOSOnly || !AppPlatform.isWindows) &&
+      (!linuxUnsupported || !AppPlatform.isLinux);
 
   /// The apps this platform can open a project in, in the order of the
   /// menu.
