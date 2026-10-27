@@ -99,6 +99,8 @@ class _FakeCcApiConnector extends CcApiConnector {
   Object? failure;
   int connects = 0;
   int refreshes = 0;
+  CcApiKeyChooser? connectChooser;
+  CcApiKeyChooser? refreshChooser;
   Completer<bool>? pending;
   bool failRefresh = false;
 
@@ -107,13 +109,15 @@ class _FakeCcApiConnector extends CcApiConnector {
   @override
   Object? get error => failure;
   @override
-  Future<bool> connect() async {
+  Future<bool> connect({CcApiKeyChooser? chooseKey}) async {
+    connectChooser = chooseKey;
     connects++;
     if (pending != null) return pending!.future;
     return true;
   }
   @override
-  Future<bool> refresh() async {
+  Future<bool> refresh({CcApiKeyChooser? chooseKey}) async {
+    refreshChooser = chooseKey;
     refreshes++;
     if (pending != null) return pending!.future;
     if (failRefresh) {

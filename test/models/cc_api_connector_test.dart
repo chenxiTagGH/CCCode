@@ -17,7 +17,7 @@ import 'package:baocode/settings/user_settings.dart';
 void main() {
   test('detects CC API protocols from platform and model identity', () {
     expect(detectCcApiProtocol(platform: 'anthropic'), ProviderProtocol.anthropic);
-    expect(detectCcApiProtocol(platform: 'openai'), ProviderProtocol.openaiResponses);
+    expect(detectCcApiProtocol(platform: 'openai'), ProviderProtocol.openaiChat);
     expect(detectCcApiProtocol(platform: 'gemini'), ProviderProtocol.openaiChat);
     expect(detectCcApiProtocol(modelId: 'claude-sonnet-4-5'), ProviderProtocol.anthropic);
     expect(detectCcApiProtocol(modelId: 'gpt-5.6-terra'), ProviderProtocol.openaiResponses);
@@ -276,6 +276,32 @@ void main() {
 
     expect(await fixture.connector.connect(), isTrue);
     expect(fixture.revealedKeyId, '9');
+  });
+
+  test('stored key identity beats a stale local secret match', () async {
+    final fixture = await makeFixture(
+      loginRefreshToken: 'refresh-1',
+      accountKeys: [
+        fakeKey(id: '1', name: 'stored'),
+        fakeKey(
+          id: '2',
+          name: 'stale secret',
+          masked: AccountKey.mask('sk-stale-whole'),
+        ),
+      ],
+      revealedKey: 'sk-stored',
+      accountWholeKeys: {
+        '1': 'sk-stored',
+        '2': 'sk-stale-whole',
+      },
+      existingKey: 'sk-stale-whole',
+      models: const [RemoteModel('claude-sonnet-4-5')],
+      preloadSession: true,
+    );
+    fixture.store.state = {'provider-key': {'id': '1'}};
+
+    expect(await fixture.connector.connect(), isTrue);
+    expect(fixture.revealedKeyId, '1');
   });
 
   test('stored key identity beats the CCCode fallback', () async {

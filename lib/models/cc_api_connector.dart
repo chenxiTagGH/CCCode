@@ -349,7 +349,10 @@ class CcApiConnector {
         }
       });
       await attempt(() => providers.setDefaultModel(oldDefault));
-      await attempt(() => store.writeSession(rotatedSession ?? previousSession ?? oldSession));
+      // A rotated token may have invalidated the prior token. Keep it for
+      // genuine synchronization failures, but cancellation occurs before
+      // persistence and therefore never reaches this rollback path.
+      await attempt(() => store.writeSession(rotatedSession ?? previousSession));
       await attempt(() => store.writeState(oldState));
       if (rollbackErrors.isNotEmpty) {
         _error = StateError('persistence failed; rollback failed: ${rollbackErrors.first}');
@@ -358,6 +361,19 @@ class CcApiConnector {
     }
       _status = CcApiConnectionStatus.connected;
       return true;
+    } on _CcApiSelectionCancelled {
+      rethrow;
+    } on Object {
+      // Once the server rotates a credential, the prior one may be invalid.
+      // Preserve it for genuine failures; key-picker cancellation is excluded.
+      if (!committed && rotatedSession != null) {
+        try {
+          await store.writeSession(rotatedSession);
+        } catch (_) {
+          // Preserve the original synchronization failure.
+        }
+      }
+      rethrow;
     } finally {
       if (!committed) {
         try {
@@ -378,15 +394,15 @@ class CcApiConnector {
     // against the current provider key only after reveal; prefer stored id.
     final metadata = store.readState()?['provider-key'];
     final id = metadata is Map ? metadata['id'] : null;
+    if (id is String) {
+      final same = keys.where((key) => key.id == id).firstOrNull;
+      if (same != null) return same;
+    }
     if (currentKey != null) {
       final matches = keys
           .where((key) => key.masked == AccountKey.mask(currentKey))
           .toList();
       if (matches.length == 1) return matches.single;
-    }
-    if (id is String) {
-      final same = keys.where((key) => key.id == id).firstOrNull;
-      if (same != null) return same;
     }
     if (keys.length == 1) return keys.single;
     if (keys.length > 1) {
