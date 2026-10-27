@@ -1691,6 +1691,8 @@
   "modelsProviders": "上游",
   "modelsEnableProvider": "在模型选择中显示 {name}",
   "modelsCcApiName": "CC API",
+  "modelsCcApiChooseKey": "选择 CC API 密钥",
+  "modelsCcApiChoose": "选择",
   "modelsCcApiDescription": "Claude、GPT、Gemini 一键接入",
   "modelsCcApiLogin": "登录 CC API",
   "modelsCcApiSignIn": "登录 CC API",

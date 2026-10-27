@@ -106,11 +106,13 @@ void main() {
       existingModels: const [ProviderModel(id: 'old-model')],
       existingKey: 'old-key',
       existingDefault: '@cc-api/old-model',
-      preloadSession: true,
+      preloadSession: false,
     );
+    fixture.store.session = null;
+    fixture.store.state = {'provider-key': {'id': 'old'}};
     final before = await fixture.snapshot();
 
-    expect(await fixture.connector.refresh(chooseKey: (_) async => null), isFalse);
+    expect(await fixture.connector.connect(chooseKey: (_) async => null), isFalse);
     expect(await fixture.snapshot(), before);
     expect(fixture.revealedKeyId, isNull);
   });
@@ -533,12 +535,17 @@ Future<ConnectorFixture> makeFixture({
   return fixture;
 }
 
-AccountKey fakeKey({required String id, required String name, String? masked}) =>
-    AccountKey(
-      id: id,
-      name: name,
-      masked: masked ?? 'sk-••••',
-    );
+AccountKey fakeKey({
+  required String id,
+  required String name,
+  String? masked,
+  String? platform,
+}) => AccountKey(
+  id: id,
+  name: name,
+  masked: masked ?? 'sk-••••',
+  platform: platform,
+);
 
 class ConnectorFixture {
   ConnectorFixture._(this.providers, this.window, this.store);
@@ -556,10 +563,15 @@ class ConnectorFixture {
   Future<List<Object?>> snapshot() async {
     final provider = providers.provider('cc-api');
     return [
+      store.session,
+      store.state,
       provider?.id,
       provider?.name,
       provider?.baseUrl,
-      provider?.models.map((model) => [model.id, model.label]).toList(),
+      provider?.protocol,
+      provider?.models
+          .map((model) => [model.id, model.label, model.protocol, model.enabled])
+          .toList(),
       await providers.key('cc-api'),
       providers.defaultModel,
     ];

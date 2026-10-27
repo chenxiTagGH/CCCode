@@ -10246,6 +10246,8 @@ abstract class AppLocalizations {
   String modelsEnableProvider(String name);
 
   String get modelsCcApiName;
+  String get modelsCcApiChooseKey;
+  String get modelsCcApiChoose;
   String get modelsCcApiDescription;
   String get modelsCcApiLogin;
   String get modelsCcApiSignIn;

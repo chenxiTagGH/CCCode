@@ -101,16 +101,20 @@ class CcApiConnector {
     _status = CcApiConnectionStatus.connecting;
     _error = null;
     try {
-      var session = await store.readSession();
+      final previousSession = await store.readSession();
+      var session = previousSession;
       if (session == null || session.isEmpty) {
         session = await _login();
         if (session == null) {
           _status = CcApiConnectionStatus.needsLogin;
           return false;
         }
-        await store.writeSession(session);
       }
-      return await _synchronize(session, chooseKey: chooseKey);
+      return await _synchronize(
+        session,
+        previousSession: previousSession,
+        chooseKey: chooseKey,
+      );
     } on _CcApiSelectionCancelled {
       _status = CcApiConnectionStatus.disconnected;
       return false;
@@ -134,12 +138,17 @@ class CcApiConnector {
     _status = CcApiConnectionStatus.connecting;
     _error = null;
     try {
-      final session = await store.readSession();
+      final previousSession = await store.readSession();
+      final session = previousSession;
       if (session == null || session.isEmpty) {
         _status = CcApiConnectionStatus.needsLogin;
         return false;
       }
-      return await _synchronize(session, chooseKey: chooseKey);
+      return await _synchronize(
+        session,
+        previousSession: previousSession,
+        chooseKey: chooseKey,
+      );
     } on _CcApiSelectionCancelled {
       _status = CcApiConnectionStatus.disconnected;
       return false;
@@ -186,7 +195,11 @@ class CcApiConnector {
     }
   }
 
-  Future<bool> _synchronize(String session, {CcApiKeyChooser? chooseKey}) async {
+  Future<bool> _synchronize(
+    String session, {
+    String? previousSession,
+    CcApiKeyChooser? chooseKey,
+  }) async {
     String? rotatedSession;
     Future<void> rotationQueue = Future<void>.value();
     var committed = false;
@@ -196,10 +209,9 @@ class CcApiConnector {
       credential: session,
       onCredential: (value) {
         rotatedSession = value;
-        rotationQueue = rotationQueue.then(
-          (_) => store.writeSession(value),
-          onError: (_) => store.writeSession(value),
-        );
+        // Persist only after synchronization commits; cancellation must not
+        // replace the caller's existing session.
+        rotationQueue = Future<void>.value();
       },
     );
     try {
@@ -337,7 +349,7 @@ class CcApiConnector {
         }
       });
       await attempt(() => providers.setDefaultModel(oldDefault));
-      await attempt(() => store.writeSession(rotatedSession ?? oldSession));
+      await attempt(() => store.writeSession(rotatedSession ?? previousSession ?? oldSession));
       await attempt(() => store.writeState(oldState));
       if (rollbackErrors.isNotEmpty) {
         _error = StateError('persistence failed; rollback failed: ${rollbackErrors.first}');

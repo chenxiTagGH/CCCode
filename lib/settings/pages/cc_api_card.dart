@@ -170,7 +170,7 @@ class _CcApiKeyPickerState extends State<_CcApiKeyPicker> {
 
   @override
   Widget build(BuildContext context) => AlertDialog(
-    title: const Text('Choose CC API key'),
+    title: Text(context.l10n.modelsCcApiChooseKey),
     content: SizedBox(
       width: 420,
       child: ListView(
@@ -194,13 +194,13 @@ class _CcApiKeyPickerState extends State<_CcApiKeyPicker> {
     actions: [
       TextButton(
         onPressed: () => Navigator.of(context).pop(),
-        child: const Text('Cancel'),
+        child: Text(context.l10n.commonCancel),
       ),
       FilledButton(
         onPressed: selected == null
             ? null
             : () => Navigator.of(context).pop(selected),
-        child: const Text('Choose'),
+        child: Text(context.l10n.modelsCcApiChoose),
       ),
     ],
   );

@@ -5929,6 +5929,8 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get modelsCcApiName => 'CC API';
+  String get modelsCcApiChooseKey => '选择 CC API 密钥';
+  String get modelsCcApiChoose => '选择';
   String get modelsCcApiDescription => 'Claude、GPT、Gemini 一键接入';
   String get modelsCcApiLogin => '登录 CC API';
   String get modelsCcApiSignIn => '登录 CC API';

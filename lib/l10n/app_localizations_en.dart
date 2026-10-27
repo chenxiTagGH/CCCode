@@ -6316,6 +6316,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get modelsCcApiName => 'CC API';
+  String get modelsCcApiChooseKey => 'Choose CC API key';
+  String get modelsCcApiChoose => 'Choose';
   String get modelsCcApiDescription => 'One-click access to Claude, GPT and Gemini';
   String get modelsCcApiLogin => 'Log in to CC API';
   String get modelsCcApiSignIn => 'Sign in to CC API';

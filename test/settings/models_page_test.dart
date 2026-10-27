@@ -17,6 +17,8 @@ import 'package:baocode/models/secret_store.dart';
 import 'package:baocode/models/upstream.dart';
 import 'package:baocode/settings/pages/model_dialogs.dart';
 import 'package:baocode/settings/pages/models_page.dart';
+import 'package:baocode/settings/pages/cc_api_card.dart';
+import 'package:baocode/channel/account/account_api.dart';
 import 'package:baocode/settings/pages/settings_widgets.dart';
 import 'package:baocode/workspace/workspace.dart';
 import 'package:flutter/material.dart';
@@ -164,6 +166,43 @@ void main() {
     secrets = MemorySecretStore();
     providers = ModelProviders.memory(secrets: secrets);
     listed = [];
+  });
+
+  testWidgets('CC API key picker shows masked metadata and supports selection and cancellation', (tester) async {
+    AccountKey? picked;
+    await tester.pumpWidget(MaterialApp(
+      home: Builder(
+        builder: (context) => ElevatedButton(
+          onPressed: () async {
+            picked = await showCcApiKeyPicker(context, const [
+              AccountKey(
+                id: '1',
+                name: 'OpenAI',
+                masked: 'sk-••••',
+                platform: 'openai',
+              ),
+            ]);
+          },
+          child: const Text('Open'),
+        ),
+      ),
+    ));
+
+    await tester.tap(find.text('Open'));
+    await tester.pumpAndSettle();
+    expect(find.text('OpenAI'), findsOneWidget);
+    expect(find.text('sk-•••• · openai'), findsOneWidget);
+    await tester.tap(find.text('Cancel'));
+    await tester.pumpAndSettle();
+    expect(picked, isNull);
+
+    await tester.tap(find.text('Open'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byType(RadioListTile<AccountKey>));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Choose'));
+    await tester.pumpAndSettle();
+    expect(picked?.id, '1');
   });
 
   Future<List<RemoteModel>> list(ModelProvider provider, String? key) async {

@@ -4514,6 +4514,8 @@
     }
   },
   "modelsCcApiName": "CC API",
+  "modelsCcApiChooseKey": "Choose CC API key",
+  "modelsCcApiChoose": "Choose",
   "modelsCcApiDescription": "One-click access to Claude, GPT and Gemini",
   "modelsCcApiLogin": "Log in to CC API",
   "modelsCcApiSignIn": "Sign in to CC API",
