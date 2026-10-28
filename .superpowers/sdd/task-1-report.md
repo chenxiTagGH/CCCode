@@ -23,6 +23,7 @@ Task 1 theme renaming and customizable commit attribution are implemented. Legac
 - `f6e06fe12887fc25c97e79d44594df2e7d515bbc` — `fix: finalize Task 1 public links and startup migration`
 - `647a9e20e6d721df8f9009b435b532137c41a406` — `fix: complete Task 1 public URL migration`
 - `e745f9c636df966b890d90f4cfa66af3f5318cc1` — `fix: finish Task 1 public URL cleanup`
+- Final follow-up commit: pending at report generation time.
 - `67fe869df428e34708fdcecb7987159f15ee5a3f` — `fix: finalize Task 1 migration durability`
 
 All implementation commits include:
@@ -35,7 +36,7 @@ All implementation commits include:
 - `CommitAttribution.cccode`, `.agent`, and `.none` remain available.
 - Persisted custom fields are `chat.commitAttributionName` and `chat.commitAttributionEmail`.
 - Shared canonical email validation rejects malformed addresses, including leading/trailing/consecutive local-part dots; Unicode-aware name validation rejects Cc/Cf/Zl/Zp characters, including U+0085, U+2028, and U+2029.
-- Empty custom values clear their settings and restore `CCCode` / `noreply@ccapitoken.cc`. Legacy `noreply@baocode.dev` normalizes after trimming and is persisted to settings on startup, while other valid user-entered emails are preserved and shown.
+- Empty custom email values clear the email setting and restore `noreply@ccapitoken.cc`; attribution names must remain non-empty and unsafe values are rejected. Legacy `noreply@baocode.dev` normalizes after trimming and is persisted to settings on startup, while other valid user-entered emails are preserved and shown.
 - `ColorThemeStorage.storeColorTheme` is consistently asynchronous across the interface, `Workspace`, `ColorThemeSettings`, and callers; startup waits for theme-ID migration persistence, while ordinary runtime saves remain nonblocking.
 - Pull-request attribution is generated dynamically from the current configured attribution name and uses the CCCode website URL; Featured Upstreams join links use `ccapitoken.cc`.
 - Legacy attribution email migration is awaited in startup before initialization continues. Public site hreflang, channel download, and upstream import/asset/CSP/verification links use `ccapitoken.cc`; internal `dl.baocode.dev` release targets remain unchanged.

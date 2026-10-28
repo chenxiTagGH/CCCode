@@ -11,10 +11,10 @@ void main() {
     expect(GeneralSettingsPage.validAttributionEmail('name@example'), isFalse);
   });
 
-  test('rejects attribution names with control characters but allows clear', () {
+  test('rejects empty and unsafe attribution names', () {
     expect(GeneralSettingsPage.validAttributionName('Ada Lovelace'), isTrue);
     expect(GeneralSettingsPage.validAttributionName('Ada\nLovelace'), isFalse);
-    expect(GeneralSettingsPage.validAttributionName(''), isTrue);
+    expect(GeneralSettingsPage.validAttributionName(''), isFalse);
     expect(
       GeneralSettingsPage.validAttributionName('Ada\u0085Lovelace'),
       isFalse,

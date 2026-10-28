@@ -27,7 +27,7 @@ abstract final class ExtensionStore {
   );
 
   /// The zip to load unpacked: the website sends it to the newest.
-  static final zip = Uri.https('dl.baocode.dev', '/dl/browser-extension');
+  static final zip = Uri.https('baocode.dev', '/dl/browser-extension');
 
   /// The store's page as last known: fetched, or kept; [fallback] before.
   static Uri get page => _page ?? fallback;
