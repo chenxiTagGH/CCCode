@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
@@ -100,61 +101,74 @@ class _CcApiCardState extends State<CcApiCard> {
       CcApiConnectionStatus.failed => l10n.modelsCcApiFailed,
       CcApiConnectionStatus.disconnected => l10n.modelsCcApiDescription,
     };
-    final subtitle = balance == null
+    final balanceText = balance == null
+        ? null
+        : l10n.modelsCcApiBalanceAmount(
+            l10n.modelsCcApiCurrencySymbol,
+            balance.toStringAsFixed(2),
+          );
+    final subtitle = balanceText == null
         ? detail
-        : l10n.modelsCcApiBalance('\$${balance.toStringAsFixed(2)}');
+        : l10n.modelsCcApiDetailWithBalance(detail, balanceText);
     final enabled = !_working && status != CcApiConnectionStatus.connecting;
-    return SizedBox(
-      height: FeaturedUpstreamsStrip.cardHeight,
-      width: _cardWidth,
-      child: Semantics(
-        button: true,
-        label: '${l10n.modelsCcApiName}, $detail, $action',
-        child: GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTap: enabled
-              ? () => unawaited(
-                    status == CcApiConnectionStatus.connected
-                        ? _refresh()
-                        : _connect(),
-                  )
-              : null,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            decoration: BoxDecoration(
-              color: SettingsColors.card,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Row(
-              children: [
-                const SizedBox.square(
-                  dimension: 24,
-                  child: Center(child: CcCodeLogo(size: 22)),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final screenWidth = MediaQuery.sizeOf(context).width;
+        final available = math.max(160.0, screenWidth - 32);
+        final width = math.min(_cardWidth, math.min(constraints.maxWidth, available));
+        return SizedBox(
+          height: FeaturedUpstreamsStrip.cardHeight,
+          width: width,
+          child: Semantics(
+            button: true,
+            label: '${l10n.modelsCcApiName}, $subtitle, $action',
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: enabled
+                  ? () => unawaited(
+                        status == CcApiConnectionStatus.connected
+                            ? _refresh()
+                            : _connect(),
+                      )
+                  : null,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                decoration: BoxDecoration(
+                  color: SettingsColors.card,
+                  borderRadius: BorderRadius.circular(10),
                 ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(l10n.modelsCcApiName, maxLines: 1, overflow: TextOverflow.ellipsis, style: SettingsText.label.copyWith(fontSize: 12.5, height: 1.3, fontWeight: FontWeight.w500)),
-                      Text(subtitle, maxLines: 1, overflow: TextOverflow.ellipsis, style: SettingsText.description.copyWith(fontSize: 11.5, height: 1.35, color: SettingsColors.textTertiary)),
+                child: Row(
+                  children: [
+                    const SizedBox.square(
+                      dimension: 24,
+                      child: Center(child: CcCodeLogo(size: 22)),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(l10n.modelsCcApiName, maxLines: 1, overflow: TextOverflow.ellipsis, style: SettingsText.label.copyWith(fontSize: 12.5, height: 1.3, fontWeight: FontWeight.w500)),
+                          Text(subtitle, maxLines: 1, overflow: TextOverflow.ellipsis, style: SettingsText.description.copyWith(fontSize: 11.5, height: 1.35, color: SettingsColors.textTertiary)),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    if (_working || status == CcApiConnectionStatus.connecting)
+                      SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: themeColors['textLink.foreground']))
+                    else ...[
+                      Text(action, style: SettingsText.description),
+                      const SizedBox(width: 4),
+                      Icon(Codicons.chevronRight, size: 14, color: SettingsColors.textSecondary),
                     ],
-                  ),
+                  ],
                 ),
-                const SizedBox(width: 6),
-                if (_working || status == CcApiConnectionStatus.connecting)
-                  SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: themeColors['textLink.foreground']))
-                else ...[
-                  Text(action, style: SettingsText.description),
-                  const SizedBox(width: 4),
-                  Icon(Codicons.chevronRight, size: 14, color: SettingsColors.textSecondary),
-                ],
-              ],
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

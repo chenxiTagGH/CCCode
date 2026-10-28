@@ -6357,7 +6357,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get modelsCcApiUnavailable => 'CC API is temporarily unavailable';
   String get modelsCcApiRetry => 'Retry';
   String get modelsCcApiFailed => 'Temporarily unavailable';
-  String modelsCcApiBalance(String amount) => 'Balance: $amount';
+  String get modelsCcApiCurrencySymbol => '\$';
+  String modelsCcApiBalanceAmount(String symbol, String amount) => '$symbol$amount';
+  String modelsCcApiDetailWithBalance(String detail, String balance) => '$detail · $balance';
 
   String get modelsFeaturedWhy => 'Why am I seeing this?';
 

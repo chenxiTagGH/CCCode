@@ -127,7 +127,16 @@ class _FakeCcApiConnector extends CcApiConnector {
     refreshChooser = chooseKey;
     refreshes++;
     current = CcApiConnectionStatus.connecting;
-    if (pending != null) return pending!.future;
+    if (pending != null) {
+      final result = await pending!.future;
+      if (!result || failRefresh) {
+        failure = StateError('secret must not render');
+        current = CcApiConnectionStatus.failed;
+        return false;
+      }
+      current = CcApiConnectionStatus.connected;
+      return true;
+    }
     if (failRefresh) {
       failure = StateError('secret must not render');
       current = CcApiConnectionStatus.failed;
@@ -370,13 +379,14 @@ void main() {
       'account': {'balance': 12.5},
     };
     await pumpWithCcApi(tester, connector);
-    expect(find.text('余额：\$12.50'), findsOneWidget);
+    expect(find.text('已连接 · 余额 \$12.50'), findsOneWidget);
+    expect(find.bySemanticsLabel('CC API, 已连接 · 余额 \$12.50, 刷新模型'), findsOneWidget);
 
     connector.ccStore.state = {
       'account': {'balance': 0},
     };
     await pumpWithCcApi(tester, connector);
-    expect(find.text('余额：\$0.00'), findsOneWidget);
+    expect(find.text('已连接 · 余额 \$0.00'), findsOneWidget);
   });
 
   testWidgets('CC API card omits a missing balance and keeps stale balance', (tester) async {
@@ -385,7 +395,7 @@ void main() {
       current: CcApiConnectionStatus.connected,
     );
     await pumpWithCcApi(tester, connector);
-    expect(find.textContaining('余额：'), findsNothing);
+    expect(find.textContaining('余额'), findsNothing);
 
     connector.ccStore.state = {
       'account': {'balance': 8.5},
@@ -396,11 +406,13 @@ void main() {
     connector.pending = Completer<bool>();
     await tester.tap(find.text('CC API'));
     await tester.pump();
-    expect(find.text('余额：\$8.50'), findsOneWidget);
+    expect(find.text('正在连接 · 余额 \$8.50'), findsOneWidget);
 
     connector.pending!.complete(false);
     await tester.pump();
-    expect(find.text('余额：\$8.50'), findsOneWidget);
+    expect(find.text('暂时无法连接 · 余额 \$8.50'), findsOneWidget);
+    expect(find.text('余额：\$8.50'), findsNothing);
+    expect(find.bySemanticsLabel('CC API, 暂时无法连接 · 余额 \$8.50, 重试'), findsOneWidget);
   });
 
   testWidgets('Models page places fixed CC API card before external featured cards', (tester) async {

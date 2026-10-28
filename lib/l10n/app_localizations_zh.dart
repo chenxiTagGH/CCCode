@@ -5968,7 +5968,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get modelsCcApiUnavailable => 'CC API 暂时无法使用';
   String get modelsCcApiRetry => '重试';
   String get modelsCcApiFailed => '暂时无法连接';
-  String modelsCcApiBalance(String amount) => '余额：$amount';
+  String get modelsCcApiCurrencySymbol => '\$';
+  String modelsCcApiBalanceAmount(String symbol, String amount) => '$symbol$amount';
+  String modelsCcApiDetailWithBalance(String detail, String balance) => '$detail · 余额 $balance';
 
   String get modelsFeaturedWhy => '为什么我看到这个？';
 
