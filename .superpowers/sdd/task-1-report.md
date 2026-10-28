@@ -21,6 +21,7 @@ Task 1 theme renaming and customizable commit attribution are implemented. Legac
 - `1eff3418039677b2a6809411bc07296d6416cca2` — `fix: harden Task 1 async contracts and validation`
 - `a229d5048f555dd7f95da34a497d94c7ab4bb0d0` — `fix: finalize Task 1 persistence and attribution`
 - `f6e06fe12887fc25c97e79d44594df2e7d515bbc` — `fix: finalize Task 1 public links and startup migration`
+- Final follow-up commit: pending at report generation time.
 - `67fe869df428e34708fdcecb7987159f15ee5a3f` — `fix: finalize Task 1 migration durability`
 
 All implementation commits include:
@@ -58,10 +59,11 @@ Passed:
 - `jq empty packages/bao_editor/tool/textmate_themes/theme-bao/themes/bao-dark-color-theme.json packages/bao_editor/tool/textmate_themes/theme-bao/themes/bao-light-color-theme.json packages/bao_editor/assets/textmate/manifest.json`
 - `node --check packages/bao_editor/tool/generate_textmate_assets.mjs`
 - `git diff --check`
-- Static scan classified remaining `Bao` strings as intentional migration compatibility or planning/spec history; active product/docs/package references were updated. Visible About, channel setup, featured feeds, update download pages, and browser extension links now use `ccapitoken.cc`; update manifests/CDN, telemetry, stats, and release infrastructure domains remain unchanged.
+- Static scan classified remaining `Bao` strings as intentional migration compatibility or planning/spec history; active product/docs/package references were updated. Visible About, channel setup, featured feeds, update download pages, browser extension links, site hreflang links, and upstream import/asset links now use `ccapitoken.cc`; internal `dl.baocode.dev` release/CDN targets remain unchanged.
 
 Unavailable:
 
+- `flutter test test/update/update_controller_test.dart test/channel/channel_setup_test.dart` failed to start with `(eval):1: command not found: flutter`, exit code `127`.
 - `flutter test test/kernel/commit_attribution_test.dart test/settings/general_page_test.dart test/theme/workbench_theme_test.dart` failed to start with `(eval):1: command not found: flutter`, exit code `127`.
 - Earlier focused `flutter test ...` commands failed with the same exact missing executable error.
 - `dart format ...` failed to start with `(eval):1: command not found: dart`, exit code `127`.

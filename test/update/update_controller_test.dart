@@ -85,7 +85,7 @@ void main() {
       ]);
       expect(offer.secondary.single.label, l10n.updateReleaseNotes);
       offer.secondary.single.run();
-      expect(opened, [Uri.parse('https://baocode.dev/changelog#v1.2.0')]);
+      expect(opened, [Uri.parse('https://ccapitoken.cc/changelog#v1.2.0')]);
 
       offer.primary[2].run();
       expect(service.skippedVersion, '1.2.0');
@@ -96,11 +96,11 @@ void main() {
       final version = AppVersion.parse('1.2.0+13');
       expect(
         UpdateController.changelogUrl(version, 'zh'),
-        Uri.parse('https://baocode.dev/zh/changelog#v1.2.0'),
+        Uri.parse('https://ccapitoken.cc/zh/changelog#v1.2.0'),
       );
       expect(
         UpdateController.changelogUrl(version, 'en'),
-        Uri.parse('https://baocode.dev/changelog#v1.2.0'),
+        Uri.parse('https://ccapitoken.cc/changelog#v1.2.0'),
       );
     });
 

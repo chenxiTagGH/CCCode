@@ -193,8 +193,8 @@ for (const pick of document.querySelectorAll('.pick')) {
     a.setAttribute('style', sample.getAttribute('style'));
     a.innerHTML = sample.innerHTML;
     for (const img of a.querySelectorAll('img')) {
-      img.setAttribute('src', 'https://baocode.dev' + img.getAttribute('src'));
-      img.setAttribute('srcset', img.getAttribute('srcset').replaceAll('/brand/', 'https://baocode.dev/brand/'));
+      img.setAttribute('src', 'https://ccapitoken.cc' + img.getAttribute('src'));
+      img.setAttribute('srcset', img.getAttribute('srcset').replaceAll('/brand/', 'https://ccapitoken.cc/brand/'));
     }
     const style = styles.dataset.template
       .replace('{url}', `${styles.dataset.page}#${pick.id}`)

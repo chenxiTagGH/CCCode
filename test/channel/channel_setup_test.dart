@@ -270,8 +270,8 @@ void main() {
       await setup.openPage(zh: false);
       await setup.openPage(zh: true);
       expect(opened, [
-        Uri.parse('https://baocode.dev/activate#i=$_id'),
-        Uri.parse('https://baocode.dev/zh/activate#i=$_id'),
+        Uri.parse('https://ccapitoken.cc/activate#i=$_id'),
+        Uri.parse('https://ccapitoken.cc/zh/activate#i=$_id'),
       ]);
       expect(setup.waiting, isTrue);
     });
@@ -379,7 +379,7 @@ void main() {
       addTearDown(setup.dispose);
       for (final link in [
         '',
-        'https://baocode.dev/activate#i=$_id',
+        'https://ccapitoken.cc/activate#i=$_id',
         'cccode://provider/import?v=1',
         'cccode://activate',
         'cccode://activate?',
@@ -413,7 +413,7 @@ void main() {
       expect(setup.done, isFalse);
       await setup.openPage(zh: false);
       expect(opened, [
-        Uri.parse('https://baocode.dev/activate#i=$_id&again=$_again'),
+        Uri.parse('https://ccapitoken.cc/activate#i=$_id&again=$_again'),
       ]);
       server.kept = const ChannelAttribution('channel', 'aijws');
       await until(() => setup.done);
@@ -576,7 +576,7 @@ void main() {
       final shown = await open(tester, setup);
       await tester.tap(find.text('在浏览器中完成设置').last);
       await tester.pump();
-      expect(opened, [Uri.parse('https://baocode.dev/zh/activate#i=$_id')]);
+      expect(opened, [Uri.parse('https://ccapitoken.cc/zh/activate#i=$_id')]);
       expect(find.text('正在等待浏览器完成…'), findsOneWidget);
       expect(find.text('重新打开网页'), findsOneWidget);
 
@@ -681,7 +681,7 @@ void main() {
       await tester.tap(find.text('去浏览器确认'));
       await tester.pump();
       expect(opened, [
-        Uri.parse('https://baocode.dev/zh/activate#i=$_id&again=$_again'),
+        Uri.parse('https://ccapitoken.cc/zh/activate#i=$_id&again=$_again'),
       ]);
       expect(shown.gate.stage, ChannelStage.setup);
       expect(find.text('正在等待浏览器完成…'), findsOneWidget);
@@ -745,7 +745,7 @@ void main() {
       await tester.pump();
       expect(find.text('浏览器没有打开'), findsOneWidget);
       expect(find.text('正在等待浏览器完成…'), findsNothing);
-      final address = 'https://baocode.dev/zh/activate#i=$_id';
+      final address = 'https://ccapitoken.cc/zh/activate#i=$_id';
       expect(find.text(address), findsOneWidget);
       await tester.tap(find.text('复制'));
       await tester.pump();
