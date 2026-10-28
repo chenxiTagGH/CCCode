@@ -17,9 +17,13 @@
 		{
 			"pattern": "baocode.dev",
 			"custom_domain": true
+		},
+		{
+			"pattern": "ccapitoken.cc",
+			"custom_domain": true
 		}
 	],
-	// Only at baocode.dev: not at baocode.<account>.workers.dev. A branch's
+	// Only at baocode.dev and ccapitoken.cc: not at baocode.<account>.workers.dev. A branch's
 	// preview version keeps its own address there.
 	"workers_dev": false,
 	"preview_urls": true,

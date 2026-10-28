@@ -31,6 +31,7 @@ Task 1 theme renaming and customizable commit attribution are implemented. Legac
 - `60e5c7e1a0d0da41eaa0f2358f9473af1d1244e5` — `fix: finalize Task 1 async startup and help links`
 - `09f5dbe652fd8e9c4c8a0105e15ddaddb033beef` — `fix: finalize Task 1 site identity documentation`
 - `01d2b0b97d49b09b1ca8397d3aef5630b6c92d8e` — `fix: finalize Task 1 dual-domain deployment`
+- Final follow-up commit: pending at report generation time.
 - `67fe869df428e34708fdcecb7987159f15ee5a3f` — `fix: finalize Task 1 migration durability`
 
 All implementation commits include:
@@ -47,7 +48,7 @@ All implementation commits include:
 - `ColorThemeStorage.storeColorTheme` is consistently asynchronous across the interface, `Workspace`, `ColorThemeSettings`, and callers; all persistence-relevant `_apply`/`setColorTheme` paths await `_keep` and the actual `PreferenceStore.write`, settings changes and startup await theme initialization, while ordinary runtime saves remain nonblocking.
 - Pull-request attribution is generated dynamically from the current configured attribution name, escapes Markdown punctuation including emphasis, code, underscores, hashes, and exclamation marks, and uses the CCCode website URL; Featured Upstreams join links use `ccapitoken.cc`.
 - ColorThemeSettings now awaits delegated state persistence; activation HTML and import documentation use `ccapitoken.cc`.
-- Legacy attribution email migration is awaited in startup before initialization continues. Public site hreflang, channel download, changelog, upstream import/asset/CSP/verification links, and site identity use `ccapitoken.cc`; Wrangler serves both `baocode.dev` and `ccapitoken.cc` routes for migration compatibility. Internal `dl.baocode.dev` release targets and `stats.baocode.dev` attribution endpoint remain unchanged and are documented as internal. Legacy `baocode.dev` attribution-referrer compatibility exclusions remain intentional.
+- Legacy attribution email migration is awaited in startup before initialization continues. Public site hreflang, channel download, changelog, upstream import/asset/CSP/verification links, and site identity use `ccapitoken.cc`; Wrangler config explicitly routes both `baocode.dev` and `ccapitoken.cc` as custom domains. Internal `dl.baocode.dev` release targets and `stats.baocode.dev` attribution endpoint remain unchanged and are documented as internal in English and Chinese activation pages. Legacy `baocode.dev` attribution-referrer compatibility exclusions remain intentional.
 - Transport and settings use normalized current attribution APIs. The compatibility `baoCodeCommit` getter delegates dynamically and does not contain a fixed legacy value.
 - General settings has visible localized name/email labels and validation errors; invalid persisted names show an initial field error and invalid values are not persisted. Settings fields clear stale errors after external updates or resubmitting the valid current value.
 
