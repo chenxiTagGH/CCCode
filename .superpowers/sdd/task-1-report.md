@@ -15,7 +15,7 @@ Task 1 theme renaming and customizable commit attribution are implemented. Legac
 - `5f252a4d` — `fix: validate attribution names in settings`
 - `9c67dc15` — `fix: finish Task 1 branding and attribution cleanup`
 - `04be24c7` — `fix: complete Task 1 review cleanup`
-- Final follow-up commit: pending at report generation time.
+- `cb024e3e02ccbff255c6af30f785ee605eb010f2` — `fix: migrate legacy attribution and active branding`
 
 All implementation commits include:
 `Co-Authored-By: Claude Code <noreply@anthropic.com>`
