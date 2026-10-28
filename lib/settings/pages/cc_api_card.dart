@@ -84,6 +84,7 @@ class _CcApiCardState extends State<CcApiCard> {
     final count = provider?.enabledModels.length ?? 0;
     final balance = connector.accountBalance;
     final status = connector.status == CcApiConnectionStatus.disconnected &&
+            connector.error == null &&
             provider != null && provider.enabledModels.isNotEmpty
         ? CcApiConnectionStatus.connected
         : connector.status;

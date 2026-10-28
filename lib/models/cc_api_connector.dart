@@ -20,6 +20,10 @@ class _CcApiSelectionCancelled implements Exception {
   const _CcApiSelectionCancelled();
 }
 
+class _CcApiInvalidated implements Exception {
+  const _CcApiInvalidated();
+}
+
 /// The connection lifecycle of the CC API connector.
 enum CcApiConnectionStatus {
   disconnected,
@@ -104,6 +108,7 @@ class CcApiConnector {
   CcApiConnectionStatus _status = CcApiConnectionStatus.disconnected;
   Object? _error;
   bool _accountStateInvalidated = false;
+  int _epoch = 0;
 
   CcApiConnectionStatus get status => _status;
   Object? get error => _error;
@@ -119,10 +124,12 @@ class CcApiConnector {
 
   Future<bool> connect({CcApiKeyChooser? chooseKey}) async {
     if (_status == CcApiConnectionStatus.connecting) return false;
+    final epoch = ++_epoch;
     _status = CcApiConnectionStatus.connecting;
     _error = null;
     try {
       final previousSession = await store.readSession();
+      if (epoch != _epoch) throw const _CcApiInvalidated();
       var session = previousSession;
       if (session == null || session.isEmpty) {
         session = await _login();
@@ -135,6 +142,7 @@ class CcApiConnector {
         session,
         previousSession: previousSession,
         chooseKey: chooseKey,
+        epoch: epoch,
       );
     } on _CcApiSelectionCancelled {
       _status = CcApiConnectionStatus.disconnected;
@@ -151,19 +159,22 @@ class CcApiConnector {
 
   Future<bool> refresh({CcApiKeyChooser? chooseKey}) async {
     if (_status == CcApiConnectionStatus.connecting) return false;
+    final epoch = ++_epoch;
     _status = CcApiConnectionStatus.connecting;
     _error = null;
     try {
       final previousSession = await store.readSession();
+      if (epoch != _epoch) throw const _CcApiInvalidated();
       final session = previousSession;
       if (session == null || session.isEmpty) {
-        _status = CcApiConnectionStatus.needsLogin;
+        await _handleSignedOut(CcApiConnectionStatus.needsLogin);
         return false;
       }
       return await _synchronize(
         session,
         previousSession: previousSession,
         chooseKey: chooseKey,
+        epoch: epoch,
       );
     } on _CcApiSelectionCancelled {
       _status = CcApiConnectionStatus.disconnected;
@@ -210,7 +221,14 @@ class CcApiConnector {
     String session, {
     String? previousSession,
     CcApiKeyChooser? chooseKey,
+    required int epoch,
   }) async {
+    void guard() {
+      if (epoch != _epoch || _accountStateInvalidated) {
+        throw const _CcApiInvalidated();
+      }
+    }
+    guard();
     String? rotatedSession;
     Future<void> rotationQueue = Future<void>.value();
     var committed = false;
@@ -373,6 +391,8 @@ class CcApiConnector {
       // Selection cancellation is strictly non-committing: storage and
       // provider state remain unchanged, including any deferred rotation.
       rethrow;
+    } on _CcApiInvalidated {
+      return false;
     } on Object {
       // A first login must remain usable after a genuine sync failure. A
       // refresh rotation may also invalidate the prior session, so retain the
@@ -398,7 +418,7 @@ class CcApiConnector {
   }
 
   Map<String, Object?> _accountState(AccountProfile profile) {
-    final previous = store.readState()?['account'];
+    final previous = _accountStateInvalidated ? null : store.readState()?['account'];
     final previousBalance = previous is Map ? previous['balance'] : null;
     final balance = profile.balance ??
         (previousBalance is num ? previousBalance.toDouble() : null);
@@ -483,9 +503,10 @@ class CcApiConnector {
   }
 
   Future<void> signOut() async {
-    final session = await store.readSession();
     _accountStateInvalidated = true;
+    ++_epoch;
     _status = CcApiConnectionStatus.disconnected;
+    final session = await store.readSession();
     _error = null;
     Object? firstError;
     if (session != null) {

@@ -514,6 +514,21 @@ void main() {
     expect(fixture.connector.accountBalance, isNull);
   });
 
+  test('refresh without a session clears stale account and provider state', () async {
+    final fixture = await makeFixture(
+      loginRefreshToken: null,
+      existingModels: const [ProviderModel(id: 'old')],
+      existingKey: 'old-key',
+      existingDefault: '@cc-api/old',
+    );
+    fixture.store.session = null;
+    fixture.store.state = {'account': {'balance': 10}};
+    expect(await fixture.connector.refresh(), isFalse);
+    expect(fixture.connector.status, CcApiConnectionStatus.needsLogin);
+    expect(fixture.connector.accountBalance, isNull);
+    expect(fixture.providers.provider('cc-api'), isNull);
+  });
+
   test('unreadable provider key fails before any key write or clear', () async {
     final secrets = ThrowingSecretStore();
     final providers = ModelProviders.memory(secrets: secrets);
