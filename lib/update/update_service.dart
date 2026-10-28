@@ -76,7 +76,7 @@ abstract interface class PreparedUpdate {
 class ManualUpdateRequired implements Exception {
   const ManualUpdateRequired(this.reason);
 
-  static final downloadPage = Uri.parse('https://baocode.dev/download');
+  static final downloadPage = Uri.parse('https://ccapitoken.cc/download');
 
   final String reason;
 

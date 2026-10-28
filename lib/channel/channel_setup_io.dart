@@ -23,7 +23,7 @@ Future<ChannelAttribution?> lookUpChannel(Uri url) async {
 const channelsUrlVariable = 'CCCODE_CHANNELS_URL';
 
 /// The CCCode website's.
-const channelsBase = 'https://baocode.dev';
+const channelsBase = 'https://ccapitoken.cc';
 
 /// The channel [id]'s entry as the website lists it (site/channels.json),
 /// its logo with it; null for one not listed. Throws when the website could

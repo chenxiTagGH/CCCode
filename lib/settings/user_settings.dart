@@ -152,40 +152,40 @@ class ColorThemeSettings implements ColorThemeStorage {
   String? get colorThemeData => state.colorThemeData;
 
   @override
-  void storeColorTheme({required String setting, String? data}) {
+  Future<void> storeColorTheme({required String setting, String? data}) async {
     state.storeColorTheme(setting: setting, data: data);
     // Unset is the default theme: the file is not written for it.
     final current = colorThemeSetting ?? ThemeSettingDefaults.colorThemeDark;
     if (migrateThemeSettingsId(current) == setting) return;
-    unawaited(
-      settings.update(key, setting).catchError((Object error) {
-        // A settings file that does not parse is left as it is; its error
-        // is shown.
-        debugPrint('workbench.colorTheme not kept: $error');
-      }),
-    );
+    try {
+      await settings.update(key, setting);
+    } on Object catch (error) {
+      // A settings file that does not parse is left as it is; its error
+      // is shown.
+      debugPrint('workbench.colorTheme not kept: $error');
+    }
   }
 
   WorkbenchThemeService? _themes;
 
   /// Applies to [themes] the theme the setting names whenever the file
   /// changes (the default one when it is removed), until [dispose].
-  void follow(WorkbenchThemeService themes) {
+  Future<void> follow(WorkbenchThemeService themes) async {
     _themes = themes;
     settings.addListener(_changed);
-    _persistMigratedSetting();
+    await persistMigratedSetting();
   }
 
-  void _persistMigratedSetting() {
+  Future<void> persistMigratedSetting() async {
     final current = colorThemeSetting;
     if (current == null) return;
     final migrated = migrateThemeSettingsId(current);
     if (migrated == current) return;
-    unawaited(
-      settings.update(key, migrated).catchError((Object error) {
-        debugPrint('workbench.colorTheme migration not kept: $error');
-      }),
-    );
+    try {
+      await settings.update(key, migrated);
+    } on Object catch (error) {
+      debugPrint('workbench.colorTheme migration not kept: $error');
+    }
   }
 
   void _changed() {

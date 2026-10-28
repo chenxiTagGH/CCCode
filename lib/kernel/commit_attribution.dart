@@ -48,7 +48,8 @@ enum CommitAttribution {
   }
 
   static bool needsEmailMigration(Map<String, Object?> settings) =>
-      settings[emailSettingKey] == legacyDefaultEmail;
+      settings[emailSettingKey] is String &&
+      (settings[emailSettingKey] as String).trim() == legacyDefaultEmail;
 
   static CommitAttributionValue normalized(Map<String, Object?> settings) {
     final name = switch (settings[nameSettingKey]) {

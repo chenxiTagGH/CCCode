@@ -444,7 +444,7 @@ Future<void> main(List<String> arguments) async {
     ..storage = colorTheme
     // A theme of an extension applies once they are read.
     ..waitsForExtensionThemes = files != null;
-  if (colorTheme is ColorThemeSettings) colorTheme.follow(themes);
+  if (colorTheme is ColorThemeSettings) await colorTheme.follow(themes);
   unawaited(themes.initialize());
   // The keybindings: keybindings.json and the selected keymap, in effect
   // from the first frame and followed as they change.

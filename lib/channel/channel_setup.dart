@@ -313,8 +313,8 @@ class ChannelSetup extends ChangeNotifier {
   static const pendingState = 'pending';
   static const doneState = 'done';
 
-  static const pageUrl = 'https://baocode.dev/activate';
-  static const zhPageUrl = 'https://baocode.dev/zh/activate';
+  static const pageUrl = 'https://ccapitoken.cc/activate';
+  static const zhPageUrl = 'https://ccapitoken.cc/zh/activate';
   static const lookUpBase = 'https://stats.baocode.dev/v1/attribution/';
 
   /// The app's, while it is to be set up (main.dart sets it).

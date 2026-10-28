@@ -18,6 +18,7 @@ Task 1 theme renaming and customizable commit attribution are implemented. Legac
 - `cb024e3e` — `fix: migrate legacy attribution and active branding`
 - `a210cebd` — `docs: finalize Task 1 migration report`
 - `b008d68b35589b472e2c1c617358020d9eec8874` — `fix: persist Task 1 migrations`
+- Final follow-up commit: pending at report generation time.
 
 All implementation commits include:
 `Co-Authored-By: Claude Code <noreply@anthropic.com>`
@@ -29,7 +30,7 @@ All implementation commits include:
 - `CommitAttribution.cccode`, `.agent`, and `.none` remain available.
 - Persisted custom fields are `chat.commitAttributionName` and `chat.commitAttributionEmail`.
 - Shared canonical email validation rejects malformed addresses; Unicode-aware name validation rejects control/format characters, including U+0085.
-- Empty custom values clear their settings and restore `CCCode` / `noreply@ccapitoken.cc`. Legacy `noreply@baocode.dev` normalizes to the new default and is persisted to settings on startup, while other valid user-entered emails are preserved and shown.
+- Empty custom values clear their settings and restore `CCCode` / `noreply@ccapitoken.cc`. Legacy `noreply@baocode.dev` normalizes after trimming and is persisted to settings on startup, while other valid user-entered emails are preserved and shown.
 - Transport and settings use normalized current attribution APIs. The compatibility `baoCodeCommit` getter delegates dynamically and does not contain a fixed legacy value.
 - General settings has visible localized name/email labels and validation errors; invalid persisted names show an initial field error and invalid values are not persisted. Settings fields clear stale errors after external updates or resubmitting the valid current value.
 
@@ -51,7 +52,7 @@ Passed:
 - `jq empty packages/bao_editor/tool/textmate_themes/theme-bao/themes/bao-dark-color-theme.json packages/bao_editor/tool/textmate_themes/theme-bao/themes/bao-light-color-theme.json packages/bao_editor/assets/textmate/manifest.json`
 - `node --check packages/bao_editor/tool/generate_textmate_assets.mjs`
 - `git diff --check`
-- Static scan classified remaining `Bao` strings as intentional migration compatibility or planning/spec history; active product/docs/package references were updated.
+- Static scan classified remaining `Bao` strings as intentional migration compatibility or planning/spec history; active product/docs/package references were updated. Visible About, channel setup, featured feeds, update download pages, and browser extension links now use `ccapitoken.cc`; update manifests/CDN, telemetry, stats, and release infrastructure domains remain unchanged.
 
 Unavailable:
 

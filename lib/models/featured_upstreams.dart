@@ -81,7 +81,7 @@ class FeaturedUpstream {
       description.values.firstOrNull;
 
   /// The list, its logos beside it.
-  static final feed = Uri.parse('https://baocode.dev/featured/upstreams.json');
+  static final feed = Uri.parse('https://ccapitoken.cc/featured/upstreams.json');
 
   /// A logo's name: a file beside the list, never a path.
   static bool isLogoName(String name) =>

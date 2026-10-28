@@ -72,7 +72,6 @@ String migrateThemeSettingsId(String settingsId) => switch (settingsId) {
   'Default Dark+' => 'Dark+',
   'Default Light+' => 'Light+',
   'Bao Dark' ||
-  'CC Dark' ||
   'Experimental Dark' ||
   'VS Code Dark' ||
   'Dark 2026' ||
@@ -80,7 +79,6 @@ String migrateThemeSettingsId(String settingsId) => switch (settingsId) {
   'Monokai' ||
   'Abyss' => ThemeSettingDefaults.colorThemeDark,
   'Bao Light' ||
-  'CC Light' ||
   'Experimental Light' ||
   'VS Code Light' ||
   'Light 2026' ||
