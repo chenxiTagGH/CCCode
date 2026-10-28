@@ -14,7 +14,7 @@ Task 1 theme renaming and customizable commit attribution are implemented. The f
 - `3c6238ee` — `fix: harden Task 1 attribution validation`
 - `5f252a4d` — `fix: validate attribution names in settings`
 - `9c67dc15` — `fix: finish Task 1 branding and attribution cleanup`
-- Final follow-up commit: pending at report generation time.
+- `04be24c762ef92a12b9d1e069826af84c8ce7e91` — `fix: complete Task 1 review cleanup`
 
 All implementation commits include:
 `Co-Authored-By: Claude Code <noreply@anthropic.com>`
