@@ -126,13 +126,13 @@ class CcApiConnector {
   }
 
   Future<bool> connect({CcApiKeyChooser? chooseKey}) {
+    if (_signingOut) return Future<bool>.value(false);
     final operation = _connect(chooseKey: chooseKey);
     _activeOperations.add(operation);
     return operation.whenComplete(() => _activeOperations.remove(operation));
   }
 
   Future<bool> _connect({CcApiKeyChooser? chooseKey}) async {
-    await (_cleanupFuture ?? Future<void>.value());
     if (_status == CcApiConnectionStatus.connecting) return false;
     final epoch = ++_epoch;
     _status = CcApiConnectionStatus.connecting;
@@ -174,13 +174,13 @@ class CcApiConnector {
   }
 
   Future<bool> refresh({CcApiKeyChooser? chooseKey}) {
+    if (_signingOut) return Future<bool>.value(false);
     final operation = _refresh(chooseKey: chooseKey);
     _activeOperations.add(operation);
     return operation.whenComplete(() => _activeOperations.remove(operation));
   }
 
   Future<bool> _refresh({CcApiKeyChooser? chooseKey}) async {
-    await (_cleanupFuture ?? Future<void>.value());
     if (_status == CcApiConnectionStatus.connecting) return false;
     final epoch = ++_epoch;
     _status = CcApiConnectionStatus.connecting;
@@ -537,6 +537,14 @@ class CcApiConnector {
   }
 
   Future<void> _automaticCleanup(CcApiConnectionStatus nextStatus) async {
+    while (_activeOperations.isNotEmpty) {
+      final active = List<Future<bool>>.of(_activeOperations);
+      try {
+        await Future.wait(active);
+      } catch (_) {
+        // Cleanup continues after stale operations finish.
+      }
+    }
     Object? firstError;
     try {
       await providers.remove(providerId);
