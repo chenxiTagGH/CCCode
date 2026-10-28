@@ -68,11 +68,22 @@ void main() {
     }
   });
 
-  test('accepts HTTPS bases', () {
-    expect(
-      BarkNotifier.parseBase('https://api.day.app/key')?.scheme,
-      'https',
+  test('delivers HTTPS URI with title and body path segments', () async {
+    Uri? requested;
+    final notifier = BarkNotifier(
+      request: (uri) async {
+        requested = uri;
+        return HttpStatus.ok;
+      },
     );
+    await notifier.send(
+      Uri.parse('https://api.day.app/key'),
+      title: 'title / 你好',
+      body: 'body? & value',
+    );
+    expect(requested?.scheme, 'https');
+    expect(requested?.host, 'api.day.app');
+    expect(requested?.pathSegments, ['key', 'title / 你好', 'body? & value']);
   });
 
   test('does not follow redirects', () async {
