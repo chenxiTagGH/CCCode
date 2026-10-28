@@ -336,45 +336,51 @@ class GeneralSettingsPage extends StatelessWidget {
                     ),
                     if (current == CommitAttribution.cccode) ...[
                       const SizedBox(height: 8),
-                      SettingsTextField(
-                        value: switch (
-                          settings?[CommitAttribution.nameSettingKey]
-                        ) {
-                          final String value when value.trim().isNotEmpty =>
-                            value,
-                          _ => CommitAttribution.defaultName,
-                        },
-                        semanticLabel: l10n.generalSettingsAttributionName,
-                        validator: (value) => validAttributionName(value)
-                            ? null
-                            : l10n.generalSettingsAttributionNameInvalid,
-                        onSubmitted: (value) => _write(
-                          CommitAttribution.nameSettingKey,
-                          value.isEmpty ? null : value,
+                      _AttributionField(
+                        label: l10n.generalSettingsAttributionName,
+                        child: SettingsTextField(
+                          value: switch (
+                            settings?[CommitAttribution.nameSettingKey]
+                          ) {
+                            final String value when value.trim().isNotEmpty =>
+                              value,
+                            _ => CommitAttribution.defaultName,
+                          },
+                          semanticLabel: l10n.generalSettingsAttributionName,
+                          validator: (value) => validAttributionName(value)
+                              ? null
+                              : l10n.generalSettingsAttributionNameInvalid,
+                          onSubmitted: (value) => _write(
+                            CommitAttribution.nameSettingKey,
+                            value.isEmpty ? null : value,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 8),
-                      SettingsTextField(
-                        value: switch (
-                          settings?[CommitAttribution.emailSettingKey]
-                        ) {
-                          final String value when value.trim().isNotEmpty =>
-                            value,
-                          _ => CommitAttribution.defaultEmail,
-                        },
-                        semanticLabel: l10n.generalSettingsAttributionEmail,
-                        hint: l10n.generalSettingsAttributionEmailHint,
-                        validator: (value) => validAttributionEmail(value)
-                            ? null
-                            : l10n.generalSettingsAttributionEmailInvalid,
-                        onSubmitted: (value) {
-                          if (validAttributionEmail(value)) {
-                            _write(
-                              CommitAttribution.emailSettingKey,
-                              value.isEmpty ? null : value,
-                            );
-                          }
-                        },
+                      _AttributionField(
+                        label: l10n.generalSettingsAttributionEmail,
+                        child: SettingsTextField(
+                          value: switch (
+                            settings?[CommitAttribution.emailSettingKey]
+                          ) {
+                            final String value when value.trim().isNotEmpty =>
+                              value,
+                            _ => CommitAttribution.defaultEmail,
+                          },
+                          semanticLabel: l10n.generalSettingsAttributionEmail,
+                          hint: l10n.generalSettingsAttributionEmailHint,
+                          validator: (value) => validAttributionEmail(value)
+                              ? null
+                              : l10n.generalSettingsAttributionEmailInvalid,
+                          onSubmitted: (value) {
+                            if (validAttributionEmail(value)) {
+                              _write(
+                                CommitAttribution.emailSettingKey,
+                                value.isEmpty ? null : value,
+                              );
+                            }
+                          },
+                        ),
                       ),
                       if (settings?[CommitAttribution.emailSettingKey]
                               case final String email
@@ -520,6 +526,23 @@ class GeneralSettingsPage extends StatelessWidget {
       },
     );
   }
+}
+
+class _AttributionField extends StatelessWidget {
+  const _AttributionField({required this.label, required this.child});
+
+  final String label;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(label, style: SettingsText.description),
+      const SizedBox(height: 4),
+      child,
+    ],
+  );
 }
 
 /// Whether the `code` command is installed, and the buttons to install or

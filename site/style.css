@@ -257,7 +257,7 @@ pre code { padding: 0; background: none; font-size: 13.5px; line-height: 1.6; wh
 .pick:hover::after, .pick:focus-visible::after, .pick.copied::after { opacity: 1; transform: translate(-50%, 0); }
 .pick.copied::after { background: #3F6B3A; }
 
-/* /upstreams: CCCode's Settings → Models, drawn in Bao Light (the theme's
+/* /upstreams: CCCode's Settings → Models, drawn in CC Light (the theme's
    colors: its paper, side bar, text, lines and sand gold), a site's card
    among those at the top and the site just imported below. */
 .mock { --bg: #FDFCF8; --side: #F5F4EE; --card: #F4F2EC; --sel: #E8E5DC; --line: #E9E7DF; --text: #2B2925; --dim: #69655A; --faint: #8E8A7E; --sand: #E2B373; --sand-text: #8F6528; --green: #5C8B4C;

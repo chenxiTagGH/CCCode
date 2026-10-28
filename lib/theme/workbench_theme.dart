@@ -65,7 +65,7 @@ abstract final class ThemeSettingDefaults {
 
 /// `migrateThemeSettingsId`: the current id of a theme once named
 /// [settingsId]. Themes no longer bundled (our former defaults among them)
-/// give way to the Bao theme of their color scheme.
+/// give way to the CC theme of their color scheme.
 String migrateThemeSettingsId(String settingsId) => switch (settingsId) {
   'Default Dark Modern' => 'Dark Modern',
   'Default Light Modern' => 'Light Modern',

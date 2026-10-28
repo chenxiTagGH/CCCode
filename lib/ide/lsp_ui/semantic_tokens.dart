@@ -16,6 +16,7 @@ import 'package:bao_editor/monaco/vs/workbench/services/themes/common/color_them
 import 'package:bao_editor/textmate/textmate_manifest.dart';
 
 import '../lsp/lsp_protocol.dart';
+import '../../theme/workbench_theme.dart' show ThemeSettingDefaults;
 
 /// What a semantic token sets on the syntax style under it; a null field
 /// keeps the syntax span's value. Upstream these are the `SEMANTIC_USE_*`
@@ -170,7 +171,7 @@ Color _flutterColor(vs.Color color) => Color.fromARGB(
 
 /// The editor's default color theme (`workbench.colorTheme`):
 /// `ThemeSettingDefaults.colorThemeDark`.
-const String ideDefaultColorThemeId = 'CC Dark';
+const String ideDefaultColorThemeId = ThemeSettingDefaults.colorThemeDark;
 
 // The stylers, not futures of them: a future answers in the zone it was made
 // in, which may be gone (a widget test's fake async zone).
