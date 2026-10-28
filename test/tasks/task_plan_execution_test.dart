@@ -66,8 +66,9 @@ void main() {
     events.add(const TurnStarted(2, 'turn'));
     events.add(const TurnEnded(3, 'turn', interrupted: true));
 
-    expect(session.taskPlan!.status, TaskPlanStatus.running);
-    expect(session.taskPlan!.pauseRequested, isTrue);
+    expect(session.taskPlan!.status, TaskPlanStatus.paused);
+    expect(session.taskPlan!.pauseRequested, isFalse);
+    expect(session.taskPlan!.currentStep!.status, TaskStepStatus.paused);
     expect(session.taskPlan!.completedCount, 0);
   });
 

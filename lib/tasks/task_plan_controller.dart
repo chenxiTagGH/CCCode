@@ -162,13 +162,31 @@ class TaskPlanController extends ValueNotifier<TaskPlan?> {
   }
 
   /// Running work is allowed to finish; the next step remains blocked.
-  void pause() {
+  void pause({bool commandStopped = false}) {
     final plan = value;
     if (plan == null ||
         plan.status == TaskPlanStatus.completed ||
         plan.status == TaskPlanStatus.cancelled ||
         plan.status == TaskPlanStatus.failed) return;
+    final now = _now();
     final running = plan.steps.any((step) => step.status == TaskStepStatus.running);
+    if (commandStopped && running) {
+      _set(plan.copyWith(
+        status: TaskPlanStatus.paused,
+        pauseRequested: false,
+        steps: [
+          for (final step in plan.steps)
+            step.status == TaskStepStatus.running
+                ? step.copyWith(
+                    status: TaskStepStatus.paused,
+                    elapsed: step.elapsedAt(now),
+                    runningSince: null,
+                  )
+                : step,
+        ],
+      ));
+      return;
+    }
     _set(plan.copyWith(
       status: running ? TaskPlanStatus.running : TaskPlanStatus.paused,
       pauseRequested: running,
@@ -181,8 +199,11 @@ class TaskPlanController extends ValueNotifier<TaskPlan?> {
         plan.status == TaskPlanStatus.cancelled ||
         plan.status == TaskPlanStatus.completed ||
         plan.status == TaskPlanStatus.failed) return;
+    final hasRunningStep = plan.steps.any(
+      (step) => step.status == TaskStepStatus.running,
+    );
     _set(plan.copyWith(
-      status: TaskPlanStatus.pending,
+      status: hasRunningStep ? TaskPlanStatus.running : TaskPlanStatus.pending,
       pauseRequested: false,
       steps: [
         for (final step in plan.steps)
@@ -192,7 +213,7 @@ class TaskPlanController extends ValueNotifier<TaskPlan?> {
             step,
       ],
     ));
-    start();
+    if (!hasRunningStep) start();
   }
 
   void cancel() {
@@ -299,7 +320,19 @@ class TaskPlanController extends ValueNotifier<TaskPlan?> {
                 : TaskPlanStatus.running;
     if (previous == null) {
       create(title: title ?? 'Task plan', steps: steps);
-      if (active == null && !allCompleted) start();
+      if (value != null && allCompleted) {
+        _set(value!.copyWith(
+          status: TaskPlanStatus.completed,
+          finishedAt: _now(),
+        ));
+      } else if (value != null && active != null) {
+        _set(value!.copyWith(
+          status: TaskPlanStatus.running,
+          startedAt: value!.startedAt ?? steps[active.$1].startedAt ?? _now(),
+        ));
+      } else if (active == null) {
+        start();
+      }
     } else {
       _set(previous.copyWith(
         title: title,

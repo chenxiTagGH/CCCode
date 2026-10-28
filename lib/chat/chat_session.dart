@@ -144,8 +144,10 @@ class ChatSession extends ChangeNotifier implements ChatFeed {
 
   /// Resumes the next incomplete step through the existing agent session.
   void resumeTask() {
+    final current = taskPlan?.currentStep;
+    final wasRunning = current?.status == TaskStepStatus.running;
     taskPlanController.resume();
-    if (taskPlan?.status == TaskPlanStatus.running) {
+    if (!wasRunning && taskPlan?.status == TaskPlanStatus.running) {
       send(const ComposerMessage(
         text: 'Continue the task plan from the next incomplete step.',
       ));
@@ -204,7 +206,7 @@ class ChatSession extends ChangeNotifier implements ChatFeed {
       taskPlanController.reconcile(event.todos);
     }
     if (event is TurnEnded && event.interrupted) {
-      taskPlanController.pause();
+      taskPlanController.pause(commandStopped: true);
     }
     if (event case SessionRenamed(:final title)) {
       _renamed = title;

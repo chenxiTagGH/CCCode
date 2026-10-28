@@ -31,6 +31,17 @@ void main() {
     expect(controller.value!.steps[1].status, TaskStepStatus.pending);
   });
 
+  test('resuming a paused running step keeps it running', () {
+    controller.create(steps: [step('one'), step('two')]);
+    controller.start();
+    controller.pause();
+    controller.resume();
+
+    expect(controller.value!.status, TaskPlanStatus.running);
+    expect(controller.value!.steps[0].status, TaskStepStatus.running);
+    expect(controller.value!.pauseRequested, isFalse);
+  });
+
   test('pause lets current step finish and blocks the next step', () {
     controller.create(steps: [step('one'), step('two')]);
     controller.start();
