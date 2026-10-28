@@ -846,13 +846,10 @@ class _ChatScreenState extends State<ChatScreen>
           ChatKeys.dispatch(event) ?? KeyEventResult.ignored,
       child: TaskPlanPanel(
         controller: _session.taskPlanController,
-        onPause: _session.taskPlanController.pause,
-        onResume: _session.taskPlanController.resume,
-        onRetry: _session.taskPlanController.retryFailed,
-        onStop: () {
-          _session.stop();
-          _session.taskPlanController.cancel();
-        },
+        onPause: _session.pauseTask,
+        onResume: _session.resumeTask,
+        onRetry: _session.retryTask,
+        onStop: _session.cancelTask,
         child: _buildScaffold(),
       ),
     );

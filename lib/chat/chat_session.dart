@@ -139,6 +139,34 @@ class ChatSession extends ChangeNotifier implements ChatFeed {
 
   TaskPlan? get taskPlan => taskPlanController.value;
 
+  /// Requests a pause without interrupting the current kernel turn.
+  void pauseTask() => taskPlanController.pause();
+
+  /// Resumes the next incomplete step through the existing agent session.
+  void resumeTask() {
+    taskPlanController.resume();
+    if (taskPlan?.status == TaskPlanStatus.running) {
+      send(const ComposerMessage(
+        text: 'Continue the task plan from the next incomplete step.',
+      ));
+    }
+  }
+
+  /// Retries the failed step through the existing agent session.
+  void retryTask() {
+    taskPlanController.retryFailed();
+    if (taskPlan?.status == TaskPlanStatus.running) {
+      send(const ComposerMessage(
+        text: 'Retry the failed task plan step, then continue the remaining steps.',
+      ));
+    }
+  }
+
+  void cancelTask() {
+    stop();
+    taskPlanController.cancel();
+  }
+
   /// What is typed in its composer and not sent, while another
   /// conversation shows.
   final ComposerDraft draft = ComposerDraft();
@@ -172,15 +200,11 @@ class ChatSession extends ChangeNotifier implements ChatFeed {
       taskPlanController.storageKey = id;
       unawaited(taskPlanController.restore());
     }
-    if (event is TodosReported && event.todos.isNotEmpty) {
+    if (event is TodosReported) {
       taskPlanController.reconcile(event.todos);
     }
     if (event is TurnEnded && event.interrupted) {
       taskPlanController.pause();
-    }
-    if (event case ItemUpserted(item: final ToolCallItem item)
-        when item.status == ToolStatus.failed) {
-      taskPlanController.failStep(item.output ?? item.detail ?? 'Tool failed');
     }
     if (event case SessionRenamed(:final title)) {
       _renamed = title;

@@ -24,8 +24,13 @@ class TaskPlanController extends ValueNotifier<TaskPlan?> {
     if (key == null || store == null) return;
     final revision = _revision;
     final restored = await store!.read(key);
-    if (!_disposed && revision == _revision && restored != null) {
+    if (_disposed || revision != _revision) return;
+    if (restored != null) {
       value = restored;
+    } else if (value != null) {
+      // A new session may have produced a plan before its stable id existed.
+      // Persist that in-memory plan as soon as the id becomes available.
+      await store!.write(key, value, at: _now());
     }
   }
 
@@ -38,6 +43,15 @@ class TaskPlanController extends ValueNotifier<TaskPlan?> {
   }
 
   Future<void> flush() => store?.flush() ?? Future<void>.value();
+
+  Future<void> clear() async {
+    final key = storageKey;
+    _revision++;
+    value = null;
+    if (key != null) {
+      await store?.write(key, null);
+    }
+  }
 
   void create({String title = 'Task plan', required List<TaskStep> steps}) {
     if (title.trim().isEmpty || steps.isEmpty) return;
@@ -228,7 +242,11 @@ class TaskPlanController extends ValueNotifier<TaskPlan?> {
   /// A validated, complete todo snapshot from the agent's own tool events.
   /// Updates completion only from those events, never from a timer.
   void reconcile(List<TodoEntry> todos, {String? title}) {
-    if (todos.isEmpty || todos.any((todo) => todo.content.trim().isEmpty)) return;
+    if (todos.isEmpty) {
+      if (value?.status != TaskPlanStatus.cancelled) unawaited(clear());
+      return;
+    }
+    if (todos.any((todo) => todo.content.trim().isEmpty)) return;
     final previous = value;
     if (previous?.status == TaskPlanStatus.cancelled) return;
     final available = [...?previous?.steps];
@@ -240,39 +258,54 @@ class TaskPlanController extends ValueNotifier<TaskPlan?> {
       if (match != null) available.remove(match);
       final step = match ??
           TaskStep(id: 'step-${_revision + 1}-$index', title: todo.content);
+      final stepStatus = switch (todo.status) {
+        TodoStatus.completed => TaskStepStatus.completed,
+        TodoStatus.inProgress => TaskStepStatus.running,
+        TodoStatus.pending => TaskStepStatus.pending,
+      };
+      final now = _now();
       steps.add(
-        todo.status == TodoStatus.pending && step.status == TaskStepStatus.running
-            ? step.copyWith(
-                status: TaskStepStatus.pending,
-                elapsed: step.elapsedAt(_now()),
-                runningSince: null,
-              )
-            : step,
+        step.status == stepStatus &&
+                !(stepStatus == TaskStepStatus.running && step.runningSince == null)
+            ? step
+            : step.copyWith(
+                status: stepStatus,
+                startedAt: stepStatus == TaskStepStatus.running
+                    ? step.startedAt ?? now
+                    : step.startedAt,
+                runningSince: stepStatus == TaskStepStatus.running ? now : null,
+                elapsed: stepStatus == TaskStepStatus.running
+                    ? step.elapsed
+                    : step.elapsedAt(now),
+                finishedAt: stepStatus == TaskStepStatus.completed ? now : null,
+                error: null,
+              ),
       );
     }
-    if (previous == null) {
-      create(title: title ?? 'Task plan', steps: steps);
-    } else {
-      _set(previous.copyWith(title: title, steps: steps));
-    }
-    for (final (index, todo) in todos.indexed) {
-      if (todo.status == TodoStatus.completed) completeStep(steps[index].id);
-    }
-    final plan = value;
-    if (plan == null ||
-        plan.status == TaskPlanStatus.paused ||
-        plan.status == TaskPlanStatus.failed ||
-        plan.status == TaskPlanStatus.cancelled ||
-        plan.pauseRequested) return;
     final active = todos.indexed
         .where((entry) => entry.$2.status == TodoStatus.inProgress)
         .firstOrNull;
-    if (active != null) {
-      start(steps[active.$1].id);
-    } else if (plan.steps.any((step) => step.status == TaskStepStatus.pending)) {
-      // A TodoWrite update may briefly mark the previous step complete before
-      // marking the next one in progress; advance the projection immediately.
-      start();
+    final allCompleted = steps.every(
+      (step) => step.status == TaskStepStatus.completed,
+    );
+    final projectedStatus = allCompleted
+        ? TaskPlanStatus.completed
+        : previous?.pauseRequested == true
+            ? TaskPlanStatus.paused
+            : active == null
+                ? TaskPlanStatus.pending
+                : TaskPlanStatus.running;
+    if (previous == null) {
+      create(title: title ?? 'Task plan', steps: steps);
+      if (active == null && !allCompleted) start();
+    } else {
+      _set(previous.copyWith(
+        title: title,
+        steps: steps,
+        status: projectedStatus,
+        pauseRequested: previous?.pauseRequested ?? false,
+        finishedAt: allCompleted ? _now() : null,
+      ));
     }
   }
 
