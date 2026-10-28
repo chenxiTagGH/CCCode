@@ -1,15 +1,14 @@
 # Task 3 report: CC API balance and wider card
 
 ## Status
-Implemented Task 3 and final operation-serialization fixes. The CC API card remains responsive and explicit-status driven. Sign-out cleanup now serializes with active synchronization and blocks reconnect until cleanup completes, preventing stale rollback or cleanup writes from overlapping a new commit.
+Implemented Task 3 and final concurrency barrier fixes. The CC API card remains responsive and explicit-status driven. All active connect/refresh operations are tracked and awaited before either automatic or explicit sign-out cleanup, preventing stale writes from overlapping cleanup or a later reconnect.
 
-## Latest serialization fixes
-- Track the active connect/refresh Future and a cleanup Future/lock.
-- `signOut()` invalidates the epoch and disconnects immediately, waits for the active operation to finish, then performs best-effort session/state/provider cleanup; the lock clears only after cleanup completes.
-- New connect/refresh operations wait for cleanup completion, so reconnect cannot overlap cleanup writes.
-- Obsolete operation catch handlers no longer set failed/needs-login or run signed-out cleanup when their epoch is stale.
-- Existing epoch guards remain before provider/session/state/default commits, rollback writes, key creation/reveal, and connected status.
-- Card explicit status behavior remains unchanged: connected is never inferred solely from residual provider models.
+## Latest concurrency fixes
+- Track every active connect/refresh Future in a Set rather than only the latest operation.
+- Sign-out cleanup waits in a loop until all operations started before invalidation have completed, including operations that were active concurrently.
+- Automatic `_handleSignedOut()` uses the same signing-out lock and cleanup Future as explicit `signOut()`; new connect/refresh calls wait for cleanup completion.
+- Stale catch handlers remain epoch guarded and cannot overwrite a newer disconnected or reconnecting state.
+- Existing guards remain before provider/session/state/default commits, rollback writes, key creation/reveal, and connected status.
 
 ## Latest commit
 - Follow-up commit includes `Co-Authored-By: Claude Code <noreply@anthropic.com>`.
@@ -24,7 +23,7 @@ Implemented Task 3 and final operation-serialization fixes. The CC API card rema
 ## Commands and results
 - `git diff --check`: passed with no output.
 - `ruby -rjson -e 'ARGV.each { |path| JSON.parse(File.read(path)); puts "valid #{path}" }' lib/l10n/app_en.arb lib/l10n/app_zh.arb`: both ARB files parsed successfully.
-- Targeted symbol inspection confirmed active-operation tracking, cleanup lock, stale catch guards, and explicit card status.
+- Targeted symbol inspection confirmed active-operation Set tracking, automatic/explicit cleanup lock sharing, wait-barrier looping, stale catch guards, and explicit card status.
 - Flutter tests were not rerun because Flutter remains unavailable (`flutter: command not found`, exit code 127 in prior focused runs).
 
 Flutter/Dart were unavailable, so no test pass is claimed.

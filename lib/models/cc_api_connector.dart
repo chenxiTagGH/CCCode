@@ -111,7 +111,7 @@ class CcApiConnector {
   int _epoch = 0;
   bool _signingOut = false;
   Future<void>? _cleanupFuture;
-  Future<bool>? _activeOperation;
+  final Set<Future<bool>> _activeOperations = {};
 
   CcApiConnectionStatus get status => _status;
   Object? get error => _error;
@@ -127,10 +127,8 @@ class CcApiConnector {
 
   Future<bool> connect({CcApiKeyChooser? chooseKey}) {
     final operation = _connect(chooseKey: chooseKey);
-    _activeOperation = operation;
-    return operation.whenComplete(() {
-      if (identical(_activeOperation, operation)) _activeOperation = null;
-    });
+    _activeOperations.add(operation);
+    return operation.whenComplete(() => _activeOperations.remove(operation));
   }
 
   Future<bool> _connect({CcApiKeyChooser? chooseKey}) async {
@@ -177,10 +175,8 @@ class CcApiConnector {
 
   Future<bool> refresh({CcApiKeyChooser? chooseKey}) {
     final operation = _refresh(chooseKey: chooseKey);
-    _activeOperation = operation;
-    return operation.whenComplete(() {
-      if (identical(_activeOperation, operation)) _activeOperation = null;
-    });
+    _activeOperations.add(operation);
+    return operation.whenComplete(() => _activeOperations.remove(operation));
   }
 
   Future<bool> _refresh({CcApiKeyChooser? chooseKey}) async {
@@ -527,9 +523,20 @@ class CcApiConnector {
   }
 
   Future<void> _handleSignedOut(CcApiConnectionStatus nextStatus) async {
+    if (_signingOut) {
+      await (_cleanupFuture ?? Future<void>.value());
+      return;
+    }
     _accountStateInvalidated = true;
     ++_epoch;
     _status = nextStatus;
+    _signingOut = true;
+    final cleanup = _automaticCleanup(nextStatus);
+    _cleanupFuture = cleanup;
+    await cleanup;
+  }
+
+  Future<void> _automaticCleanup(CcApiConnectionStatus nextStatus) async {
     Object? firstError;
     try {
       await providers.remove(providerId);
@@ -549,6 +556,8 @@ class CcApiConnector {
     if (firstError != null) {
       _error = StateError('signed-out cleanup failed: $firstError');
     }
+    _signingOut = false;
+    _cleanupFuture = null;
   }
 
   Future<void> signOut() async {
@@ -567,12 +576,12 @@ class CcApiConnector {
   }
 
   Future<void> _signOutCleanup() async {
-    final active = _activeOperation;
-    if (active != null) {
+    while (_activeOperations.isNotEmpty) {
+      final active = List<Future<bool>>.of(_activeOperations);
       try {
-        await active;
+        await Future.wait(active);
       } catch (_) {
-        // Cleanup continues even when the stale operation failed.
+        // Cleanup continues even when stale operations fail.
       }
     }
     Object? firstError;
