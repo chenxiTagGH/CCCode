@@ -47,6 +47,9 @@ enum CommitAttribution {
     return trimmed.isNotEmpty && !_controlCharacters.hasMatch(trimmed);
   }
 
+  static bool needsEmailMigration(Map<String, Object?> settings) =>
+      settings[emailSettingKey] == legacyDefaultEmail;
+
   static CommitAttributionValue normalized(Map<String, Object?> settings) {
     final name = switch (settings[nameSettingKey]) {
       final String value when isValidName(value) => value.trim(),

@@ -173,6 +173,19 @@ class ColorThemeSettings implements ColorThemeStorage {
   void follow(WorkbenchThemeService themes) {
     _themes = themes;
     settings.addListener(_changed);
+    _persistMigratedSetting();
+  }
+
+  void _persistMigratedSetting() {
+    final current = colorThemeSetting;
+    if (current == null) return;
+    final migrated = migrateThemeSettingsId(current);
+    if (migrated == current) return;
+    unawaited(
+      settings.update(key, migrated).catchError((Object error) {
+        debugPrint('workbench.colorTheme migration not kept: $error');
+      }),
+    );
   }
 
   void _changed() {

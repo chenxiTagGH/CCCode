@@ -503,6 +503,7 @@ class _SettingsTextFieldState extends State<SettingsTextField> {
   @override
   void initState() {
     super.initState();
+    _error = widget.validator?.call(widget.value);
     _focus.addListener(_focusChanged);
   }
 

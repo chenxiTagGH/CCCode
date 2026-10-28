@@ -56,6 +56,19 @@ void main() {
 
   test('migrates the legacy default email but preserves custom emails', () {
     expect(
+      CommitAttribution.needsEmailMigration({
+        CommitAttribution.emailSettingKey:
+            CommitAttribution.legacyDefaultEmail,
+      }),
+      isTrue,
+    );
+    expect(
+      CommitAttribution.needsEmailMigration({
+        CommitAttribution.emailSettingKey: 'person@example.com',
+      }),
+      isFalse,
+    );
+    expect(
       CommitAttribution.normalized({
         CommitAttribution.emailSettingKey:
             CommitAttribution.legacyDefaultEmail,

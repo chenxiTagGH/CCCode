@@ -15,5 +15,9 @@ void main() {
     expect(GeneralSettingsPage.validAttributionName('Ada Lovelace'), isTrue);
     expect(GeneralSettingsPage.validAttributionName('Ada\nLovelace'), isFalse);
     expect(GeneralSettingsPage.validAttributionName(''), isTrue);
+    expect(
+      GeneralSettingsPage.validAttributionName('Ada\u0085Lovelace'),
+      isFalse,
+    );
   });
 }
