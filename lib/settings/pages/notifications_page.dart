@@ -186,7 +186,7 @@ class _NotificationsSettingsPageState extends State<NotificationsSettingsPage> {
               description: l10n.notificationsBarkUrlDescription,
               trailing: SettingsTextField(
                 value: current.barkUrl ?? '',
-                hint: 'https://api.day.app/your-key',
+                hint: l10n.notificationsBarkUrlHint,
                 semanticLabel: l10n.notificationsBarkUrl,
                 onSubmitted: (value) => _write(
                   AttentionSettings.barkUrlKey,

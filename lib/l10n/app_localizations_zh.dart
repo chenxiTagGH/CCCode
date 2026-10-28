@@ -3510,6 +3510,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get notificationsBarkUrlDescription => '可选的 Bark 推送地址，密钥会保存在 settings.json 中。';
 
   @override
+  String get notificationsBarkUrlHint => 'https://api.day.app/你的密钥';
+
+  @override
   String get notificationsSound => '提示音';
 
   @override

@@ -6158,6 +6158,12 @@ abstract class AppLocalizations {
   /// **'Optional Bark push URL. Its key is stored in settings.json.'**
   String get notificationsBarkUrlDescription;
 
+  /// No description provided for @notificationsBarkUrlHint.
+  ///
+  /// In en, this message translates to:
+  /// **'https://api.day.app/your-key'**
+  String get notificationsBarkUrlHint;
+
   /// No description provided for @notificationsSound.
   ///
   /// In en, this message translates to:

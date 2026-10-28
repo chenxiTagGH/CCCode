@@ -2465,6 +2465,7 @@
   },
   "notificationsBarkUrl": "Bark URL",
   "notificationsBarkUrlDescription": "Optional Bark push URL. Its key is stored in settings.json.",
+  "notificationsBarkUrlHint": "https://api.day.app/your-key",
   "notificationsSound": "Sound",
   "notificationsSoundMicrowave": "Microwave Ding",
   "@notificationsSoundMicrowave": {

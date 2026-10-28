@@ -3653,6 +3653,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Optional Bark push URL. Its key is stored in settings.json.';
 
   @override
+  String get notificationsBarkUrlHint => 'https://api.day.app/your-key';
+
+  @override
   String get notificationsSound => 'Sound';
 
   @override

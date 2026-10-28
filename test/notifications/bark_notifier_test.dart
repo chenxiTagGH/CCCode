@@ -61,9 +61,18 @@ void main() {
       'http://[invalid/key',
       'https://%zz/key',
       '://missing-scheme/key',
+      'https://api.day.app/key?',
+      'https://api.day.app/key#',
     ]) {
       expect(BarkNotifier.parseBase(value), isNull);
     }
+  });
+
+  test('accepts HTTPS bases', () {
+    expect(
+      BarkNotifier.parseBase('https://api.day.app/key')?.scheme,
+      'https',
+    );
   });
 
   test('does not follow redirects', () async {
@@ -91,6 +100,22 @@ void main() {
     );
   });
 
+  test('times out when the accepted request never sends headers', () async {
+    final socketServer = await ServerSocket.bind(InternetAddress.loopbackIPv4, 0);
+    addTearDown(() => socketServer.close());
+    socketServer.listen((socket) {
+      // Keep the connection open without sending an HTTP response.
+    });
+    final stopwatch = Stopwatch()..start();
+    await BarkNotifier(timeout: const Duration(milliseconds: 40)).send(
+      Uri.parse('http://127.0.0.1:${socketServer.port}/key'),
+      title: 'title',
+      body: 'body',
+    );
+    stopwatch.stop();
+    expect(stopwatch.elapsed, lessThan(const Duration(seconds: 1)));
+  });
+
   test('times out when response body never completes', () async {
     await server!.close(force: true);
     server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
@@ -109,6 +134,37 @@ void main() {
     );
     stopwatch.stop();
     expect(stopwatch.elapsed, lessThan(const Duration(seconds: 1)));
+  });
+
+  test('redacts non-success diagnostics', () async {
+    await server!.close(force: true);
+    server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+    server!.listen((request) {
+      request.response
+        ..statusCode = HttpStatus.badGateway
+        ..close();
+    });
+    final diagnostics = <int>[];
+    final output = StreamController<List<int>>();
+    output.stream.listen(diagnostics.addAll);
+    final sink = IOSink(output);
+    await IOOverrides.runZoned(
+      () => BarkNotifier().send(
+        Uri.parse('http://127.0.0.1:${server!.port}/BARK-SECRET-KEY'),
+        title: 'PRIVATE-TITLE',
+        body: 'PRIVATE-BODY',
+      ),
+      stderr: () => sink,
+    );
+    await sink.flush();
+    await sink.close();
+    await output.close();
+    final message = utf8.decode(diagnostics);
+    expect(message, contains('HTTP 502'));
+    expect(message, isNot(contains('127.0.0.1')));
+    expect(message, isNot(contains('BARK-SECRET-KEY')));
+    expect(message, isNot(contains('PRIVATE-TITLE')));
+    expect(message, isNot(contains('PRIVATE-BODY')));
   });
 
   test('swallows network failures without logging URL or message content', () async {

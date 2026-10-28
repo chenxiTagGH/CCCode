@@ -8,7 +8,9 @@ class BarkNotifier {
 
   /// Parses and validates a configured Bark base URL without making a request.
   static Uri? parseBase(String value) {
-    final base = Uri.tryParse(value.trim());
+    final trimmed = value.trim();
+    if (trimmed.endsWith('?') || trimmed.endsWith('#')) return null;
+    final base = Uri.tryParse(trimmed);
     if (base == null ||
         (base.scheme != 'http' && base.scheme != 'https') ||
         base.host.isEmpty ||

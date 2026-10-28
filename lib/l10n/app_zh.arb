@@ -1014,6 +1014,7 @@
   "notificationsWhenLabel": "何时通知：{name}",
   "notificationsBarkUrl": "Bark URL",
   "notificationsBarkUrlDescription": "可选的 Bark 推送地址，密钥会保存在 settings.json 中。",
+  "notificationsBarkUrlHint": "https://api.day.app/你的密钥",
   "notificationsSound": "提示音",
   "notificationsSoundMicrowave": "微波炉“叮”",
   "notificationsSoundManOhYeah": "man-oh-yeah",
