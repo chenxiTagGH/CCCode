@@ -18,6 +18,7 @@ Task 1 theme renaming and customizable commit attribution are implemented. Legac
 - `cb024e3e` — `fix: migrate legacy attribution and active branding`
 - `a210cebd` — `docs: finalize Task 1 migration report`
 - `b008d68b35589b472e2c1c617358020d9eec8874` — `fix: persist Task 1 migrations`
+- Final follow-up commit: pending at report generation time.
 - `67fe869df428e34708fdcecb7987159f15ee5a3f` — `fix: finalize Task 1 migration durability`
 
 All implementation commits include:
@@ -29,8 +30,9 @@ All implementation commits include:
 - TextMate generator/source metadata, generated assets, theme picker, semantic-token default, related tests, product pages, release notes, active docs, and Linux package metadata use current CC names/ccapitoken links. Remaining Bao references are limited to intentional migration compatibility and planning/spec history.
 - `CommitAttribution.cccode`, `.agent`, and `.none` remain available.
 - Persisted custom fields are `chat.commitAttributionName` and `chat.commitAttributionEmail`.
-- Shared canonical email validation rejects malformed addresses; Unicode-aware name validation rejects control/format characters, including U+0085.
+- Shared canonical email validation rejects malformed addresses, including leading/trailing/consecutive local-part dots; Unicode-aware name validation rejects Cc/Cf/Zl/Zp characters, including U+0085, U+2028, and U+2029.
 - Empty custom values clear their settings and restore `CCCode` / `noreply@ccapitoken.cc`. Legacy `noreply@baocode.dev` normalizes after trimming and is persisted to settings on startup, while other valid user-entered emails are preserved and shown.
+- `ColorThemeStorage.storeColorTheme` is consistently asynchronous across the interface, `Workspace`, `ColorThemeSettings`, and callers; startup waits for theme-ID migration persistence.
 - Transport and settings use normalized current attribution APIs. The compatibility `baoCodeCommit` getter delegates dynamically and does not contain a fixed legacy value.
 - General settings has visible localized name/email labels and validation errors; invalid persisted names show an initial field error and invalid values are not persisted. Settings fields clear stale errors after external updates or resubmitting the valid current value.
 

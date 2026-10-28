@@ -18,6 +18,9 @@ void main() {
       'not-an-email',
       'name<>@example.com',
       'name,other@example.com',
+      '.name@example.com',
+      'name.@example.com',
+      'name..other@example.com',
     ]) {
       expect(CommitAttribution.isValidEmail(email), isFalse);
       expect(
@@ -32,6 +35,8 @@ void main() {
   test('rejects control characters in custom names', () {
     expect(CommitAttribution.isValidName('Ada\nLovelace'), isFalse);
     expect(CommitAttribution.isValidName('Ada\u0085Lovelace'), isFalse);
+    expect(CommitAttribution.isValidName('Ada Lovelace'), isFalse);
+    expect(CommitAttribution.isValidName('Ada Lovelace'), isFalse);
     expect(
       CommitAttribution.commitTrailer({
         CommitAttribution.nameSettingKey: 'Ada\nLovelace',

@@ -92,7 +92,7 @@ String migrateThemeSettingsId(String settingsId) => switch (settingsId) {
 abstract interface class ColorThemeStorage {
   String? get colorThemeSetting;
   String? get colorThemeData;
-  void storeColorTheme({required String setting, String? data});
+  Future<void> storeColorTheme({required String setting, String? data});
 }
 
 /// A color theme's colors as widgets read them: what the theme sets, else
@@ -474,9 +474,15 @@ class WorkbenchThemeService extends ChangeNotifier
 
   void _keep(ColorThemeData theme) {
     _setting = theme.settingsId;
-    storage?.storeColorTheme(
-      setting: theme.settingsId,
-      data: theme.toStorage(),
+    unawaited(
+      storage
+          ?.storeColorTheme(
+            setting: theme.settingsId,
+            data: theme.toStorage(),
+          )
+          .catchError((Object error) {
+            debugPrint('color theme not kept: $error');
+          }),
     );
   }
 }

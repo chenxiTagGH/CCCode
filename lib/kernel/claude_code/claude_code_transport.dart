@@ -176,7 +176,7 @@ class ClaudeLaunch {
   Map<String, String>? get _attribution => switch (attribution) {
     CommitAttribution.cccode => {
       'commit': CommitAttribution.currentCommitTrailer(),
-      'pr': CommitAttribution.baoCodePullRequest,
+      'pr': CommitAttribution.currentPullRequestAttribution(),
     },
     CommitAttribution.agent => null,
     CommitAttribution.none => const {'commit': '', 'pr': ''},

@@ -26,21 +26,36 @@ enum CommitAttribution {
   static const legacyDefaultEmail = 'noreply@baocode.dev';
 
   static final _emailPattern = RegExp(
-    r'^[A-Za-z0-9.!#$%&*+/=?^_`{|}~-]+@'
+    r'^[A-Za-z0-9!#$%&*+/=?^_`{|}~-]'
+    r'(?:[A-Za-z0-9!#$%&*+/=?^_`{|}~.-]*[A-Za-z0-9!#$%&*+/=?^_`{|}~-])?@'
     r'[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?'
     r'(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)+$',
   );
-  static final _controlCharacters = RegExp(r'[\p{Cc}\p{Cf}]', unicode: true);
+  static final _controlCharacters = RegExp(
+    r'[\p{Cc}\p{Cf}\p{Zl}\p{Zp}]',
+    unicode: true,
+  );
 
   /// The current CCCode commit trailer, resolved from the active settings.
   static String get baoCodeCommit => currentCommitTrailer();
-  static const baoCodePullRequest =
+  static String get baoCodePullRequest => currentPullRequestAttribution();
+
+  static String currentPullRequestAttribution() =>
       '🤖 Generated with [CCCode](https://github.com/chenxiTagGH/CCCode)';
 
   static CommitAttribution parse(Object? setting) =>
       values.where((value) => value.name == setting).firstOrNull ?? fallback;
 
-  static bool isValidEmail(String value) => _emailPattern.hasMatch(value.trim());
+  static bool isValidEmail(String value) {
+    final email = value.trim();
+    final at = email.indexOf('@');
+    if (at <= 0) return false;
+    final local = email.substring(0, at);
+    if (local.startsWith('.') || local.endsWith('.') || local.contains('..')) {
+      return false;
+    }
+    return _emailPattern.hasMatch(email);
+  }
 
   static bool isValidName(String value) {
     final trimmed = value.trim();

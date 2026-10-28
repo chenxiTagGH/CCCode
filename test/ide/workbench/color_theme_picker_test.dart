@@ -103,7 +103,7 @@ class _Storage implements ColorThemeStorage {
   String? get colorThemeData => null;
 
   @override
-  void storeColorTheme({required String setting, String? data}) =>
+  Future<void> storeColorTheme({required String setting, String? data}) async =>
       kept.add(setting);
 }
 

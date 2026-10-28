@@ -1906,7 +1906,7 @@ class Workspace extends ChangeNotifier implements ColorThemeStorage {
   bool _colorThemeStored = false;
 
   @override
-  void storeColorTheme({required String setting, String? data}) {
+  Future<void> storeColorTheme({required String setting, String? data}) async {
     _colorTheme = setting;
     _colorThemeData = data;
     _colorThemeStored = true;
