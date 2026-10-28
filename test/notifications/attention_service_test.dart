@@ -210,8 +210,11 @@ void main() {
     expect(bark.sent, hasLength(1));
     expect(host.sounds, isEmpty);
 
-    // Off: the count stays.
-    settings = const AttentionSettings(enabled: false);
+    // Off: the count stays, even with Bark still configured.
+    settings = const AttentionSettings(
+      enabled: false,
+      barkUrl: 'https://example.test/configured-key',
+    );
     final background = _thread(workspace, 'Rate limit per API key');
     background.session.send(const ComposerMessage(text: '加一个限流'));
     await _runUntilQuestion(tester, background.session);

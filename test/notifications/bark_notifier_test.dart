@@ -91,6 +91,26 @@ void main() {
     );
   });
 
+  test('times out when response body never completes', () async {
+    await server!.close(force: true);
+    server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+    server!.listen((request) {
+      request.response
+        ..statusCode = HttpStatus.ok
+        ..headers.chunkedTransferEncoding = true
+        ..write('headers arrived');
+      // Deliberately leave the response open so the body never completes.
+    });
+    final stopwatch = Stopwatch()..start();
+    await BarkNotifier(timeout: const Duration(milliseconds: 40)).send(
+      Uri.parse('http://127.0.0.1:${server!.port}/key'),
+      title: 'title',
+      body: 'body',
+    );
+    stopwatch.stop();
+    expect(stopwatch.elapsed, lessThan(const Duration(seconds: 1)));
+  });
+
   test('swallows network failures without logging URL or message content', () async {
     final diagnostics = <int>[];
     final output = StreamController<List<int>>();
