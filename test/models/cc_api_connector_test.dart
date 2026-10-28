@@ -481,6 +481,39 @@ void main() {
     expect(fixture.connector.error, isA<StateError>());
   });
 
+  test('explicit sign-out stays disconnected and hides balance when cleanup fails', () async {
+    final fixture = await makeFixture(
+      loginRefreshToken: 'refresh-1',
+      accountKeys: [fakeKey(id: '7', name: 'CCCode')],
+      revealedKey: 'sk-cccode',
+      models: const [RemoteModel('claude-sonnet-4-5')],
+    );
+    expect(await fixture.connector.connect(), isTrue);
+    fixture.store.failStateClear = true;
+    await fixture.connector.signOut();
+    expect(fixture.connector.status, CcApiConnectionStatus.disconnected);
+    expect(fixture.connector.accountBalance, isNull);
+    expect(fixture.connector.error, isA<StateError>());
+  });
+
+  test('failed reconnect after invalidation cannot reveal persisted balance', () async {
+    final fixture = await makeFixture(
+      loginRefreshToken: 'refresh-1',
+      accountKeys: [fakeKey(id: '7', name: 'CCCode')],
+      revealedKey: 'sk-cccode',
+      models: const [RemoteModel('claude-sonnet-4-5')],
+    );
+    expect(await fixture.connector.connect(), isTrue);
+    fixture.signedOut = true;
+    expect(await fixture.connector.refresh(), isFalse);
+    expect(fixture.connector.accountBalance, isNull);
+    fixture.signedOut = false;
+    fixture.store.session = 'refresh-1';
+    fixture.listModelsError = const UpstreamException('offline');
+    expect(await fixture.connector.connect(), isFalse);
+    expect(fixture.connector.accountBalance, isNull);
+  });
+
   test('unreadable provider key fails before any key write or clear', () async {
     final secrets = ThrowingSecretStore();
     final providers = ModelProviders.memory(secrets: secrets);

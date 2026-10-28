@@ -140,19 +140,7 @@ class CcApiConnector {
       _status = CcApiConnectionStatus.disconnected;
       return false;
     } on AccountSignedOut {
-      _accountStateInvalidated = true;
-      try {
-        await store.writeSession(null);
-      } catch (_) {
-        // Signed-out status must not depend on keychain cleanup succeeding.
-      }
-      try {
-        await store.writeState(null);
-      } catch (error) {
-        _error = StateError('signed-out metadata cleanup failed: $error');
-      }
-      await _clearProviderAfterSignOut();
-      _status = CcApiConnectionStatus.needsLogin;
+      await _handleSignedOut(CcApiConnectionStatus.needsLogin);
       return false;
     } on Object catch (error) {
       _error = error;
@@ -181,19 +169,7 @@ class CcApiConnector {
       _status = CcApiConnectionStatus.disconnected;
       return false;
     } on AccountSignedOut {
-      _accountStateInvalidated = true;
-      try {
-        await store.writeSession(null);
-      } catch (_) {
-        // Signed-out status must not depend on keychain cleanup succeeding.
-      }
-      try {
-        await store.writeState(null);
-      } catch (error) {
-        _error = StateError('signed-out metadata cleanup failed: $error');
-      }
-      await _clearProviderAfterSignOut();
-      _status = CcApiConnectionStatus.needsLogin;
+      await _handleSignedOut(CcApiConnectionStatus.needsLogin);
       return false;
     } on Object catch (error) {
       _error = error;
@@ -349,7 +325,6 @@ class CcApiConnector {
       },
     };
     try {
-      _accountStateInvalidated = false;
       await providers.setKey(providerId, whole);
       await providers.save(nextProvider);
       await providers.setDefaultModel(nextDefault);
@@ -357,6 +332,7 @@ class CcApiConnector {
       await store.writeSession(rotatedSession ?? session);
       await store.writeState(nextState);
       committed = true;
+      _accountStateInvalidated = false;
     } catch (error) {
       final rollbackErrors = <Object>[];
       Future<void> attempt(Future<void> Function() action) async {
@@ -482,25 +458,62 @@ class CcApiConnector {
         .id;
   }
 
-  Future<void> _clearProviderAfterSignOut() async {
+  Future<void> _handleSignedOut(CcApiConnectionStatus nextStatus) async {
+    _accountStateInvalidated = true;
+    _status = nextStatus;
+    Object? firstError;
     try {
       await providers.remove(providerId);
     } catch (error) {
-      _error = StateError('signed-out provider cleanup failed: $error');
+      firstError ??= error;
+    }
+    try {
+      await store.writeSession(null);
+    } catch (error) {
+      firstError ??= error;
+    }
+    try {
+      await store.writeState(null);
+    } catch (error) {
+      firstError ??= error;
+    }
+    if (firstError != null) {
+      _error = StateError('signed-out cleanup failed: $firstError');
     }
   }
 
   Future<void> signOut() async {
     final session = await store.readSession();
-    if (session != null) {
-      final adapter = Sub2ApiAdapter(site: site, send: send, credential: session);
-      await adapter.signOut();
-    }
-    await store.writeSession(null);
-    await store.writeState(null);
-    await providers.remove(providerId);
+    _accountStateInvalidated = true;
     _status = CcApiConnectionStatus.disconnected;
     _error = null;
+    Object? firstError;
+    if (session != null) {
+      try {
+        final adapter = Sub2ApiAdapter(site: site, send: send, credential: session);
+        await adapter.signOut();
+      } catch (error) {
+        firstError ??= error;
+      }
+    }
+    try {
+      await store.writeSession(null);
+    } catch (error) {
+      firstError ??= error;
+    }
+    try {
+      await store.writeState(null);
+    } catch (error) {
+      firstError ??= error;
+    }
+    try {
+      await providers.remove(providerId);
+    } catch (error) {
+      firstError ??= error;
+    }
+    if (firstError != null) {
+      _error = StateError('sign-out cleanup failed: $firstError');
+    }
   }
 }
 

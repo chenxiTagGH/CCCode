@@ -1,18 +1,17 @@
 # Task 3 report: CC API balance and wider card
 
 ## Status
-Implemented Task 3 and final coordinator review fixes. The CC API model card is wider when space permits, adapts safely down to ultra-narrow parent widths, displays the latest account balance from non-secret account metadata, preserves stale balance through refresh/failure and incomplete profile responses, and suppresses stale balance immediately after signed-out responses even when metadata cleanup persistence fails.
+Implemented Task 3 and final coordinator sign-out fixes. The CC API model card is responsive down to ultra-narrow parent widths, displays non-secret account balance metadata, preserves stale balance through refresh/failure and incomplete profiles, and cannot show stale balance after implicit or explicit sign-out—even when persistence cleanup fails.
 
-## Latest review fixes
-- Card content is fully compact below 72px: it removes padding/logo/content/action affordances that cannot fit, while retaining the parent-sized semantics node and accessible status/balance label. Regression covers widths 20px and 40px and checks for layout exceptions.
-- The connector invalidates account metadata in memory before signed-out cleanup. `accountBalance` returns null after sign-out even if `store.writeState(null)` fails. The in-memory `cc-api` provider is removed, and cleanup failures are retained in `connector.error`.
-- Existing parent-constraint clamp and balance-preservation behavior remain covered.
+## Final sign-out fixes
+- Added shared signed-out handling that invalidates the in-memory account state and sets the target disconnected/needs-login status before any cleanup I/O.
+- Explicit `signOut()` now invalidates balance and disconnects before remote/storage/provider cleanup; all cleanup attempts continue independently.
+- Cleanup errors retain the first/root error rather than being overwritten by later provider-removal errors.
+- `_accountStateInvalidated` is cleared only after a synchronization fully commits; failed reconnects cannot reveal old persisted metadata.
+- Added regressions for failed metadata cleanup, explicit sign-out state safety, and failed reconnect after invalidation.
 
-## Commits
-- `127f4bb87b0e7918130cb0a1e96031058e3b17d7` — initial feature
-- `730f78b0` — review fixes
-- `68350278` — final review fixes
-- Latest follow-up commit contains this report and the ultra-narrow/sign-out cleanup fixes, with `Co-Authored-By: Claude Code <noreply@anthropic.com>`.
+## Latest commit
+- Follow-up commit includes `Co-Authored-By: Claude Code <noreply@anthropic.com>`.
 
 ## Relevant files
 - `/Users/tangchenxi/Desktop/Chenxi/vibeCoding/CCCode/lib/models/cc_api_connector.dart`
@@ -25,8 +24,8 @@ Implemented Task 3 and final coordinator review fixes. The CC API model card is 
 ## Commands and results
 - `git diff --check`: passed with no output.
 - `ruby -rjson -e 'ARGV.each { |path| JSON.parse(File.read(path)); puts "valid #{path}" }' lib/l10n/app_en.arb lib/l10n/app_zh.arb`: both ARB files parsed successfully.
-- `flutter test test/settings/models_page_test.dart --plain-name 'CC API card stays compact at ultra-narrow widths'`: could not start; exit code 127, `flutter: command not found`.
-- `flutter test test/models/cc_api_connector_test.dart --plain-name 'signed-out refresh clears the previous account balance metadata'`: could not start; exit code 127, `flutter: command not found`.
+- Targeted symbol inspection confirmed invalidation lifecycle, first-error retention, pre-cleanup disconnect, and regressions are wired.
+- Flutter tests were not rerun because Flutter remains unavailable (`flutter: command not found`, exit code 127 in prior focused runs).
 
 Flutter/Dart were unavailable, so no test pass is claimed.
 
