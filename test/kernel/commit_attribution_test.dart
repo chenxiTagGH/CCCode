@@ -61,6 +61,12 @@ void main() {
       CommitAttribution.currentPullRequestAttribution(),
       '🤖 Generated with [Custom Name](https://ccapitoken.cc)',
     );
+    CommitAttribution.currentValue =
+        () => (name: 'Name [unsafe](x)', email: 'custom@example.com');
+    expect(
+      CommitAttribution.currentPullRequestAttribution(),
+      r'🤖 Generated with [Name \[unsafe\]\(x\)](https://ccapitoken.cc)',
+    );
   });
 
   test('migrates the legacy default email but preserves custom emails', () {

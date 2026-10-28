@@ -1,9 +1,9 @@
 // The one-click import of an upstream (docs/upstream-import.md): a site's
 // "Import to CCCode" link comes here, what to import after the # —
 //
-//   https://baocode.dev/import#v=1&name=…&protocol=…&url=…&key=…
+//   https://ccapitoken.cc/import#v=1&name=…&protocol=…&url=…&key=…
 //
-// which browsers never send to baocode.dev — and goes on to the app as
+// which browsers never send to ccapitoken.cc — and goes on to the app as
 // cccode://provider/import?…, CCCode asking before it adds anything. The
 // fragment is taken off the address bar as soon as it is read, so the key
 // is not left in it. The page's words are in its HTML (each language's).

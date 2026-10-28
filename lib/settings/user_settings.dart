@@ -153,7 +153,7 @@ class ColorThemeSettings implements ColorThemeStorage {
 
   @override
   Future<void> storeColorTheme({required String setting, String? data}) async {
-    state.storeColorTheme(setting: setting, data: data);
+    await state.storeColorTheme(setting: setting, data: data);
     // Unset is the default theme: the file is not written for it.
     final current = colorThemeSetting ?? ThemeSettingDefaults.colorThemeDark;
     if (migrateThemeSettingsId(current) == setting) return;

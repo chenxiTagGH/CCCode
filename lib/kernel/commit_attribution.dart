@@ -42,7 +42,13 @@ enum CommitAttribution {
 
   static String currentPullRequestAttribution() {
     final value = currentValue();
-    return '🤖 Generated with [${value.name}](https://ccapitoken.cc)';
+    final name = value.name
+        .replaceAll(r'\', r'\\')
+        .replaceAll('[', r'\[')
+        .replaceAll(']', r'\]')
+        .replaceAll('(', r'\(')
+        .replaceAll(')', r'\)');
+    return '🤖 Generated with [$name](https://ccapitoken.cc)';
   }
 
   static CommitAttribution parse(Object? setting) =>
