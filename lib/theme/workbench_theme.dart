@@ -460,7 +460,7 @@ class WorkbenchThemeService extends ChangeNotifier
     ColorThemeData theme, {
     bool silent = false,
     bool preview = true,
-  }) {
+  }) async {
     _current.clearCaches();
     _current = theme;
     _colors = null;

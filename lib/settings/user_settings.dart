@@ -188,13 +188,13 @@ class ColorThemeSettings implements ColorThemeStorage {
     }
   }
 
-  void _changed() {
+  Future<void> _changed() async {
     final themes = _themes;
     if (themes == null) return;
     final id = migrateThemeSettingsId(
       colorThemeSetting ?? ThemeSettingDefaults.colorThemeDark,
     );
-    if (id != themes.colorThemeId) unawaited(themes.setColorTheme(id));
+    if (id != themes.colorThemeId) await themes.setColorTheme(id);
   }
 
   void dispose() {

@@ -26,7 +26,7 @@ const BRIDGE = 1;
 // (tabs.*, cdp, detach, watch): told in the hello.
 const CAPABILITIES = ['cdp.session', 'call', 'subscribe', 'configure'];
 // What the toolbar button opens while CCCode is not there to connect to.
-const HELP = 'https://baocode.dev/download#browser';
+const HELP = 'https://ccapitoken.cc/download#browser';
 
 let port = null;
 let connected = false; // To CCCode, not just its host.
