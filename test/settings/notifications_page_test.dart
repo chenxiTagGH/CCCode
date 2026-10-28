@@ -88,7 +88,23 @@ void main() {
     );
     await tester.pump();
     expect(find.text('Notify me when an agent needs me'), findsOneWidget);
+    expect(find.text('Bark URL'), findsOneWidget);
     expect(find.text('Show the icon in the menu bar'), findsOneWidget);
+
+    final barkField = find.bySemanticsLabel('Bark URL');
+    await tester.enterText(barkField, 'https://api.day.app/test-key');
+    await tester.testTextInput.receiveAction(TextInputAction.done);
+    await settle(
+      tester,
+      () => settings[AttentionSettings.barkUrlKey] ==
+          'https://api.day.app/test-key',
+    );
+    await tester.enterText(barkField, '');
+    await tester.testTextInput.receiveAction(TextInputAction.done);
+    await settle(
+      tester,
+      () => !settings.values.containsKey(AttentionSettings.barkUrlKey),
+    );
 
     // A turn's end is not notified.
     await tester.tap(find.text('Finishes a turn'));

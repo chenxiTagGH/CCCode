@@ -2463,6 +2463,8 @@
     },
     "description": "The when-to-notify dropdown, as read out."
   },
+  "notificationsBarkUrl": "Bark URL",
+  "notificationsBarkUrlDescription": "Optional Bark push URL. Its key is stored in settings.json.",
   "notificationsSound": "Sound",
   "notificationsSoundMicrowave": "Microwave Ding",
   "@notificationsSoundMicrowave": {

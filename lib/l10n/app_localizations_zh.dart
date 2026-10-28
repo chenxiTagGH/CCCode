@@ -3504,6 +3504,12 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String get notificationsBarkUrl => 'Bark URL';
+
+  @override
+  String get notificationsBarkUrlDescription => '可选的 Bark 推送地址，密钥会保存在 settings.json 中。';
+
+  @override
   String get notificationsSound => '提示音';
 
   @override

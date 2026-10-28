@@ -3646,6 +3646,13 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get notificationsBarkUrl => 'Bark URL';
+
+  @override
+  String get notificationsBarkUrlDescription =>
+      'Optional Bark push URL. Its key is stored in settings.json.';
+
+  @override
   String get notificationsSound => 'Sound';
 
   @override

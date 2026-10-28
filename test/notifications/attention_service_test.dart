@@ -7,7 +7,19 @@ import 'package:baocode/l10n/l10n.dart';
 import 'package:baocode/notifications/attention_host.dart';
 import 'package:baocode/notifications/attention_service.dart';
 import 'package:baocode/notifications/attention_settings.dart';
+import 'package:baocode/notifications/bark_notifier.dart';
 import 'package:baocode/workspace/workspace.dart';
+
+class _FakeBarkNotifier extends BarkNotifier {
+  final List<({Uri base, String title, String body})> sent = [];
+  bool throwOnSend = false;
+
+  @override
+  Future<void> send(Uri base, {required String title, required String body}) async {
+    if (throwOnSend) throw StateError('network failed');
+    sent.add((base: base, title: title, body: body));
+  }
+}
 
 /// Records what the service asks of the system.
 class _FakeHost implements AttentionHost {
@@ -73,6 +85,7 @@ void main() {
   late Workspace workspace;
   late _FakeHost host;
   late AttentionService service;
+  late _FakeBarkNotifier bark;
   var settings = const AttentionSettings();
   var focused = true;
   final opened = <AgentThread>[];
@@ -80,12 +93,14 @@ void main() {
   void start() {
     workspace = Workspace.mock();
     host = _FakeHost();
+    bark = _FakeBarkNotifier();
     service = AttentionService(
       workspace: workspace,
       host: host,
       settings: () => settings,
       l10n: () => englishLocalizations,
       onOpen: opened.add,
+      barkNotifier: bark,
       focused: () => focused,
     )..start();
   }
@@ -206,6 +221,7 @@ void main() {
     expect(defaults.when, NotifyWhen.unfocused);
     expect(defaults.events, AttentionEvent.values.toSet());
     expect(defaults.tray, isTrue);
+    expect(defaults.barkUrl, isNull);
 
     final set = AttentionSettings.parse(const {
       'notifications.enabled': false,
@@ -213,12 +229,14 @@ void main() {
       'notifications.when': 'always',
       'notifications.events': ['finished', 'bogus'],
       'tray.enabled': false,
+      'notifications.barkUrl': '  https://example.test/key  ',
     });
     expect(set.enabled, isFalse);
     expect(NotificationSoundValue.systemName(set.sound), 'Glass');
     expect(set.when, NotifyWhen.always);
     expect(set.events, {AttentionEvent.finished});
     expect(set.tray, isFalse);
+    expect(set.barkUrl, 'https://example.test/key');
     expect(set.notifies(AttentionEvent.finished), isFalse);
 
     expect(AttentionSettings.encodeEvents(AttentionEvent.values.toSet()), null);
@@ -233,5 +251,27 @@ void main() {
       NotificationSoundValue.isFile(NotificationSoundValue.gulpGulpGulpGulp),
       isFalse,
     );
+  });
+
+  testWidgets('sends Bark beside the host notification and isolates failure', (
+    tester,
+  ) async {
+    settings = const AttentionSettings(
+      when: NotifyWhen.always,
+      barkUrl: 'https://example.test/key',
+    );
+    start();
+    final agent = workspace.selected;
+    agent.session.send(const ComposerMessage(text: '加一个限流'));
+    await _runUntilQuestion(tester, agent.session);
+    expect(host.notifications, hasLength(1));
+    expect(bark.sent, hasLength(1));
+    expect(bark.sent.single.base.toString(), 'https://example.test/key');
+
+    bark.throwOnSend = true;
+    agent.session.answer(_answer);
+    await _runUntilDone(tester, agent.session);
+    expect(host.notifications, hasLength(2));
+    expect(host.notifications.last.body, startsWith('Finished'));
   });
 }

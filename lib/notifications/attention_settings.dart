@@ -30,12 +30,14 @@ class AttentionSettings {
     this.when = NotifyWhen.unfocused,
     this.events = const {AttentionEvent.needsInput, AttentionEvent.finished},
     this.tray = true,
+    this.barkUrl,
   });
 
   static const enabledKey = 'notifications.enabled';
   static const soundKey = 'notifications.sound';
   static const whenKey = 'notifications.when';
   static const eventsKey = 'notifications.events';
+  static const barkUrlKey = 'notifications.barkUrl';
   static const trayKey = 'tray.enabled';
 
   static const defaults = AttentionSettings();
@@ -67,6 +69,10 @@ class AttentionSettings {
         final bool tray => tray,
         _ => defaults.tray,
       },
+      barkUrl: switch (values[barkUrlKey]) {
+        final String url when url.trim().isNotEmpty => url.trim(),
+        _ => defaults.barkUrl,
+      },
     );
   }
 
@@ -75,6 +81,7 @@ class AttentionSettings {
   final NotifyWhen when;
   final Set<AttentionEvent> events;
   final bool tray;
+  final String? barkUrl;
 
   /// Whether [event] is notified.
   bool notifies(AttentionEvent event) => enabled && events.contains(event);

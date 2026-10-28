@@ -8,6 +8,7 @@ import '../l10n/l10n.dart';
 import '../workspace/workspace.dart';
 import 'attention_host.dart';
 import 'attention_settings.dart';
+import 'bark_notifier.dart';
 import 'notification_sound.dart';
 
 /// Tells the user when an agent wants them: it stopped on a question
@@ -23,6 +24,7 @@ class AttentionService {
     required this.settings,
     required this.l10n,
     required this.onOpen,
+    this.barkNotifier = const BarkNotifier(),
     this.settingsChanges,
     this.shown,
     bool Function()? focused,
@@ -30,6 +32,7 @@ class AttentionService {
 
   final Workspace workspace;
   final AttentionHost host;
+  final BarkNotifier barkNotifier;
 
   /// The settings now (settings.json's, read as they change).
   final AttentionSettings Function() settings;
@@ -215,13 +218,19 @@ class AttentionService {
             ? l10n.attentionFinished
             : '${l10n.attentionFinished} · $reply';
     }
-    unawaited(
-      host.notify(
-        id: _id(thread),
-        title: thread.localizedTitle(l10n),
-        body: body,
-      ),
-    );
+    final title = thread.localizedTitle(l10n);
+    unawaited(host.notify(id: _id(thread), title: title, body: body));
+    final barkUrl = settings.barkUrl;
+    if (barkUrl != null) {
+      final uri = Uri.tryParse(barkUrl);
+      if (uri != null) {
+        unawaited(
+          barkNotifier.send(uri, title: title, body: body).catchError(
+            (Object _) {},
+          ),
+        );
+      }
+    }
     if (sound) _sound(settings.sound);
   }
 

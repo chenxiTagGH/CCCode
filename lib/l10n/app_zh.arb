@@ -1012,6 +1012,8 @@
   "notificationsWhenUnfocused": "我没在看它时",
   "notificationsWhenAlways": "总是",
   "notificationsWhenLabel": "何时通知：{name}",
+  "notificationsBarkUrl": "Bark URL",
+  "notificationsBarkUrlDescription": "可选的 Bark 推送地址，密钥会保存在 settings.json 中。",
   "notificationsSound": "提示音",
   "notificationsSoundMicrowave": "微波炉“叮”",
   "notificationsSoundManOhYeah": "man-oh-yeah",

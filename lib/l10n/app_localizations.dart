@@ -6146,6 +6146,18 @@ abstract class AppLocalizations {
   /// **'Notify: {name}'**
   String notificationsWhenLabel(String name);
 
+  /// No description provided for @notificationsBarkUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Bark URL'**
+  String get notificationsBarkUrl;
+
+  /// No description provided for @notificationsBarkUrlDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional Bark push URL. Its key is stored in settings.json.'**
+  String get notificationsBarkUrlDescription;
+
   /// No description provided for @notificationsSound.
   ///
   /// In en, this message translates to:

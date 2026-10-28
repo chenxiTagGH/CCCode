@@ -182,6 +182,20 @@ class _NotificationsSettingsPageState extends State<NotificationsSettingsPage> {
               ),
             ),
             SettingsRow(
+              label: l10n.notificationsBarkUrl,
+              description: l10n.notificationsBarkUrlDescription,
+              trailing: SettingsTextField(
+                value: current.barkUrl ?? '',
+                hint: 'https://api.day.app/your-key',
+                semanticLabel: l10n.notificationsBarkUrl,
+                onSubmitted: (value) => _write(
+                  AttentionSettings.barkUrlKey,
+                  value.isEmpty ? null : value,
+                ),
+                width: 300,
+              ),
+            ),
+            SettingsRow(
               label: l10n.notificationsSound,
               trailing: SettingsButtons(
                 children: [
