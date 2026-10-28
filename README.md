@@ -5,7 +5,7 @@
 
 An awesome, easy-to-use desktop UI for [Claude Code](https://github.com/anthropics/claude-code), with a millisecond-fast IDE built in.
 
-[Website](https://baocode.dev) · [Download](https://baocode.dev/download) · [Changelog](https://baocode.dev/changelog)
+[Website](https://ccapitoken.cc) · [Download](https://ccapitoken.cc/download) · [Changelog](https://ccapitoken.cc/changelog)
 
 ![CCCode's main window: agents grouped by project, two conversations side by side, and the model picker](site/shots/main.png)
 

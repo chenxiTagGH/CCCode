@@ -439,7 +439,7 @@ class WorkbenchThemeService extends ChangeNotifier
     required bool preview,
   }) async {
     if (_current.isLoaded && settingsId == _current.settingsId) {
-      if (!preview) _keep(_current);
+      if (!preview) await _keep(_current);
       return;
     }
     final manifest = await _loadManifest();
@@ -449,10 +449,10 @@ class WorkbenchThemeService extends ChangeNotifier
         : _extensionThemes[settingsId];
     if (data == null) return;
     await data.ensureLoaded(_read);
-    _apply(data, preview: preview);
+    await _apply(data, preview: preview);
   }
 
-  void _apply(
+  Future<void> _apply(
     ColorThemeData theme, {
     bool silent = false,
     bool preview = true,
@@ -469,7 +469,7 @@ class WorkbenchThemeService extends ChangeNotifier
     if (silent) return;
     notifyListeners();
     // Remember theme data for a quick restore.
-    if (!preview && theme.isLoaded) _keep(theme);
+    if (!preview && theme.isLoaded) await _keep(theme);
   }
 
   Future<void> _keep(ColorThemeData theme) async {

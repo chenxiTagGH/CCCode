@@ -4,7 +4,7 @@
 
 一个出色、易用的 [Claude Code](https://github.com/anthropics/claude-code) 桌面界面，内置毫秒级响应的快速 IDE。
 
-[官网](https://baocode.dev) · [下载](https://baocode.dev/download) · [更新日志](https://baocode.dev/changelog)
+[官网](https://ccapitoken.cc) · [下载](https://ccapitoken.cc/download) · [更新日志](https://ccapitoken.cc/changelog)
 
 ![CCCode 主窗口：按项目分组的智能体、并排显示的两个对话，以及模型选择器](site/shots/main.png)
 

@@ -4,7 +4,7 @@
 
 Una interfaz de escritorio fácil de usar para [Claude Code](https://github.com/anthropics/claude-code), con un IDE integrado que responde en milisegundos.
 
-[Sitio web](https://baocode.dev) · [Descargar](https://baocode.dev/download) · [Historial de cambios](https://baocode.dev/changelog)
+[Sitio web](https://ccapitoken.cc) · [Descargar](https://ccapitoken.cc/download) · [Historial de cambios](https://ccapitoken.cc/changelog)
 
 ![Ventana principal de CCCode: agentes agrupados por proyecto, dos conversaciones en paralelo y selector de modelo](site/shots/main.png)
 
