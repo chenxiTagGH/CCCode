@@ -18,7 +18,7 @@ Task 1 theme renaming and customizable commit attribution are implemented. Legac
 - `cb024e3e` — `fix: migrate legacy attribution and active branding`
 - `a210cebd` — `docs: finalize Task 1 migration report`
 - `b008d68b35589b472e2c1c617358020d9eec8874` — `fix: persist Task 1 migrations`
-- Final follow-up commit: pending at report generation time.
+- `1eff3418039677b2a6809411bc07296d6416cca2` — `fix: harden Task 1 async contracts and validation`
 - `67fe869df428e34708fdcecb7987159f15ee5a3f` — `fix: finalize Task 1 migration durability`
 
 All implementation commits include:
