@@ -10,6 +10,8 @@ import '../kernel/kernel_registry.dart';
 import '../kernel/kernel_types.dart';
 import '../kernel/transcript.dart';
 import '../remote/remote_location.dart';
+import '../tasks/task_plan.dart';
+import '../tasks/task_plan_controller.dart';
 import 'chat_feed.dart';
 import 'chat_models.dart';
 import 'composer/composer_draft.dart';
@@ -107,7 +109,9 @@ class ChatSession extends ChangeNotifier implements ChatFeed {
     ContextUsage? usage,
     this.quietAfterText = const Duration(seconds: 5),
     ChangeReviewOpener? openReview,
+    TaskPlanController? taskPlanController,
   }) : kernels = kernels ?? KernelRegistry.all,
+       taskPlanController = taskPlanController ?? TaskPlanController(),
        _openReview =
            openReview ?? (reviewSupported ? ChangeReview.open : null) {
     _transcript = Transcript(
@@ -129,6 +133,11 @@ class ChatSession extends ChangeNotifier implements ChatFeed {
   /// nothing new: the text is most often followed at once, by a tool or the
   /// turn's end, and the row would only flash.
   final Duration quietAfterText;
+
+  /// A structured projection of the agent's TodoWrite task list.
+  final TaskPlanController taskPlanController;
+
+  TaskPlan? get taskPlan => taskPlanController.value;
 
   /// What is typed in its composer and not sent, while another
   /// conversation shows.
@@ -158,6 +167,21 @@ class ChatSession extends ChangeNotifier implements ChatFeed {
   }
 
   void _apply(KernelEvent event) {
+    final id = sessionId;
+    if (taskPlanController.storageKey == null && id != null && id.isNotEmpty) {
+      taskPlanController.storageKey = id;
+      unawaited(taskPlanController.restore());
+    }
+    if (event is TodosReported && event.todos.isNotEmpty) {
+      taskPlanController.reconcile(event.todos);
+    }
+    if (event is TurnEnded && event.interrupted) {
+      taskPlanController.pause();
+    }
+    if (event case ItemUpserted(item: final ToolCallItem item)
+        when item.status == ToolStatus.failed) {
+      taskPlanController.failStep(item.output ?? item.detail ?? 'Tool failed');
+    }
     if (event case SessionRenamed(:final title)) {
       _renamed = title;
       notifyListeners();
@@ -1131,6 +1155,7 @@ class ChatSession extends ChangeNotifier implements ChatFeed {
       ..dispose();
     unawaited(_subscription?.cancel());
     _kernel.dispose();
+    taskPlanController.dispose();
     super.dispose();
   }
 }

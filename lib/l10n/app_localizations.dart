@@ -3542,6 +3542,26 @@ abstract class AppLocalizations {
   /// **'Copy session ID'**
   String get sidebarCopySessionId;
 
+  String get taskPlanOpen;
+  String get taskPlanPending;
+  String get taskPlanRunning;
+  String get taskPlanCompleted;
+  String get taskPlanFailed;
+  String get taskPlanPaused;
+  String get taskPlanCancelled;
+  String get taskPlanPause;
+  String get taskPlanResume;
+  String get taskPlanRetry;
+  String get taskPlanStop;
+  String get taskPlanStopConfirmation;
+  String get taskPlanEstimateUnknown;
+  String taskPlanEstimate(String min, String max);
+  String taskPlanElapsed(String time);
+  String taskPlanStepCompleted(String time);
+  String taskPlanStepFailed(String time);
+  String taskPlanStepPaused(String time);
+  String get taskPlanStepCancelled;
+
   /// No description provided for @sidebarOpenStash.
   ///
   /// In en, this message translates to:

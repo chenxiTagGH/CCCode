@@ -81,9 +81,10 @@ bool _hasExplicitProtocolMarker(String value, String marker) => RegExp(
   '(^|\\s)${RegExp.escape(marker)}(?=/|\\s|\\u0024)',
 ).hasMatch(value);
 
-bool _hasModelFamilyToken(String value, String token) => RegExp(
-  '(^|[-_./:\\s])${RegExp.escape(token)}(?=\\d|[-_./:\\s]|\\u0024)',
-).hasMatch(value);
+bool _hasModelFamilyToken(String value, String token) {
+  final suffix = token == 'gpt' ? r'(?=\d|-\d|$)' : r'(?=\d|[-_./:\s]|$)';
+  return RegExp('(^|[-_./:\s])${RegExp.escape(token)}$suffix').hasMatch(value);
+}
 
 bool _hasToken(String value, String token) => RegExp(
   '(^|[-_./:\\s])${RegExp.escape(token)}(?=\\u0024|[-_./:\\s])',
@@ -627,7 +628,9 @@ class CcApiConnector {
 
   Future<void> _signOutCleanup() async {
     while (_activeOperations.isNotEmpty) {
-      final active = List<Future<bool>>.of(_activeOperations);
+      final active = [
+        for (final operation in _activeOperations) operation.future,
+      ];
       try {
         await Future.wait(active);
       } catch (_) {

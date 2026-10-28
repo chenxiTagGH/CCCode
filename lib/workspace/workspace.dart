@@ -27,6 +27,8 @@ import 'agent_title.dart';
 import 'chat_grid.dart';
 import 'editor_launcher.dart';
 import 'preference_store.dart';
+import '../tasks/task_plan_controller.dart';
+import '../tasks/task_plan_store.dart';
 import 'project_workspace.dart';
 
 /// The arrangement of the project and its conversation in the window.
@@ -243,6 +245,7 @@ class Workspace extends ChangeNotifier implements ColorThemeStorage {
        kernels = kernels ?? KernelRegistry.all,
        _preferredKernel = (kernels ?? KernelRegistry.all).first,
        _store = preferences,
+       _taskPlanStore = preferences == null ? null : TaskPlanStore(preferences),
        _draftStore = drafts {
     this.icons
       ..onRemoved = _forgetIconImage
@@ -531,6 +534,7 @@ class Workspace extends ChangeNotifier implements ColorThemeStorage {
             workspace: () => _kernelWorkspace(session.cwd),
           ),
           historyCount: 0,
+          taskPlanController: _taskPlanController(session.id),
         ),
       ),
     );
@@ -1920,6 +1924,18 @@ class Workspace extends ChangeNotifier implements ColorThemeStorage {
   Future<void> _restoring = Future.value();
 
   final PreferenceStore? _store;
+  final TaskPlanStore? _taskPlanStore;
+
+  TaskPlanController? _taskPlanController(String? sessionId) {
+    final store = _taskPlanStore;
+    if (store == null) return null;
+    final controller = TaskPlanController(
+      store: store,
+      storageKey: sessionId?.isEmpty == false ? sessionId : null,
+    );
+    if (controller.storageKey != null) unawaited(controller.restore());
+    return controller;
+  }
 
   Future<void> _restore() async {
     await _restoreDrafts();
@@ -2540,6 +2556,7 @@ class Workspace extends ChangeNotifier implements ColorThemeStorage {
           workspace: () => _kernelWorkspace(cwd),
         ),
         historyCount: 0,
+        taskPlanController: _taskPlanController(null),
       ),
     );
     _add(thread);
@@ -2582,6 +2599,7 @@ class Workspace extends ChangeNotifier implements ColorThemeStorage {
           workspace: () => _kernelWorkspace(record.cwd),
         ),
         historyCount: 0,
+        taskPlanController: _taskPlanController(record.id),
       ),
     );
     _add(forked);

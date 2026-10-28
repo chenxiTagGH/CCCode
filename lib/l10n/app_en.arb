@@ -7552,5 +7552,29 @@
         "type": "int"
       }
     }
-  }
+  },
+  "taskPlanOpen": "Open task plan",
+  "taskPlanPending": "Task plan",
+  "taskPlanRunning": "In progress",
+  "taskPlanCompleted": "Completed",
+  "taskPlanFailed": "Failed",
+  "taskPlanPaused": "Paused",
+  "taskPlanCancelled": "Stopped",
+  "taskPlanPause": "Pause",
+  "taskPlanResume": "Continue",
+  "taskPlanRetry": "Retry failed step",
+  "taskPlanStop": "Stop",
+  "taskPlanStopConfirmation": "Stop this task plan? Completed steps will be kept.",
+  "taskPlanEstimateUnknown": "Estimated time unavailable",
+  "taskPlanEstimate": "Estimated {min}–{max}",
+  "taskPlanElapsed": "Elapsed {time}",
+  "taskPlanStepCompleted": "Completed · {time}",
+  "taskPlanStepFailed": "Failed · {time}",
+  "taskPlanStepPaused": "Paused · {time}",
+  "taskPlanStepCancelled": "Stopped",
+  "@taskPlanEstimate": {"placeholders": {"min": {"type": "String"}, "max": {"type": "String"}}},
+  "@taskPlanElapsed": {"placeholders": {"time": {"type": "String"}}},
+  "@taskPlanStepCompleted": {"placeholders": {"time": {"type": "String"}}},
+  "@taskPlanStepFailed": {"placeholders": {"time": {"type": "String"}}},
+  "@taskPlanStepPaused": {"placeholders": {"time": {"type": "String"}}}
 }

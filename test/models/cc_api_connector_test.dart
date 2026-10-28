@@ -31,6 +31,8 @@ void main() {
     expect(detectCcApiProtocol(modelId: 'o3'), ProviderProtocol.openaiResponses);
     expect(detectCcApiProtocol(modelId: 'o4'), ProviderProtocol.openaiResponses);
     expect(detectCcApiProtocol(modelId: 'vendor-gptish'), ProviderProtocol.anthropic);
+    expect(detectCcApiProtocol(modelId: 'vendor-gpt-ish'), ProviderProtocol.anthropic);
+    expect(detectCcApiProtocol(modelId: 'vendor-gpt-preview'), ProviderProtocol.anthropic);
     expect(detectCcApiProtocol(modelId: 'gemini-2.5-pro'), ProviderProtocol.openaiChat);
     expect(
       detectCcApiProtocol(modelId: 'openai-responses/gpt-5'),

@@ -47,6 +47,7 @@ import 'panels/queue_panel.dart';
 import 'panels/todo_panel.dart';
 import 'side_panel/file_link.dart';
 import 'side_panel/file_open.dart';
+import '../tasks/task_plan_panel.dart';
 import 'stop_confirmation.dart';
 import 'widgets/agent_step.dart';
 import 'widgets/chat_minimap.dart';
@@ -843,7 +844,17 @@ class _ChatScreenState extends State<ChatScreen>
       includeSemantics: false,
       onKeyEvent: (node, event) =>
           ChatKeys.dispatch(event) ?? KeyEventResult.ignored,
-      child: _buildScaffold(),
+      child: TaskPlanPanel(
+        controller: _session.taskPlanController,
+        onPause: _session.taskPlanController.pause,
+        onResume: _session.taskPlanController.resume,
+        onRetry: _session.taskPlanController.retryFailed,
+        onStop: () {
+          _session.stop();
+          _session.taskPlanController.cancel();
+        },
+        child: _buildScaffold(),
+      ),
     );
   }
 

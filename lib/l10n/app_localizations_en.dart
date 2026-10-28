@@ -1957,6 +1957,26 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get sidebarCopySessionId => 'Copy session ID';
 
+  @override String get taskPlanOpen => 'Open task plan';
+  @override String get taskPlanPending => 'Task plan';
+  @override String get taskPlanRunning => 'In progress';
+  @override String get taskPlanCompleted => 'Completed';
+  @override String get taskPlanFailed => 'Failed';
+  @override String get taskPlanPaused => 'Paused';
+  @override String get taskPlanCancelled => 'Stopped';
+  @override String get taskPlanPause => 'Pause';
+  @override String get taskPlanResume => 'Continue';
+  @override String get taskPlanRetry => 'Retry failed step';
+  @override String get taskPlanStop => 'Stop';
+  @override String get taskPlanStopConfirmation => 'Stop this task plan? Completed steps will be kept.';
+  @override String get taskPlanEstimateUnknown => 'Estimated time unavailable';
+  @override String taskPlanEstimate(String min, String max) => 'Estimated $min–$max';
+  @override String taskPlanElapsed(String time) => 'Elapsed $time';
+  @override String taskPlanStepCompleted(String time) => 'Completed · $time';
+  @override String taskPlanStepFailed(String time) => 'Failed · $time';
+  @override String taskPlanStepPaused(String time) => 'Paused · $time';
+  @override String get taskPlanStepCancelled => 'Stopped';
+
   @override
   String sidebarOpenStash(int id) {
     return 'Open Stash #$id';

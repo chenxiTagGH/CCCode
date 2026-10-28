@@ -1893,6 +1893,26 @@ class AppLocalizationsZh extends AppLocalizations {
   @override
   String get sidebarCopySessionId => '复制会话 ID';
 
+  @override String get taskPlanOpen => '打开任务计划';
+  @override String get taskPlanPending => '任务计划';
+  @override String get taskPlanRunning => '执行中';
+  @override String get taskPlanCompleted => '已完成';
+  @override String get taskPlanFailed => '失败';
+  @override String get taskPlanPaused => '已暂停';
+  @override String get taskPlanCancelled => '已停止';
+  @override String get taskPlanPause => '暂停';
+  @override String get taskPlanResume => '继续执行';
+  @override String get taskPlanRetry => '重试失败步骤';
+  @override String get taskPlanStop => '停止';
+  @override String get taskPlanStopConfirmation => '停止此任务计划？已完成的步骤会保留。';
+  @override String get taskPlanEstimateUnknown => '暂无预计时长';
+  @override String taskPlanEstimate(String min, String max) => '预计 $min–$max';
+  @override String taskPlanElapsed(String time) => '已用时 $time';
+  @override String taskPlanStepCompleted(String time) => '已完成 · $time';
+  @override String taskPlanStepFailed(String time) => '失败 · $time';
+  @override String taskPlanStepPaused(String time) => '已暂停 · $time';
+  @override String get taskPlanStepCancelled => '已停止';
+
   @override
   String sidebarOpenStash(int id) {
     return '打开 Stash #$id';
