@@ -175,16 +175,14 @@ Future<void> main(List<String> arguments) async {
     CommitAttribution.currentValue = () =>
         CommitAttribution.normalized(files.settings.values);
     if (CommitAttribution.needsEmailMigration(files.settings.values)) {
-      unawaited(
-        files.settings
-            .update(
-              CommitAttribution.emailSettingKey,
-              CommitAttribution.defaultEmail,
-            )
-            .catchError((Object error) {
-              debugPrint('commit attribution migration not kept: $error');
-            }),
-      );
+      try {
+        await files.settings.update(
+          CommitAttribution.emailSettingKey,
+          CommitAttribution.defaultEmail,
+        );
+      } on Object catch (error) {
+        debugPrint('commit attribution migration not kept: $error');
+      }
     }
     // Read as each message is sent.
     QueuedMessages.current = () =>

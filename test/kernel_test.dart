@@ -4404,7 +4404,7 @@ void main() {
       expect(flagSettings(launch(CommitAttribution.cccode)), {
         'attribution': {
           'commit': 'Co-Authored-By: CCCode <noreply@ccapitoken.cc>',
-          'pr': '🤖 Generated with [CCCode](.)',
+          'pr': '🤖 Generated with [CCCode](https://ccapitoken.cc)',
         },
       });
       expect(flagSettings(launch(CommitAttribution.none)), {

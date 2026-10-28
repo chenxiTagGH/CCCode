@@ -111,7 +111,7 @@ const attribution = (() => {
       if (!a) return;
       if (a.hasAttribute('data-file')) {
         if (!framedChannel || !DESKTOP.has(a.dataset.file)) return;
-        a.href = `https://baocode.dev/dl/${a.dataset.file}?ch=${encodeURIComponent(framedChannel)}`;
+        a.href = `https://ccapitoken.cc/dl/${a.dataset.file}?ch=${encodeURIComponent(framedChannel)}`;
         newTab(a);
       } else if (a.origin !== location.origin || a.pathname.startsWith('/dl/')) {
         newTab(a);

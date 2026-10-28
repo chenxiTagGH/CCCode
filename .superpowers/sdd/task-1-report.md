@@ -20,6 +20,7 @@ Task 1 theme renaming and customizable commit attribution are implemented. Legac
 - `b008d68b35589b472e2c1c617358020d9eec8874` — `fix: persist Task 1 migrations`
 - `1eff3418039677b2a6809411bc07296d6416cca2` — `fix: harden Task 1 async contracts and validation`
 - `a229d5048f555dd7f95da34a497d94c7ab4bb0d0` — `fix: finalize Task 1 persistence and attribution`
+- Final follow-up commit: pending at report generation time.
 - `67fe869df428e34708fdcecb7987159f15ee5a3f` — `fix: finalize Task 1 migration durability`
 
 All implementation commits include:
@@ -35,6 +36,7 @@ All implementation commits include:
 - Empty custom values clear their settings and restore `CCCode` / `noreply@ccapitoken.cc`. Legacy `noreply@baocode.dev` normalizes after trimming and is persisted to settings on startup, while other valid user-entered emails are preserved and shown.
 - `ColorThemeStorage.storeColorTheme` is consistently asynchronous across the interface, `Workspace`, `ColorThemeSettings`, and callers; startup waits for theme-ID migration persistence, while ordinary runtime saves remain nonblocking.
 - Pull-request attribution is generated dynamically from the current configured attribution name and uses the CCCode website URL; Featured Upstreams join links use `ccapitoken.cc`.
+- Legacy attribution email migration is awaited in startup before initialization continues. Public site hreflang, channel download, and upstream import/asset/CSP/verification links use `ccapitoken.cc`; internal `dl.baocode.dev` release targets remain unchanged.
 - Transport and settings use normalized current attribution APIs. The compatibility `baoCodeCommit` getter delegates dynamically and does not contain a fixed legacy value.
 - General settings has visible localized name/email labels and validation errors; invalid persisted names show an initial field error and invalid values are not persisted. Settings fields clear stale errors after external updates or resubmitting the valid current value.
 
