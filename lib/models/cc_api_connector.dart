@@ -132,7 +132,8 @@ class CcApiConnector {
       if (epoch != _epoch) throw const _CcApiInvalidated();
       var session = previousSession;
       if (session == null || session.isEmpty) {
-        session = await _login();
+        session = await _login(epoch);
+        if (epoch != _epoch) throw const _CcApiInvalidated();
         if (session == null) {
           _status = CcApiConnectionStatus.needsLogin;
           return false;
@@ -146,6 +147,8 @@ class CcApiConnector {
       );
     } on _CcApiSelectionCancelled {
       _status = CcApiConnectionStatus.disconnected;
+      return false;
+    } on _CcApiInvalidated {
       return false;
     } on AccountSignedOut {
       await _handleSignedOut(CcApiConnectionStatus.needsLogin);
@@ -179,6 +182,8 @@ class CcApiConnector {
     } on _CcApiSelectionCancelled {
       _status = CcApiConnectionStatus.disconnected;
       return false;
+    } on _CcApiInvalidated {
+      return false;
     } on AccountSignedOut {
       await _handleSignedOut(CcApiConnectionStatus.needsLogin);
       return false;
@@ -189,7 +194,7 @@ class CcApiConnector {
     }
   }
 
-  Future<String?> _login() async {
+  Future<String?> _login(int epoch) async {
     final window = openWindow();
     try {
       await window.open(
@@ -203,8 +208,10 @@ class CcApiConnector {
           Future<void>.delayed(const Duration(seconds: 1)),
           window.closed.then((_) => const _WindowClosed()),
         ]);
+        if (epoch != _epoch) throw const _CcApiInvalidated();
         if (result is _WindowClosed || closed) return null;
         final value = await window.evaluate("localStorage.getItem('refresh_token')");
+        if (epoch != _epoch) throw const _CcApiInvalidated();
         if (value is String && value.isNotEmpty) return value;
       }
       return null;
@@ -246,6 +253,7 @@ class CcApiConnector {
     try {
       final before = providers.provider(providerId);
       final oldKeyResult = await providers.keyRead(providerId);
+      guard();
       if (!oldKeyResult.readable) {
         throw const AccountError('provider key unavailable');
       }
@@ -255,8 +263,10 @@ class CcApiConnector {
     final oldSession = session;
     final profile = await adapter.profile();
     await rotationQueue;
+    guard();
     final keys = await adapter.keys();
     await rotationQueue;
+    guard();
     final currentKey = await providers.key(providerId);
     var selected = await _selectKey(keys, currentKey, chooseKey: chooseKey);
     selected ??= await adapter.create('CCCode');
@@ -270,7 +280,9 @@ class CcApiConnector {
           disableNonessentialTraffic: true,
         );
     final whole = await adapter.reveal(selected);
+    guard();
     final listed = await listModels(provider, whole);
+    guard();
     if (listed.isEmpty) {
       throw const AccountError('no models returned');
     }
@@ -343,12 +355,18 @@ class CcApiConnector {
       },
     };
     try {
+      guard();
       await providers.setKey(providerId, whole);
+      guard();
       await providers.save(nextProvider);
+      guard();
       await providers.setDefaultModel(nextDefault);
       await rotationQueue;
+      guard();
       await store.writeSession(rotatedSession ?? session);
+      guard();
       await store.writeState(nextState);
+      guard();
       committed = true;
       _accountStateInvalidated = false;
     } catch (error) {
@@ -385,6 +403,7 @@ class CcApiConnector {
       }
       throw error;
     }
+      guard();
       _status = CcApiConnectionStatus.connected;
       return true;
     } on _CcApiSelectionCancelled {
@@ -506,9 +525,14 @@ class CcApiConnector {
     _accountStateInvalidated = true;
     ++_epoch;
     _status = CcApiConnectionStatus.disconnected;
-    final session = await store.readSession();
     _error = null;
     Object? firstError;
+    String? session;
+    try {
+      session = await store.readSession();
+    } catch (error) {
+      firstError = error;
+    }
     if (session != null) {
       try {
         final adapter = Sub2ApiAdapter(site: site, send: send, credential: session);
