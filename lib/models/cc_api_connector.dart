@@ -231,7 +231,7 @@ class CcApiConnector {
     required int epoch,
   }) async {
     void guard() {
-      if (epoch != _epoch || _accountStateInvalidated) {
+      if (epoch != _epoch) {
         throw const _CcApiInvalidated();
       }
     }
@@ -259,9 +259,8 @@ class CcApiConnector {
       }
       final oldKey = oldKeyResult.value;
       final oldDefault = providers.defaultModel;
-    final oldState = store.readState();
-    final oldSession = session;
-    final profile = await adapter.profile();
+      final oldState = store.readState();
+      final profile = await adapter.profile();
     await rotationQueue;
     guard();
     final keys = await adapter.keys();
@@ -269,7 +268,9 @@ class CcApiConnector {
     guard();
     final currentKey = await providers.key(providerId);
     var selected = await _selectKey(keys, currentKey, chooseKey: chooseKey);
+    guard();
     selected ??= await adapter.create('CCCode');
+    guard();
     final protocol = detectCcApiProtocol(platform: selected.platform);
     final provider = (before ?? const ModelProvider(id: providerId, name: providerName))
         .copyWith(
@@ -378,26 +379,27 @@ class CcApiConnector {
           rollbackErrors.add(rollbackError);
         }
       }
-      await attempt(() async {
-        if (before == null) {
-          await providers.remove(providerId);
-        } else {
-          await providers.save(before);
-        }
-      });
-      await attempt(() async {
-        if (oldKey != null) {
-          await providers.setKey(providerId, oldKey);
-        } else if (oldKeyResult.readable) {
-          await providers.setKey(providerId, '');
-        }
-      });
-      await attempt(() => providers.setDefaultModel(oldDefault));
-      // A rotated token may have invalidated the prior token. Keep it for
-      // genuine synchronization failures, but cancellation occurs before
-      // persistence and therefore never reaches this rollback path.
-      await attempt(() => store.writeSession(rotatedSession ?? previousSession));
-      await attempt(() => store.writeState(oldState));
+      if (epoch == _epoch) {
+        await attempt(() async {
+          if (before == null) {
+            await providers.remove(providerId);
+          } else {
+            await providers.save(before);
+          }
+        });
+        await attempt(() async {
+          if (oldKey != null) {
+            await providers.setKey(providerId, oldKey);
+          } else if (oldKeyResult.readable) {
+            await providers.setKey(providerId, '');
+          }
+        });
+        await attempt(() => providers.setDefaultModel(oldDefault));
+        // A rotated token may have invalidated the prior token. Keep it for
+        // genuine synchronization failures, but not after invalidation.
+        await attempt(() => store.writeSession(rotatedSession ?? previousSession));
+        await attempt(() => store.writeState(oldState));
+      }
       if (rollbackErrors.isNotEmpty) {
         _error = StateError('persistence failed; rollback failed: ${rollbackErrors.first}');
       }
@@ -499,6 +501,7 @@ class CcApiConnector {
 
   Future<void> _handleSignedOut(CcApiConnectionStatus nextStatus) async {
     _accountStateInvalidated = true;
+    ++_epoch;
     _status = nextStatus;
     Object? firstError;
     try {

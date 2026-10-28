@@ -83,11 +83,7 @@ class _CcApiCardState extends State<CcApiCard> {
     final l10n = context.l10n;
     final count = provider?.enabledModels.length ?? 0;
     final balance = connector.accountBalance;
-    final status = connector.status == CcApiConnectionStatus.disconnected &&
-            connector.error == null &&
-            provider != null && provider.enabledModels.isNotEmpty
-        ? CcApiConnectionStatus.connected
-        : connector.status;
+    final status = connector.status;
     final action = switch (status) {
       CcApiConnectionStatus.disconnected => l10n.modelsCcApiLogin,
       CcApiConnectionStatus.connecting => l10n.modelsCcApiConnecting,

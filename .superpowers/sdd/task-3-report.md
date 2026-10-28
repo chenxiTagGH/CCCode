@@ -1,15 +1,15 @@
 # Task 3 report: CC API balance and wider card
 
 ## Status
-Implemented Task 3 and final state-machine hardening. The CC API model card is responsive down to ultra-narrow parent widths, displays non-secret account balance metadata, preserves stale balance through refresh/failure and incomplete profiles, and cannot show stale balance after sign-out or missing-session refresh.
+Implemented Task 3 and final race-safety review fixes. The CC API card is responsive, status-driven, and balance-safe. Sign-out and reconnect races cannot resurrect stale provider, session, default, metadata, or balance state.
 
-## Latest state-machine fixes
-- Added epoch guards immediately before async provider key, provider, default, session, and state persistence writes, and before setting connected.
-- In-flight login/synchronization checks the epoch after awaits; sign-out invalidates the epoch so stale login results cannot overwrite disconnected state.
-- Explicit sign-out invalidates and disconnects before `readSession`; read failures are retained while session/state/provider cleanup continues best effort.
-- Invalidation is cleared only after a fully committed new synchronization, allowing a fresh reconnect while preventing old persisted balance reuse.
-- Card connected inference requires a clear connector error and never overrides explicit needs-login/disconnected status.
-- Missing-session refresh runs signed-out cleanup and clears stale state.
+## Latest race fixes
+- Fresh connect epochs can synchronize after prior invalidation; `_accountStateInvalidated` no longer blocks a new epoch and is cleared only after a fully committed synchronization.
+- `_handleSignedOut` increments the epoch immediately, invalidating older operations before cleanup begins.
+- Epoch checks occur before adapter key creation/reveal, before every provider/default/session/state commit, before rollback writes, and before setting connected.
+- Sign-out and login completion are epoch guarded, so stale login results cannot overwrite disconnected state.
+- `CcApiCard` now uses `connector.status` directly; it never infers connected solely from residual provider models.
+- Added/retained race regressions for stale reconnect, cleanup, missing session, and in-flight synchronization behavior.
 
 ## Latest commit
 - Follow-up commit includes `Co-Authored-By: Claude Code <noreply@anthropic.com>`.
@@ -24,7 +24,7 @@ Implemented Task 3 and final state-machine hardening. The CC API model card is r
 ## Commands and results
 - `git diff --check`: passed with no output.
 - `ruby -rjson -e 'ARGV.each { |path| JSON.parse(File.read(path)); puts "valid #{path}" }' lib/l10n/app_en.arb lib/l10n/app_zh.arb`: both ARB files parsed successfully.
-- Targeted symbol inspection confirmed epoch guards before all persistence commits, login completion guards, pre-read sign-out invalidation, missing-session cleanup, balance invalidation, and card status precedence.
+- Targeted symbol inspection confirmed fresh-epoch reconnect, pre-commit/rollback guards, signed-out epoch invalidation, key-create/reveal guards, and explicit card status.
 - Flutter tests were not rerun because Flutter remains unavailable (`flutter: command not found`, exit code 127 in prior focused runs).
 
 Flutter/Dart were unavailable, so no test pass is claimed.
