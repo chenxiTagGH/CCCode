@@ -1713,6 +1713,8 @@
   "modelsCcApiUnavailable": "CC API 暂时无法使用",
   "modelsCcApiRetry": "重试",
   "modelsCcApiFailed": "暂时无法连接",
+  "modelsCcApiBalance": "余额：{amount}",
+  "@modelsCcApiBalance": {"description": "The latest CC API account balance shown on the model card.", "placeholders": {"amount": {"type": "String"}}},
   "@modelsCcApiConnected": {"placeholders": {"count": {"type": "int"}}},
   "modelsFeaturedWhy": "为什么我看到这个？",
   "modelsFeaturedNote": "这些站点目前已经被官方收录",

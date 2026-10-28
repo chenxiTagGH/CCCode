@@ -87,9 +87,15 @@ class _FakeCodex extends CodexService {
 }
 
 class _FakeCcApiConnector extends CcApiConnector {
-  _FakeCcApiConnector({required super.providers, required this.current})
+  factory _FakeCcApiConnector({
+    required ModelProviders providers,
+    required CcApiConnectionStatus current,
+  }) => _FakeCcApiConnector._(providers, current, _FakeCcApiStore());
+
+  _FakeCcApiConnector._(ModelProviders providers, this.current, this.ccStore)
       : super(
-          store: _FakeCcApiStore(),
+          providers: providers,
+          store: ccStore,
           openWindow: () => throw UnimplementedError(),
           send: (_, _, {json, headers}) => throw UnimplementedError(),
           listModels: (_, _) async => const [],
@@ -98,6 +104,7 @@ class _FakeCcApiConnector extends CcApiConnector {
   CcApiConnectionStatus current;
   Object? failure;
   int connects = 0;
+  final _FakeCcApiStore ccStore;
   int refreshes = 0;
   CcApiKeyChooser? connectChooser;
   CcApiKeyChooser? refreshChooser;
@@ -119,26 +126,29 @@ class _FakeCcApiConnector extends CcApiConnector {
   Future<bool> refresh({CcApiKeyChooser? chooseKey}) async {
     refreshChooser = chooseKey;
     refreshes++;
+    current = CcApiConnectionStatus.connecting;
     if (pending != null) return pending!.future;
     if (failRefresh) {
       failure = StateError('secret must not render');
       current = CcApiConnectionStatus.failed;
       return false;
     }
+    current = CcApiConnectionStatus.connected;
     return true;
   }
 }
 
 class _FakeCcApiStore implements CcApiStore {
   String? session;
+  Map<String, Object?>? state;
   @override
   Future<String?> readSession() async => session;
   @override
   Future<void> writeSession(String? value) async => session = value;
   @override
-  Map<String, Object?>? readState() => null;
+  Map<String, Object?>? readState() => state;
   @override
-  Future<void> writeState(Map<String, Object?>? value) async {}
+  Future<void> writeState(Map<String, Object?>? value) async => state = value;
 }
 
 class _FakeLogin implements CodexLogin {
@@ -349,6 +359,48 @@ void main() {
     await tester.pump();
     expect(find.text('暂时无法连接'), findsOneWidget);
     expect(find.text('secret must not render'), findsNothing);
+  });
+
+  testWidgets('CC API card shows localized positive and zero balances', (tester) async {
+    final connector = _FakeCcApiConnector(
+      providers: providers,
+      current: CcApiConnectionStatus.connected,
+    );
+    connector.ccStore.state = {
+      'account': {'balance': 12.5},
+    };
+    await pumpWithCcApi(tester, connector);
+    expect(find.text('余额：\$12.50'), findsOneWidget);
+
+    connector.ccStore.state = {
+      'account': {'balance': 0},
+    };
+    await pumpWithCcApi(tester, connector);
+    expect(find.text('余额：\$0.00'), findsOneWidget);
+  });
+
+  testWidgets('CC API card omits a missing balance and keeps stale balance', (tester) async {
+    final connector = _FakeCcApiConnector(
+      providers: providers,
+      current: CcApiConnectionStatus.connected,
+    );
+    await pumpWithCcApi(tester, connector);
+    expect(find.textContaining('余额：'), findsNothing);
+
+    connector.ccStore.state = {
+      'account': {'balance': 8.5},
+    };
+    await tester.pump();
+    expect(find.text('余额：\$8.50'), findsOneWidget);
+
+    connector.pending = Completer<bool>();
+    await tester.tap(find.text('CC API'));
+    await tester.pump();
+    expect(find.text('余额：\$8.50'), findsOneWidget);
+
+    connector.pending!.complete(false);
+    await tester.pump();
+    expect(find.text('余额：\$8.50'), findsOneWidget);
   });
 
   testWidgets('Models page places fixed CC API card before external featured cards', (tester) async {

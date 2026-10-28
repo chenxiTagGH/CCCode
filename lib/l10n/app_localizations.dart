@@ -10284,6 +10284,7 @@ abstract class AppLocalizations {
   String get modelsCcApiUnavailable;
   String get modelsCcApiRetry;
   String get modelsCcApiFailed;
+  String modelsCcApiBalance(String amount);
 
   /// No description provided for @modelsFeaturedWhy.
   ///

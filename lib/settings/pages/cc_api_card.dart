@@ -28,6 +28,8 @@ class CcApiCard extends StatefulWidget {
 }
 
 class _CcApiCardState extends State<CcApiCard> {
+  static const _cardWidth = 248.0;
+
   bool _working = false;
 
   @override
@@ -79,6 +81,7 @@ class _CcApiCardState extends State<CcApiCard> {
     final provider = connector.providers.provider(CcApiConnector.providerId);
     final l10n = context.l10n;
     final count = provider?.enabledModels.length ?? 0;
+    final balance = connector.accountBalance;
     final status = connector.status == CcApiConnectionStatus.disconnected &&
             provider != null && provider.enabledModels.isNotEmpty
         ? CcApiConnectionStatus.connected
@@ -97,10 +100,13 @@ class _CcApiCardState extends State<CcApiCard> {
       CcApiConnectionStatus.failed => l10n.modelsCcApiFailed,
       CcApiConnectionStatus.disconnected => l10n.modelsCcApiDescription,
     };
+    final subtitle = balance == null
+        ? detail
+        : l10n.modelsCcApiBalance('\$${balance.toStringAsFixed(2)}');
     final enabled = !_working && status != CcApiConnectionStatus.connecting;
     return SizedBox(
       height: FeaturedUpstreamsStrip.cardHeight,
-      width: FeaturedUpstreamsStrip.cardWidth,
+      width: _cardWidth,
       child: Semantics(
         button: true,
         label: '${l10n.modelsCcApiName}, $detail, $action',
@@ -132,7 +138,7 @@ class _CcApiCardState extends State<CcApiCard> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(l10n.modelsCcApiName, maxLines: 1, overflow: TextOverflow.ellipsis, style: SettingsText.label.copyWith(fontSize: 12.5, height: 1.3, fontWeight: FontWeight.w500)),
-                      Text(detail, maxLines: 1, overflow: TextOverflow.ellipsis, style: SettingsText.description.copyWith(fontSize: 11.5, height: 1.35, color: SettingsColors.textTertiary)),
+                      Text(subtitle, maxLines: 1, overflow: TextOverflow.ellipsis, style: SettingsText.description.copyWith(fontSize: 11.5, height: 1.35, color: SettingsColors.textTertiary)),
                     ],
                   ),
                 ),

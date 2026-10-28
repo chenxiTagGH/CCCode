@@ -107,6 +107,14 @@ class CcApiConnector {
   CcApiConnectionStatus get status => _status;
   Object? get error => _error;
 
+  /// The last account balance committed by a successful synchronization.
+  /// Session and provider-key metadata are intentionally not exposed here.
+  double? get accountBalance {
+    final account = store.readState()?['account'];
+    final balance = account is Map ? account['balance'] : null;
+    return balance is num ? balance.toDouble() : null;
+  }
+
   Future<bool> connect({CcApiKeyChooser? chooseKey}) async {
     if (_status == CcApiConnectionStatus.connecting) return false;
     _status = CcApiConnectionStatus.connecting;

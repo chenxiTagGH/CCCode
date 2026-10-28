@@ -163,6 +163,22 @@ void main() {
     expect(provider.protocol, ProviderProtocol.anthropic);
     expect(provider.baseUrl, 'https://api.cc-hub.vip');
     expect(fixture.store.session, 'refresh-2');
+    expect(fixture.connector.accountBalance, 100);
+    expect(fixture.store.state, {
+      'account': {
+        'name': 'CCCode',
+        'email': 'cccode@example.com',
+        'balance': 100,
+      },
+      'provider-key': {
+        'id': '7',
+        'name': 'CCCode',
+        'masked': 'sk-••••',
+        'platform': 'anthropic',
+      },
+    });
+    expect(fixture.store.state.toString(), isNot(contains('access-1')));
+    expect(fixture.store.state.toString(), isNot(contains('sk-cccode')));
   });
 
   test('successful connection saves the cc-api provider and default model', () async {
@@ -260,19 +276,23 @@ void main() {
     expect(fixture.store.session, 'refresh-2');
   });
 
-  test('model refresh failure preserves the previous provider models', () async {
+  test('model refresh failure preserves the previous provider models and balance', () async {
     final fixture = await makeFixture(
       loginRefreshToken: 'refresh-1',
       existingModels: const [ProviderModel(id: 'claude-sonnet-4-5')],
       existingKey: 'sk-existing',
       existingDefault: '@cc-api/claude-sonnet-4-5',
-      modelError: const UpstreamException('offline'),
+      models: const [RemoteModel('claude-sonnet-4-5')],
     );
+    expect(await fixture.connector.connect(), isTrue);
+    expect(fixture.connector.accountBalance, 100);
     final before = await fixture.snapshot();
 
+    fixture.listModelsError = const UpstreamException('offline');
     expect(await fixture.connector.refresh(), isFalse);
     expect(fixture.listModelsInvoked, isTrue);
     expect(await fixture.snapshot(), before);
+    expect(fixture.connector.accountBalance, 100);
     // A token rotated during the failed synchronization is still durable.
     expect(fixture.store.session, 'refresh-2');
   });
@@ -596,7 +616,8 @@ Future<ConnectorFixture> makeFixture({
     },
     listModels: (_, __) async {
       fixture.listModelsInvoked = true;
-      if (modelError != null) throw modelError;
+      final error = fixture.listModelsError ?? modelError;
+      if (error != null) throw error;
       return models;
     },
   );
@@ -626,6 +647,7 @@ class ConnectorFixture {
   final FakeCcApiStore store;
   late CcApiConnector connector;
   bool listModelsInvoked = false;
+  UpstreamException? listModelsError;
   CcApiKeyChooser? chooseKey;
   String? revealedKeyId;
   Map<String, Object?>? createdKeyRequest;
