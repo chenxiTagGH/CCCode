@@ -102,7 +102,7 @@ const attribution = (() => {
   // alone (the browser keeps a frame's storage apart): /activate, opened
   // on its own by the channel build's first start, would find nothing. So
   // there a download, a channel kept, goes by /dl/ in a tab of its own,
-  // the channel with it: the Worker keeps it in a cookie of baocode.dev's
+  // the channel with it: the Worker keeps it in a cookie of ccapitoken.cc's
   // own (site-worker/index.js), and picks the build. A link off the site
   // (GitHub, the Chrome Web Store by /dl/) opens in a tab of its own too:
   // most sites refuse to show in a frame.
@@ -186,7 +186,7 @@ for (const button of document.querySelectorAll('[data-copy]')) {
 
 // A button's style to pick (/upstreams): copies the prompt above with that
 // button in it, its HTML as a site would write it: a link, its images from
-// baocode.dev, the import link for its href.
+// ccapitoken.cc, the import link for its href.
 for (const pick of document.querySelectorAll('.pick')) {
   const hint = pick.dataset.hint;
   pick.addEventListener('click', async () => {

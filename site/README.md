@@ -1,4 +1,4 @@
-# baocode.dev
+# ccapitoken.cc
 
 The CCCode website, hosted on Cloudflare, with no build step: `site/` is
 served as it is, `/download` being `download.html`.
