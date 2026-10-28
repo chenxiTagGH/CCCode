@@ -6,8 +6,9 @@ Implemented Task 3 and final concurrency barrier fixes. The CC API card remains 
 ## Latest concurrency fixes
 - Track every active connect/refresh Future in a Set rather than only the latest operation.
 - Sign-out cleanup waits in a loop until all operations started before invalidation have completed, including operations that were active concurrently.
-- Automatic `_handleSignedOut()` uses the same signing-out lock and cleanup Future as explicit `signOut()`, waiting for other active operations while excluding its own caller operation to avoid self-deadlock; cleanup still invalidates state before writes.
+- Automatic `_handleSignedOut()` uses the same signing-out lock and cleanup Future as explicit `signOut()`, waiting for all active operations except its caller epoch to avoid self-deadlock; cleanup still invalidates state before writes.
 - A fresh connect with no previous session invalidates persisted account metadata before synchronization, so an omitted profile balance cannot reuse the prior user's balance.
+- Ultra-compact cards remove all padding below 4px and hide the progress indicator below 20px; width regressions cover 0, 1, 3, 4, 19, 20, and 40px.
 - New connect/refresh calls return false immediately while cleanup is active instead of registering and deadlocking the cleanup barrier.
 - Stale catch handlers remain epoch guarded and cannot overwrite a newer disconnected or reconnecting state.
 - Existing guards remain before provider/session/state/default commits, rollback writes, key creation/reveal, and connected status.

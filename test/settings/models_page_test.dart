@@ -434,7 +434,7 @@ void main() {
       providers: providers,
       current: CcApiConnectionStatus.connected,
     );
-    for (final width in [20.0, 40.0]) {
+    for (final width in [0.0, 1.0, 3.0, 4.0, 19.0, 20.0, 40.0]) {
       await tester.pumpWidget(
         MaterialApp(
           home: SizedBox(

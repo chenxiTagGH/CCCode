@@ -24,6 +24,13 @@ class _CcApiInvalidated implements Exception {
   const _CcApiInvalidated();
 }
 
+class _ActiveCcApiOperation {
+  _ActiveCcApiOperation(this.epoch);
+
+  final int epoch;
+  late Future<bool> future;
+}
+
 /// The connection lifecycle of the CC API connector.
 enum CcApiConnectionStatus {
   disconnected,
@@ -111,7 +118,7 @@ class CcApiConnector {
   int _epoch = 0;
   bool _signingOut = false;
   Future<void>? _cleanupFuture;
-  final Set<Future<bool>> _activeOperations = {};
+  final Set<_ActiveCcApiOperation> _activeOperations = {};
 
   CcApiConnectionStatus get status => _status;
   Object? get error => _error;
@@ -127,14 +134,20 @@ class CcApiConnector {
 
   Future<bool> connect({CcApiKeyChooser? chooseKey}) {
     if (_signingOut) return Future<bool>.value(false);
-    final operation = _connect(chooseKey: chooseKey);
+    final operation = _ActiveCcApiOperation(++_epoch);
+    final future = _connect(chooseKey: chooseKey, operation: operation);
+    operation.future = future;
     _activeOperations.add(operation);
-    return operation.whenComplete(() => _activeOperations.remove(operation));
+    return future.whenComplete(() => _activeOperations.remove(operation));
   }
 
-  Future<bool> _connect({CcApiKeyChooser? chooseKey}) async {
+  Future<bool> _connect({
+    CcApiKeyChooser? chooseKey,
+    required _ActiveCcApiOperation operation,
+  }) async {
     if (_status == CcApiConnectionStatus.connecting) return false;
-    final epoch = ++_epoch;
+    final epoch = operation.epoch;
+
     _status = CcApiConnectionStatus.connecting;
     _error = null;
     try {
@@ -166,7 +179,10 @@ class CcApiConnector {
       return false;
     } on AccountSignedOut {
       if (epoch != _epoch) return false;
-      await _handleSignedOut(CcApiConnectionStatus.needsLogin, waitForActive: false);
+      await _handleSignedOut(
+        CcApiConnectionStatus.needsLogin,
+        callerEpoch: epoch,
+      );
       return false;
     } on Object catch (error) {
       if (epoch != _epoch) return false;
@@ -178,14 +194,19 @@ class CcApiConnector {
 
   Future<bool> refresh({CcApiKeyChooser? chooseKey}) {
     if (_signingOut) return Future<bool>.value(false);
-    final operation = _refresh(chooseKey: chooseKey);
+    final operation = _ActiveCcApiOperation(++_epoch);
+    final future = _refresh(chooseKey: chooseKey, operation: operation);
+    operation.future = future;
     _activeOperations.add(operation);
-    return operation.whenComplete(() => _activeOperations.remove(operation));
+    return future.whenComplete(() => _activeOperations.remove(operation));
   }
 
-  Future<bool> _refresh({CcApiKeyChooser? chooseKey}) async {
+  Future<bool> _refresh({
+    CcApiKeyChooser? chooseKey,
+    required _ActiveCcApiOperation operation,
+  }) async {
     if (_status == CcApiConnectionStatus.connecting) return false;
-    final epoch = ++_epoch;
+    final epoch = operation.epoch;
     _status = CcApiConnectionStatus.connecting;
     _error = null;
     try {
@@ -193,7 +214,10 @@ class CcApiConnector {
       if (epoch != _epoch) throw const _CcApiInvalidated();
       final session = previousSession;
       if (session == null || session.isEmpty) {
-        await _handleSignedOut(CcApiConnectionStatus.needsLogin, waitForActive: false);
+        await _handleSignedOut(
+        CcApiConnectionStatus.needsLogin,
+        callerEpoch: epoch,
+      );
         return false;
       }
       return await _synchronize(
@@ -210,7 +234,10 @@ class CcApiConnector {
       return false;
     } on AccountSignedOut {
       if (epoch != _epoch) return false;
-      await _handleSignedOut(CcApiConnectionStatus.needsLogin, waitForActive: false);
+      await _handleSignedOut(
+        CcApiConnectionStatus.needsLogin,
+        callerEpoch: epoch,
+      );
       return false;
     } on Object catch (error) {
       if (epoch != _epoch) return false;
@@ -527,7 +554,7 @@ class CcApiConnector {
 
   Future<void> _handleSignedOut(
     CcApiConnectionStatus nextStatus, {
-    bool waitForActive = true,
+    int? callerEpoch,
   }) async {
     if (_signingOut) {
       await (_cleanupFuture ?? Future<void>.value());
@@ -539,7 +566,7 @@ class CcApiConnector {
     _signingOut = true;
     final cleanup = _automaticCleanup(
       nextStatus,
-      waitForActive: waitForActive,
+      callerEpoch: callerEpoch,
     );
     _cleanupFuture = cleanup;
     await cleanup;
@@ -547,10 +574,13 @@ class CcApiConnector {
 
   Future<void> _automaticCleanup(
     CcApiConnectionStatus nextStatus, {
-    required bool waitForActive,
+    int? callerEpoch,
   }) async {
-    while (waitForActive && _activeOperations.isNotEmpty) {
-      final active = List<Future<bool>>.of(_activeOperations);
+    while (_activeOperations.any((operation) => operation.epoch != callerEpoch)) {
+      final active = <Future<bool>>[
+        for (final operation in _activeOperations)
+          if (operation.epoch != callerEpoch) operation.future,
+      ];
       try {
         await Future.wait(active);
       } catch (_) {

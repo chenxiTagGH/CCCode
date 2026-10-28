@@ -117,6 +117,7 @@ class _CcApiCardState extends State<CcApiCard> {
         final width = math.min(_cardWidth, available);
         final compact = width < 192;
         final ultraCompact = width < 72;
+        final microCompact = width < 4;
         return SizedBox(
           height: FeaturedUpstreamsStrip.cardHeight,
           width: width,
@@ -133,7 +134,7 @@ class _CcApiCardState extends State<CcApiCard> {
                       )
                   : null,
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: ultraCompact ? 2 : 10),
+                padding: EdgeInsets.symmetric(horizontal: microCompact ? 0 : ultraCompact ? 2 : 10),
                 decoration: BoxDecoration(
                   color: SettingsColors.card,
                   borderRadius: BorderRadius.circular(10),
@@ -158,7 +159,7 @@ class _CcApiCardState extends State<CcApiCard> {
                         ),
                       ),
                     if (!compact) const SizedBox(width: 6),
-                    if (_working || status == CcApiConnectionStatus.connecting)
+                    if (!microCompact && (_working || status == CcApiConnectionStatus.connecting))
                       SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: themeColors['textLink.foreground']))
                     else if (!compact)
                       Row(
