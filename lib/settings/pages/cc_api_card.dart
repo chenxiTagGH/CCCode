@@ -119,6 +119,7 @@ class _CcApiCardState extends State<CcApiCard> {
             : math.max(0.0, screenWidth - 32);
         final width = math.min(_cardWidth, available);
         final compact = width < 192;
+        final ultraCompact = width < 72;
         return SizedBox(
           height: FeaturedUpstreamsStrip.cardHeight,
           width: width,
@@ -135,28 +136,30 @@ class _CcApiCardState extends State<CcApiCard> {
                       )
                   : null,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
+                padding: EdgeInsets.symmetric(horizontal: ultraCompact ? 2 : 10),
                 decoration: BoxDecoration(
                   color: SettingsColors.card,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Row(
                   children: [
-                    const SizedBox.square(
-                      dimension: 24,
-                      child: Center(child: CcCodeLogo(size: 22)),
-                    ),
-                    if (!compact) const SizedBox(width: 10),
-                    Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(l10n.modelsCcApiName, maxLines: 1, overflow: TextOverflow.ellipsis, style: SettingsText.label.copyWith(fontSize: 12.5, height: 1.3, fontWeight: FontWeight.w500)),
-                          Text(subtitle, maxLines: 1, overflow: TextOverflow.ellipsis, style: SettingsText.description.copyWith(fontSize: 11.5, height: 1.35, color: SettingsColors.textTertiary)),
-                        ],
+                    if (!ultraCompact)
+                      const SizedBox.square(
+                        dimension: 24,
+                        child: Center(child: CcCodeLogo(size: 22)),
                       ),
-                    ),
+                    if (!compact && !ultraCompact) const SizedBox(width: 10),
+                    if (!ultraCompact)
+                      Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(l10n.modelsCcApiName, maxLines: 1, overflow: TextOverflow.ellipsis, style: SettingsText.label.copyWith(fontSize: 12.5, height: 1.3, fontWeight: FontWeight.w500)),
+                            Text(subtitle, maxLines: 1, overflow: TextOverflow.ellipsis, style: SettingsText.description.copyWith(fontSize: 11.5, height: 1.35, color: SettingsColors.textTertiary)),
+                          ],
+                        ),
+                      ),
                     if (!compact) const SizedBox(width: 6),
                     if (_working || status == CcApiConnectionStatus.connecting)
                       SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: themeColors['textLink.foreground']))

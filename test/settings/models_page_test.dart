@@ -429,21 +429,24 @@ void main() {
     expect(connector.accountBalance, 8.5);
   });
 
-  testWidgets('CC API card shrinks below its preferred width', (tester) async {
+  testWidgets('CC API card stays compact at ultra-narrow widths', (tester) async {
     final connector = _FakeCcApiConnector(
       providers: providers,
       current: CcApiConnectionStatus.connected,
     );
-    await tester.pumpWidget(
-      MaterialApp(
-        home: SizedBox(
-          width: 120,
-          child: CcApiCard(connector: connector, onChanged: () {}),
+    for (final width in [20.0, 40.0]) {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: SizedBox(
+            width: width,
+            child: CcApiCard(connector: connector, onChanged: () {}),
+          ),
         ),
-      ),
-    );
-    await tester.pump();
-    expect(tester.getSize(find.byType(CcApiCard)).width, 120);
+      );
+      await tester.pump();
+      expect(tester.getSize(find.byType(CcApiCard)).width, width);
+      expect(tester.takeException(), isNull);
+    }
   });
 
   testWidgets('Models page places fixed CC API card before external featured cards', (tester) async {

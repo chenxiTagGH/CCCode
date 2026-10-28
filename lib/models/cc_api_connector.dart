@@ -103,6 +103,7 @@ class CcApiConnector {
 
   CcApiConnectionStatus _status = CcApiConnectionStatus.disconnected;
   Object? _error;
+  bool _accountStateInvalidated = false;
 
   CcApiConnectionStatus get status => _status;
   Object? get error => _error;
@@ -110,6 +111,7 @@ class CcApiConnector {
   /// The last account balance committed by a successful synchronization.
   /// Session and provider-key metadata are intentionally not exposed here.
   double? get accountBalance {
+    if (_accountStateInvalidated) return null;
     final account = store.readState()?['account'];
     final balance = account is Map ? account['balance'] : null;
     return balance is num ? balance.toDouble() : null;
@@ -138,6 +140,7 @@ class CcApiConnector {
       _status = CcApiConnectionStatus.disconnected;
       return false;
     } on AccountSignedOut {
+      _accountStateInvalidated = true;
       try {
         await store.writeSession(null);
       } catch (_) {
@@ -178,6 +181,7 @@ class CcApiConnector {
       _status = CcApiConnectionStatus.disconnected;
       return false;
     } on AccountSignedOut {
+      _accountStateInvalidated = true;
       try {
         await store.writeSession(null);
       } catch (_) {
@@ -345,6 +349,7 @@ class CcApiConnector {
       },
     };
     try {
+      _accountStateInvalidated = false;
       await providers.setKey(providerId, whole);
       await providers.save(nextProvider);
       await providers.setDefaultModel(nextDefault);

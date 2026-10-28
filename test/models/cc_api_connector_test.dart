@@ -471,12 +471,14 @@ void main() {
     expect(await fixture.connector.connect(), isTrue);
     expect(fixture.connector.accountBalance, 100);
 
+    fixture.store.failStateClear = true;
     fixture.signedOut = true;
     expect(await fixture.connector.refresh(), isFalse);
     expect(fixture.connector.status, CcApiConnectionStatus.needsLogin);
     expect(fixture.connector.accountBalance, isNull);
     expect(fixture.providers.provider('cc-api'), isNull);
-    expect(fixture.store.state, isNull);
+    expect(fixture.store.state, isNotNull);
+    expect(fixture.connector.error, isA<StateError>());
   });
 
   test('unreadable provider key fails before any key write or clear', () async {
@@ -709,6 +711,7 @@ class ConnectorFixture {
 class FakeCcApiStore implements CcApiStore {
   String? session;
   Map<String, Object?>? state;
+  bool failStateClear = false;
 
   @override
   Future<String?> readSession() async => session;
@@ -720,7 +723,10 @@ class FakeCcApiStore implements CcApiStore {
   Map<String, Object?>? readState() => state;
 
   @override
-  Future<void> writeState(Map<String, Object?>? value) async => state = value;
+  Future<void> writeState(Map<String, Object?>? value) async {
+    if (value == null && failStateClear) throw StateError('state clear failed');
+    state = value;
+  }
 }
 
 class RecordingSecretStore implements SecretStore {
