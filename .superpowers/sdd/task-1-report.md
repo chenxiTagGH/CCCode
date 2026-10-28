@@ -30,7 +30,7 @@ Task 1 theme renaming and customizable commit attribution are implemented. Legac
 - `9b11845202d8ba79f61eb2a6dda61ab491211066` — `fix: complete Task 1 theme persistence cleanup`
 - `60e5c7e1a0d0da41eaa0f2358f9473af1d1244e5` — `fix: finalize Task 1 async startup and help links`
 - `09f5dbe652fd8e9c4c8a0105e15ddaddb033beef` — `fix: finalize Task 1 site identity documentation`
-- Final follow-up commit: pending at report generation time.
+- `01d2b0b97d49b09b1ca8397d3aef5630b6c92d8e` — `fix: finalize Task 1 dual-domain deployment`
 - `67fe869df428e34708fdcecb7987159f15ee5a3f` — `fix: finalize Task 1 migration durability`
 
 All implementation commits include:
