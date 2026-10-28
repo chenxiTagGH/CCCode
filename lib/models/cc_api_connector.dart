@@ -143,6 +143,11 @@ class CcApiConnector {
       } catch (_) {
         // Signed-out status must not depend on keychain cleanup succeeding.
       }
+      try {
+        await store.writeState(null);
+      } catch (_) {
+        // Do not retain account metadata after sign-out if storage fails.
+      }
       _status = CcApiConnectionStatus.needsLogin;
       return false;
     } on Object catch (error) {
@@ -176,6 +181,11 @@ class CcApiConnector {
         await store.writeSession(null);
       } catch (_) {
         // Signed-out status must not depend on keychain cleanup succeeding.
+      }
+      try {
+        await store.writeState(null);
+      } catch (_) {
+        // Do not retain account metadata after sign-out if storage fails.
       }
       _status = CcApiConnectionStatus.needsLogin;
       return false;

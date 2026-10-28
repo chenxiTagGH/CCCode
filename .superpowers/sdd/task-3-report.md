@@ -1,60 +1,49 @@
 # Task 3 report: CC API balance and wider card
 
 ## Status
-Implemented Task 3 and follow-up review fixes. The CC API model card is wider when space permits, shrinks responsively in narrow layouts, and displays the latest account balance from existing non-secret account metadata. Positive, zero, missing, in-flight refresh, failed refresh, stale balance, semantics, metadata ordering, and secret-boundary coverage were added.
+Implemented Task 3 and all coordinator review fixes. The CC API model card is wider when space permits, shrinks to available width in narrow layouts, displays the latest account balance from existing non-secret account metadata, preserves stale balance through refresh/failure, and clears account metadata on signed-out responses.
 
 ## Commits
 - `127f4bb87b0e7918130cb0a1e96031058e3b17d7` — `feat: show CC API balance in model card`
-- Follow-up review fixes are committed separately after this report update.
-- Both commits include `Co-Authored-By: Claude Code <noreply@anthropic.com>`.
+- `730f78b0` — `fix: address CC API balance card review`
+- This follow-up commit contains the latest review fixes and includes `Co-Authored-By: Claude Code <noreply@anthropic.com>`.
 
-## Review fixes
-- The fake connector now awaits a pending refresh result and transitions to failed/returns false when completion is unsuccessful; the stale-balance test asserts the failed detail and unchanged balance.
-- Semantics includes the rendered balance/status detail when a balance exists.
-- Currency symbol and balance/status formatting are localization contract entries; the card no longer hardcodes `$`. The account balance remains explicitly USD in l10n metadata.
-- The card width is clamped to both parent constraints and available screen width, with a minimum usable width, avoiding fixed-width overflow.
-- Status detail is preserved and balance appended, such as `暂时无法连接 · 余额 $8.50` or `已连接 · 余额 $12.50`.
+## Latest review fixes
+- The stale-balance widget test now mounts `CcApiCard` under a real `ListenableBuilder` for the providers notifier, drives the pending refresh to a failed result, and asserts the actual localized status subtitle `暂时无法连接 · 余额 $8.50` plus the unchanged `accountBalance`.
+- Card width is clamped to `min(preferredWidth, availableConstraints)` and content uses ellipsis, so it never exceeds constraints even below 192px. A focused narrow-width widget regression was added.
+- Both `connect` and `refresh` clear session metadata with `store.writeState(null)` on `AccountSignedOut`; a connector regression verifies the previous balance is removed and `needsLogin` is reported.
 
 ## Files changed
 - `/Users/tangchenxi/Desktop/Chenxi/vibeCoding/CCCode/lib/models/cc_api_connector.dart`
-  - Added `CcApiConnector.accountBalance`, reading only `store.readState()['account']['balance']`.
-  - Does not expose session tokens or whole API keys.
+  - Added metadata-only `accountBalance` getter.
+  - Clears account/provider metadata after signed-out responses.
 - `/Users/tangchenxi/Desktop/Chenxi/vibeCoding/CCCode/lib/settings/pages/cc_api_card.dart`
-  - Widened the CC API card from 196px to 248px when room permits.
-  - Clamps width for narrow layouts.
-  - Displays localized currency and preserves status detail while appending the last known balance.
-  - Includes the balance in the semantics label.
+  - Responsive preferred width of 248px, clamped to available constraints.
+  - Localized currency/status formatting.
+  - Balance included in semantics and appended to status detail.
 - `/Users/tangchenxi/Desktop/Chenxi/vibeCoding/CCCode/lib/l10n/app_en.arb`
 - `/Users/tangchenxi/Desktop/Chenxi/vibeCoding/CCCode/lib/l10n/app_zh.arb`
 - `/Users/tangchenxi/Desktop/Chenxi/vibeCoding/CCCode/lib/l10n/app_localizations.dart`
 - `/Users/tangchenxi/Desktop/Chenxi/vibeCoding/CCCode/lib/l10n/app_localizations_en.dart`
 - `/Users/tangchenxi/Desktop/Chenxi/vibeCoding/CCCode/lib/l10n/app_localizations_zh.dart`
-  - Added localized currency symbol, amount formatter, and status-with-balance formatter.
 - `/Users/tangchenxi/Desktop/Chenxi/vibeCoding/CCCode/test/settings/models_page_test.dart`
-  - Added widget coverage for positive, zero, missing, in-flight, failed-refresh stale balances, and semantics.
-  - Fake connector now models failed pending refresh completion.
 - `/Users/tangchenxi/Desktop/Chenxi/vibeCoding/CCCode/test/models/cc_api_connector_test.dart`
-  - Verifies successful synchronization commits account balance metadata before consumers rebuild.
-  - Verifies metadata contains no access token or whole API key.
-  - Verifies failed model refresh preserves the previous account balance.
 
 ## Commands and results
 
 ### Focused Flutter tests
-- `flutter test test/settings/models_page_test.dart --plain-name 'CC API card shows localized positive and zero balances'`
-- `flutter test test/models/cc_api_connector_test.dart`
-- Follow-up: `flutter test test/settings/models_page_test.dart --plain-name 'CC API card omits a missing balance and keeps stale balance'`
-- Result for all: could not start; exit code `127`, shell reported `command not found: flutter`.
+- `flutter test test/models/cc_api_connector_test.dart --plain-name 'signed-out refresh clears the previous account balance metadata'`
+- `flutter test test/settings/models_page_test.dart --plain-name 'CC API card omits a missing balance and keeps stale balance'`
+- Result for both: could not start; exit code `127`, shell reported `command not found: flutter`.
 
-Flutter/Dart were unavailable in the environment, so no test pass is claimed.
+Flutter/Dart were unavailable, so no test pass is claimed.
 
-### Static and repository checks
+### Static checks
 - `git diff --check`: passed with no output.
 - `ruby -rjson -e 'ARGV.each { |path| JSON.parse(File.read(path)); puts "valid #{path}" }' lib/l10n/app_en.arb lib/l10n/app_zh.arb`: both ARB files parsed successfully.
-- `rg -n 'modelsCcApiBalance\\b|modelsCcApiCurrencySymbol|modelsCcApiBalanceAmount|modelsCcApiDetailWithBalance' lib test`: localization interface and implementations are consistently wired.
-- Post-commit `git status --short`: clean after the follow-up commit.
+- Targeted symbol inspection confirmed responsive width, signed-out metadata clearing, localized subtitle, and regression coverage are wired.
 
 ## Concerns
-- Focused Flutter tests and formatter could not be executed because the Flutter SDK is not installed or on `PATH`.
-- Generated localization Dart files were updated consistently with the ARB entries manually because `flutter gen-l10n` was unavailable.
-- No secrets are read by the card or exposed by `accountBalance`; whole API key and session values remain in their existing secret/storage paths.
+- Focused Flutter tests and formatter could not execute because Flutter is not installed or on `PATH`.
+- Generated localization Dart files were updated manually to match ARB because `flutter gen-l10n` was unavailable.
+- Account balance is treated as USD by the CC API contract; its symbol and presentation are supplied through localization.

@@ -114,8 +114,10 @@ class _CcApiCardState extends State<CcApiCard> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final screenWidth = MediaQuery.sizeOf(context).width;
-        final available = math.max(160.0, screenWidth - 32);
-        final width = math.min(_cardWidth, math.min(constraints.maxWidth, available));
+        final available = constraints.hasBoundedWidth
+            ? constraints.maxWidth
+            : math.max(0.0, screenWidth - 32);
+        final width = math.min(_cardWidth, available);
         return SizedBox(
           height: FeaturedUpstreamsStrip.cardHeight,
           width: width,

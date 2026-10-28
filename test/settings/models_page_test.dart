@@ -400,8 +400,21 @@ void main() {
     connector.ccStore.state = {
       'account': {'balance': 8.5},
     };
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: ListenableBuilder(
+            listenable: connector.providers,
+            builder: (context, _) => CcApiCard(
+              connector: connector,
+              onChanged: () {},
+            ),
+          ),
+        ),
+      ),
+    );
     await tester.pump();
-    expect(find.text('余额：\$8.50'), findsOneWidget);
+    expect(find.text('已连接 · 余额 \$8.50'), findsOneWidget);
 
     connector.pending = Completer<bool>();
     await tester.tap(find.text('CC API'));
@@ -413,6 +426,24 @@ void main() {
     expect(find.text('暂时无法连接 · 余额 \$8.50'), findsOneWidget);
     expect(find.text('余额：\$8.50'), findsNothing);
     expect(find.bySemanticsLabel('CC API, 暂时无法连接 · 余额 \$8.50, 重试'), findsOneWidget);
+    expect(connector.accountBalance, 8.5);
+  });
+
+  testWidgets('CC API card shrinks below its preferred width', (tester) async {
+    final connector = _FakeCcApiConnector(
+      providers: providers,
+      current: CcApiConnectionStatus.connected,
+    );
+    await tester.pumpWidget(
+      MaterialApp(
+        home: SizedBox(
+          width: 120,
+          child: CcApiCard(connector: connector, onChanged: () {}),
+        ),
+      ),
+    );
+    await tester.pump();
+    expect(tester.getSize(find.byType(CcApiCard)).width, 120);
   });
 
   testWidgets('Models page places fixed CC API card before external featured cards', (tester) async {

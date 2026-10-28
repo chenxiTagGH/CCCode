@@ -447,6 +447,23 @@ void main() {
     expect(evaluateFailure.window.closeRequested, isTrue);
   });
 
+  test('signed-out refresh clears the previous account balance metadata', () async {
+    final fixture = await makeFixture(
+      loginRefreshToken: 'refresh-1',
+      accountKeys: [fakeKey(id: '7', name: 'CCCode')],
+      revealedKey: 'sk-cccode',
+      models: const [RemoteModel('claude-sonnet-4-5')],
+    );
+    expect(await fixture.connector.connect(), isTrue);
+    expect(fixture.connector.accountBalance, 100);
+
+    fixture.signedOut = true;
+    expect(await fixture.connector.refresh(), isFalse);
+    expect(fixture.connector.status, CcApiConnectionStatus.needsLogin);
+    expect(fixture.connector.accountBalance, isNull);
+    expect(fixture.store.state, isNull);
+  });
+
   test('unreadable provider key fails before any key write or clear', () async {
     final secrets = ThrowingSecretStore();
     final providers = ModelProviders.memory(secrets: secrets);
@@ -520,6 +537,7 @@ Future<ConnectorFixture> makeFixture({
     send: (method, url, {headers = const {}, json}) async {
       expect(method, anyOf('GET', 'POST'));
       expect(url.host, 'api.cc-hub.vip');
+      if (fixture.signedOut) throw const AccountSignedOut();
       if (method == 'POST' && url.path == '/api/v1/auth/refresh') {
         expect(headers, isNot(containsPair('Authorization', anything)));
         expect(json, {'refresh_token': loginRefreshToken});
@@ -647,6 +665,7 @@ class ConnectorFixture {
   final FakeCcApiStore store;
   late CcApiConnector connector;
   bool listModelsInvoked = false;
+  bool signedOut = false;
   UpstreamException? listModelsError;
   CcApiKeyChooser? chooseKey;
   String? revealedKeyId;
