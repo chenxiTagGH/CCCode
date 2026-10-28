@@ -23,6 +23,7 @@ enum CommitAttribution {
   static const fallback = cccode;
   static const defaultName = 'CCCode';
   static const defaultEmail = 'noreply@ccapitoken.cc';
+  static const legacyDefaultEmail = 'noreply@baocode.dev';
 
   static final _emailPattern = RegExp(
     r'^[A-Za-z0-9.!#$%&*+/=?^_`{|}~-]+@'
@@ -53,6 +54,8 @@ enum CommitAttribution {
     };
     final email = switch (settings[emailSettingKey]) {
       final String value when value.trim().isEmpty => defaultEmail,
+      final String value when value.trim() == legacyDefaultEmail =>
+        defaultEmail,
       final String value when isValidEmail(value) => value.trim(),
       _ => defaultEmail,
     };

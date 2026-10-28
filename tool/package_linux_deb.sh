@@ -85,8 +85,8 @@ Section: devel
 Priority: optional
 Architecture: ${package_arch}
 Depends: libgtk-3-0, libblkid1, liblzma5${webkit}
-Maintainer: CCCode <noreply@baocode.dev>
-Homepage: https://baocode.dev
+Maintainer: CCCode <noreply@ccapitoken.cc>
+Homepage: https://ccapitoken.cc
 Description: CCCode desktop for Linux
  A desktop UI for Claude Code, with a fast IDE built in.
 EOF

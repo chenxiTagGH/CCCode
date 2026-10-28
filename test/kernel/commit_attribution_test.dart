@@ -54,6 +54,22 @@ void main() {
     );
   });
 
+  test('migrates the legacy default email but preserves custom emails', () {
+    expect(
+      CommitAttribution.normalized({
+        CommitAttribution.emailSettingKey:
+            CommitAttribution.legacyDefaultEmail,
+      }).email,
+      CommitAttribution.defaultEmail,
+    );
+    expect(
+      CommitAttribution.normalized({
+        CommitAttribution.emailSettingKey: 'person@example.com',
+      }).email,
+      'person@example.com',
+    );
+  });
+
   test('clearing custom email restores the default', () {
     expect(
       CommitAttribution.normalized({
