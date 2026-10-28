@@ -1,4 +1,5 @@
-// The website, baocode.dev: site/ as the Worker `baocode`'s static assets,
+// The websites, baocode.dev and ccapitoken.cc: site/ as the Worker
+// `baocode`'s static assets,
 // deployed by Cloudflare Workers Builds on a push to main (a preview
 // version on any other branch). docs/release.md, 3 and 7.1.
 {
