@@ -32,11 +32,27 @@ void main() {
       title: 'title / 你好',
       body: 'body? & value',
     );
-    expect(
-      paths,
+    expect(paths, [
       ['key', 'title / 你好', 'body? & value'],
-    );
+    ]);
   });
+
+  test(
+    'rejects unsupported schemes, query, fragment, and missing hosts',
+    () async {
+      final invalid = [
+        Uri.parse('ftp://127.0.0.1:${server!.port}/key'),
+        Uri.parse('ws://127.0.0.1:${server!.port}/key'),
+        Uri.parse('http://127.0.0.1:${server!.port}/key?secret=value'),
+        Uri.parse('http://127.0.0.1:${server!.port}/key#fragment'),
+        Uri.parse('http:///key'),
+      ];
+      for (final base in invalid) {
+        await BarkNotifier().send(base, title: 'title', body: 'body');
+      }
+      expect(paths, isEmpty);
+    },
+  );
 
   test('swallows network failures', () async {
     await expectLater(

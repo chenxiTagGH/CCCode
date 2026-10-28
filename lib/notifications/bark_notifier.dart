@@ -11,12 +11,21 @@ class BarkNotifier {
     required String title,
     required String body,
   }) async {
-    if (!base.hasScheme || base.host.isEmpty) return;
-    final baseText = base.toString().replaceFirst(RegExp(r'/+$'), '');
-    final uri = Uri.tryParse(
-      '$baseText/${Uri.encodeComponent(title)}/${Uri.encodeComponent(body)}',
+    if ((base.scheme != 'http' && base.scheme != 'https') ||
+        base.host.isEmpty ||
+        base.hasQuery ||
+        base.hasFragment) {
+      return;
+    }
+    final pathSegments = [...base.pathSegments];
+    while (pathSegments.isNotEmpty && pathSegments.last.isEmpty) {
+      pathSegments.removeLast();
+    }
+    final uri = base.replace(
+      pathSegments: [...pathSegments, title, body],
+      query: null,
+      fragment: null,
     );
-    if (uri == null) return;
     final client = HttpClient()..connectionTimeout = timeout;
     try {
       await _request(client, uri).timeout(timeout);
