@@ -140,6 +140,9 @@ class CcApiConnector {
     try {
       final previousSession = await store.readSession();
       if (epoch != _epoch) throw const _CcApiInvalidated();
+      if (previousSession == null || previousSession.isEmpty) {
+        _accountStateInvalidated = true;
+      }
       var session = previousSession;
       if (session == null || session.isEmpty) {
         session = await _login(epoch);
@@ -163,7 +166,7 @@ class CcApiConnector {
       return false;
     } on AccountSignedOut {
       if (epoch != _epoch) return false;
-      await _handleSignedOut(CcApiConnectionStatus.needsLogin);
+      await _handleSignedOut(CcApiConnectionStatus.needsLogin, waitForActive: false);
       return false;
     } on Object catch (error) {
       if (epoch != _epoch) return false;
@@ -190,7 +193,7 @@ class CcApiConnector {
       if (epoch != _epoch) throw const _CcApiInvalidated();
       final session = previousSession;
       if (session == null || session.isEmpty) {
-        await _handleSignedOut(CcApiConnectionStatus.needsLogin);
+        await _handleSignedOut(CcApiConnectionStatus.needsLogin, waitForActive: false);
         return false;
       }
       return await _synchronize(
@@ -207,7 +210,7 @@ class CcApiConnector {
       return false;
     } on AccountSignedOut {
       if (epoch != _epoch) return false;
-      await _handleSignedOut(CcApiConnectionStatus.needsLogin);
+      await _handleSignedOut(CcApiConnectionStatus.needsLogin, waitForActive: false);
       return false;
     } on Object catch (error) {
       if (epoch != _epoch) return false;
@@ -522,7 +525,10 @@ class CcApiConnector {
         .id;
   }
 
-  Future<void> _handleSignedOut(CcApiConnectionStatus nextStatus) async {
+  Future<void> _handleSignedOut(
+    CcApiConnectionStatus nextStatus, {
+    bool waitForActive = true,
+  }) async {
     if (_signingOut) {
       await (_cleanupFuture ?? Future<void>.value());
       return;
@@ -531,13 +537,19 @@ class CcApiConnector {
     ++_epoch;
     _status = nextStatus;
     _signingOut = true;
-    final cleanup = _automaticCleanup(nextStatus);
+    final cleanup = _automaticCleanup(
+      nextStatus,
+      waitForActive: waitForActive,
+    );
     _cleanupFuture = cleanup;
     await cleanup;
   }
 
-  Future<void> _automaticCleanup(CcApiConnectionStatus nextStatus) async {
-    while (_activeOperations.isNotEmpty) {
+  Future<void> _automaticCleanup(
+    CcApiConnectionStatus nextStatus, {
+    required bool waitForActive,
+  }) async {
+    while (waitForActive && _activeOperations.isNotEmpty) {
       final active = List<Future<bool>>.of(_activeOperations);
       try {
         await Future.wait(active);

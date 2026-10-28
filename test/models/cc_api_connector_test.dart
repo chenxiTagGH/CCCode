@@ -447,6 +447,20 @@ void main() {
     expect(evaluateFailure.window.closeRequested, isTrue);
   });
 
+  test('fresh login without a balance does not reuse persisted balance', () async {
+    final fixture = await makeFixture(
+      loginRefreshToken: null,
+      accountKeys: [fakeKey(id: '7', name: 'CCCode')],
+      revealedKey: 'sk-cccode',
+      models: const [RemoteModel('claude-sonnet-4-5')],
+      preloadSession: false,
+    );
+    fixture.store.state = {'account': {'balance': 42}};
+    fixture.omitBalance = true;
+    expect(await fixture.connector.connect(), isTrue);
+    expect(fixture.connector.accountBalance, isNull);
+  });
+
   test('profile refresh without a numeric balance preserves the previous balance', () async {
     final fixture = await makeFixture(
       loginRefreshToken: 'refresh-1',
