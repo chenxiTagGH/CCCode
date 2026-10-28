@@ -10,7 +10,8 @@ Implemented and committed configurable Bark notifications, including URI hardeni
 - Request/redirect/gating hardening commit: `82b4aec96e0c73328f0fd388e50bd8a009b02d0c`
 - Final timeout/enabled-gating regression commit: `2de14ccfb786eb79fdd448f47e84ac932fe1fdf0`
 - Final URI/localization/timeout/redaction regression commit: `3500a583fefb90a86cbdb4684b3e72732f70e446`
-- HTTPS delivery test seam commit: recorded after commit creation
+- HTTPS delivery test seam commit: `2d8ffa85964ad410b614001a83a30b07321db65d`
+- Single-flight Bark request commit: recorded after commit creation
 - Commit message: `feat: add configurable Bark notifications`
 - Working tree after commit: clean
 
@@ -22,7 +23,7 @@ Implemented and committed configurable Bark notifications, including URI hardeni
 - Added `BarkNotifier.parseBase(String)` so raw malformed configured URL strings can be tested and rejected before dispatch.
 - Integrated Bark dispatch alongside the existing `host.notify` for enabled attention events. Existing system notifications, sounds, and Agent execution flow remain in place. Service-level exception handling also isolates injected notifier failures.
 - Added English and Chinese localization entries and updated generated localization APIs.
-- Added tests for empty URL skip, encoded path segments, successful local HTTP response, HTTPS delivery through a request seam (asserting scheme, host, and title/body path segments; no TLS fixture exists in the repository), unsupported schemes, query/fragment/missing-host rejection including trailing empty delimiters, raw malformed URI strings, redirects not being followed, accepted connections that never send headers, response bodies that never complete, network failure isolation, non-2xx diagnostics redaction, URL settings normalization/persistence, and AttentionService gates for disabled notifications/events with a configured URL, archived threads, and unfocused/in-view behavior.
+- Added tests for empty URL skip, encoded path segments, successful local HTTP response, HTTPS delivery through a request seam (asserting scheme, host, and title/body path segments; no TLS fixture exists in the repository), single-flight request coalescing with maximum in-flight concurrency of one, unsupported schemes, query/fragment/missing-host rejection including trailing empty delimiters, raw malformed URI strings, redirects not being followed, accepted connections that never send headers, response bodies that never complete, network failure isolation, non-2xx diagnostics redaction, URL settings normalization/persistence, and AttentionService gates for disabled notifications/events with a configured URL, archived threads, and unfocused/in-view behavior.
 
 ## Files
 
@@ -50,6 +51,7 @@ Implemented and committed configurable Bark notifications, including URI hardeni
 - `flutter test test/notifications/bark_notifier_test.dart test/notifications/attention_service_test.dart`: could not start; exit code 127, `command not found: flutter` (after stalled-response-body and configured-URL enabled=false regressions).
 - `flutter test test/notifications/bark_notifier_test.dart`: could not start; exit code 127, `command not found: flutter` (after raw delimiter rejection, localized hint, HTTPS, accepted-connection timeout, and non-2xx redaction regressions).
 - `flutter test test/notifications/bark_notifier_test.dart`: could not start; exit code 127, `command not found: flutter` (after HTTPS delivery request-seam coverage).
+- `flutter test test/notifications/bark_notifier_test.dart`: could not start; exit code 127, `command not found: flutter` (after single-flight concurrency regression).
 - `git diff --check`: passed with exit code 0 (no output).
 - `git status --short` after commit: clean (no output).
 - `git show --stat --oneline --summary HEAD`: confirmed commit `5bc16f26` with 12 files changed, 212 insertions and 7 deletions.

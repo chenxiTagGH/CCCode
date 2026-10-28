@@ -86,6 +86,38 @@ void main() {
     expect(requested?.pathSegments, ['key', 'title / 你好', 'body? & value']);
   });
 
+  test('drops overlapping sends while one request is in flight', () async {
+    final release = Completer<void>();
+    var inFlight = 0;
+    var maxInFlight = 0;
+    var calls = 0;
+    final notifier = BarkNotifier(
+      request: (uri) async {
+        calls++;
+        inFlight++;
+        maxInFlight = maxInFlight < inFlight ? inFlight : maxInFlight;
+        await release.future;
+        inFlight--;
+        return HttpStatus.ok;
+      },
+    );
+    final first = notifier.send(
+      Uri.parse('https://api.day.app/key'),
+      title: 'first',
+      body: 'body',
+    );
+    await Future<void>.delayed(Duration.zero);
+    await notifier.send(
+      Uri.parse('https://api.day.app/key'),
+      title: 'second',
+      body: 'body',
+    );
+    release.complete();
+    await first;
+    expect(calls, 1);
+    expect(maxInFlight, 1);
+  });
+
   test('does not follow redirects', () async {
     final redirected = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
     addTearDown(() => redirected.close(force: true));

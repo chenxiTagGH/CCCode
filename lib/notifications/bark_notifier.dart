@@ -4,13 +4,14 @@ import 'dart:io';
 typedef BarkRequest = Future<int> Function(Uri uri);
 
 class BarkNotifier {
-  const BarkNotifier({
+  BarkNotifier({
     this.timeout = const Duration(seconds: 5),
     this.request,
   });
 
   final Duration timeout;
   final BarkRequest? request;
+  bool _busy = false;
 
   /// Parses and validates a configured Bark base URL without making a request.
   static Uri? parseBase(String value) {
@@ -33,7 +34,8 @@ class BarkNotifier {
     required String body,
   }) async {
     final validated = parseBase(base.toString());
-    if (validated == null) return;
+    if (validated == null || _busy) return;
+    _busy = true;
     final pathSegments = [...validated.pathSegments];
     while (pathSegments.isNotEmpty && pathSegments.last.isEmpty) {
       pathSegments.removeLast();
@@ -56,6 +58,7 @@ class BarkNotifier {
       stderr.writeln('Bark notification failed: ${error.runtimeType}');
     } finally {
       client.close(force: true);
+      _busy = false;
     }
   }
 
