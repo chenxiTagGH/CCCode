@@ -3394,6 +3394,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get generalSettingsAttributionName => 'CCCode 署名名称';
 
   @override
+  String get generalSettingsAttributionNameInvalid =>
+      '请输入不含换行或控制字符的有效名称。';
+
+  @override
   String get generalSettingsAttributionEmail => 'CCCode 署名邮箱';
 
   @override

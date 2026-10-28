@@ -530,7 +530,10 @@ class _SettingsTextFieldState extends State<SettingsTextField> {
 
   void _submit(String text) {
     final typed = text.trim();
-    if (typed == widget.value) return;
+    if (typed == widget.value) {
+      if (_error != null) setState(() => _error = null);
+      return;
+    }
     final error = widget.validator?.call(typed);
     if (error != null && error.isNotEmpty) {
       setState(() => _error = error);

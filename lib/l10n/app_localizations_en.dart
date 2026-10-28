@@ -3532,6 +3532,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get generalSettingsAttributionName => 'CCCode attribution name';
 
   @override
+  String get generalSettingsAttributionNameInvalid =>
+      'Enter a valid name without line breaks or control characters.';
+
+  @override
   String get generalSettingsAttributionEmail => 'CCCode attribution email';
 
   @override

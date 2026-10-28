@@ -5967,6 +5967,7 @@ abstract class AppLocalizations {
   String get generalSettingsCommitAttributionDescription;
 
   String get generalSettingsAttributionName;
+  String get generalSettingsAttributionNameInvalid;
   String get generalSettingsAttributionEmail;
   String get generalSettingsAttributionEmailHint;
   String get generalSettingsAttributionEmailInvalid;

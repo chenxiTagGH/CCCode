@@ -112,3 +112,17 @@ Addressed the remaining validation and regression findings:
 - `git diff --check` — passed with no output.
 - `flutter test test/kernel/commit_attribution_test.dart test/theme/workbench_theme_test.dart test/settings/general_page_test.dart` — unavailable: `(eval):1: command not found: flutter`, exit code `127`.
 - `dart format lib/kernel/commit_attribution.dart lib/settings/pages/general_page.dart lib/settings/pages/settings_widgets.dart lib/theme/workbench_theme.dart test/kernel/commit_attribution_test.dart test/theme/workbench_theme_test.dart test/settings/general_page_test.dart` — unavailable: `(eval):1: command not found: dart`, exit code `127`.
+
+## Final re-review follow-up
+
+- Wired `CommitAttribution.isValidName` into the General settings name field with localized validation feedback; invalid control-character input is not persisted.
+- Fixed `SettingsTextField` to clear an existing validation error when the submitted text already equals the current valid value.
+- Added focused name-validator regression coverage and localized name-validation strings in both ARB files and generated localization outputs.
+
+## Final static checks
+
+- `jq empty lib/l10n/app_en.arb lib/l10n/app_zh.arb` — passed with no output.
+- `node --check packages/bao_editor/tool/generate_textmate_assets.mjs` — passed with no output.
+- `git diff --check` — passed with no output.
+- `grep -R "RegExp" -n lib/settings/pages/general_page.dart lib/kernel/commit_attribution.dart` — only the canonical validators in `CommitAttribution` remain.
+- `flutter test test/settings/general_page_test.dart` — unavailable: `(eval):1: command not found: flutter`, exit code `127`.

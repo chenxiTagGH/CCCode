@@ -105,6 +105,10 @@ class GeneralSettingsPage extends StatelessWidget {
   static bool validAttributionEmail(String value) =>
       value.trim().isEmpty || CommitAttribution.isValidEmail(value);
 
+  @visibleForTesting
+  static bool validAttributionName(String value) =>
+      value.trim().isEmpty || CommitAttribution.isValidName(value);
+
   /// The `window.*` settings' rows: each its label, description, and
   /// values (the first the default) as settings.json has them and named.
   List<Widget> _windowRows(BuildContext context) {
@@ -341,6 +345,9 @@ class GeneralSettingsPage extends StatelessWidget {
                           _ => CommitAttribution.defaultName,
                         },
                         semanticLabel: l10n.generalSettingsAttributionName,
+                        validator: (value) => validAttributionName(value)
+                            ? null
+                            : l10n.generalSettingsAttributionNameInvalid,
                         onSubmitted: (value) => _write(
                           CommitAttribution.nameSettingKey,
                           value.isEmpty ? null : value,
