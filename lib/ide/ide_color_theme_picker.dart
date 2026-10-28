@@ -34,6 +34,7 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 
 import '../l10n/l10n.dart';
+import '../theme/workbench_theme.dart' show ThemeSettingDefaults;
 
 import 'package:bao_editor/monaco/vs/platform/theme/common/theme.dart';
 
@@ -76,8 +77,8 @@ const ideSelectColorThemeKeybinding = IdeKeybinding(
 
 /// `ThemeSettingDefaults.COLOR_THEME_DARK` and `COLOR_THEME_LIGHT` (ours:
 /// workbench_theme.dart).
-const _defaultDark = 'CC Dark';
-const _defaultLight = 'CC Light';
+const _defaultDark = ThemeSettingDefaults.colorThemeDark;
+const _defaultLight = ThemeSettingDefaults.colorThemeLight;
 
 /// `defaultThemeDescriptions`.
 Map<String, String> _defaultThemeDescriptions(AppLocalizations l10n) => {

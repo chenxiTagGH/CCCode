@@ -126,3 +126,19 @@ Addressed the remaining validation and regression findings:
 - `git diff --check` — passed with no output.
 - `grep -R "RegExp" -n lib/settings/pages/general_page.dart lib/kernel/commit_attribution.dart` — only the canonical validators in `CommitAttribution` remain.
 - `flutter test test/settings/general_page_test.dart` — unavailable: `(eval):1: command not found: flutter`, exit code `127`.
+
+## Final coordinator review follow-up
+
+- Attribution names now reject all Unicode control/format characters through a Unicode-aware `\p{Cc}`/`\p{Cf}` validator; U+0085 regression coverage was added.
+- Updated current-theme wording from Bao to CC in the English and Chinese product site and changelog pages.
+- `ide_color_theme_picker.dart` now consumes `ThemeSettingDefaults.colorThemeDark` and `.colorThemeLight` instead of duplicating literals.
+- Replaced the fixed public `baoCodeCommit` constant with a dynamic getter delegating to the current normalized attribution API; transport and settings use dynamic APIs, so custom settings cannot be bypassed.
+
+## Final coordinator static checks
+
+- `jq empty lib/l10n/app_en.arb lib/l10n/app_zh.arb` — passed with no output.
+- `node --check packages/bao_editor/tool/generate_textmate_assets.mjs` — passed with no output.
+- `git diff --check` — passed with no output.
+- `grep -R "Bao Dark\\|Bao Light" -n site/index.html site/changelog.html site/zh/index.html site/zh/changelog.html` — passed with no output.
+- `grep -R "RegExp" -n lib/settings/pages/general_page.dart lib/kernel/commit_attribution.dart` — only canonical validators remain in `CommitAttribution`.
+- Flutter/Dart remain unavailable; no test or formatter pass is claimed.

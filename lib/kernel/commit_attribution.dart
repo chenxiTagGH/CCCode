@@ -29,10 +29,10 @@ enum CommitAttribution {
     r'[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?'
     r'(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)+$',
   );
-  static final _controlCharacters = RegExp(r'[\x00-\x1F\x7F]');
+  static final _controlCharacters = RegExp(r'[\p{Cc}\p{Cf}]', unicode: true);
 
-  static const baoCodeCommit =
-      'Co-Authored-By: CCCode <noreply@ccapitoken.cc>';
+  /// The current CCCode commit trailer, resolved from the active settings.
+  static String get baoCodeCommit => currentCommitTrailer();
   static const baoCodePullRequest =
       '🤖 Generated with [CCCode](https://github.com/chenxiTagGH/CCCode)';
 

@@ -31,6 +31,7 @@ void main() {
 
   test('rejects control characters in custom names', () {
     expect(CommitAttribution.isValidName('Ada\nLovelace'), isFalse);
+    expect(CommitAttribution.isValidName('Ada\u0085Lovelace'), isFalse);
     expect(
       CommitAttribution.commitTrailer({
         CommitAttribution.nameSettingKey: 'Ada\nLovelace',
