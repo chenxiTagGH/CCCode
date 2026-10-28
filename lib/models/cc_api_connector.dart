@@ -145,9 +145,10 @@ class CcApiConnector {
       }
       try {
         await store.writeState(null);
-      } catch (_) {
-        // Do not retain account metadata after sign-out if storage fails.
+      } catch (error) {
+        _error = StateError('signed-out metadata cleanup failed: $error');
       }
+      await _clearProviderAfterSignOut();
       _status = CcApiConnectionStatus.needsLogin;
       return false;
     } on Object catch (error) {
@@ -184,9 +185,10 @@ class CcApiConnector {
       }
       try {
         await store.writeState(null);
-      } catch (_) {
-        // Do not retain account metadata after sign-out if storage fails.
+      } catch (error) {
+        _error = StateError('signed-out metadata cleanup failed: $error');
       }
+      await _clearProviderAfterSignOut();
       _status = CcApiConnectionStatus.needsLogin;
       return false;
     } on Object catch (error) {
@@ -334,11 +336,7 @@ class CcApiConnector {
         ? null
         : modelRef(providerId, main);
     final nextState = {
-      'account': {
-        'name': profile.name,
-        'email': ?profile.email,
-        'balance': ?profile.balance,
-      },
+      'account': _accountState(profile),
       'provider-key': {
         'id': selected.id,
         'name': selected.name,
@@ -418,6 +416,18 @@ class CcApiConnector {
     }
   }
 
+  Map<String, Object?> _accountState(AccountProfile profile) {
+    final previous = store.readState()?['account'];
+    final previousBalance = previous is Map ? previous['balance'] : null;
+    final balance = profile.balance ??
+        (previousBalance is num ? previousBalance.toDouble() : null);
+    return {
+      'name': profile.name,
+      'email': ?profile.email,
+      'balance': ?balance,
+    };
+  }
+
   Future<AccountKey?> _selectKey(
     List<AccountKey> keys,
     String? currentKey, {
@@ -465,6 +475,14 @@ class CcApiConnector {
             models.where((model) => contains(model, 'claude')).firstOrNull ??
             models.first)
         .id;
+  }
+
+  Future<void> _clearProviderAfterSignOut() async {
+    try {
+      await providers.remove(providerId);
+    } catch (error) {
+      _error = StateError('signed-out provider cleanup failed: $error');
+    }
   }
 
   Future<void> signOut() async {

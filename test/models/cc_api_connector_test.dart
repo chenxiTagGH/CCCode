@@ -447,6 +447,20 @@ void main() {
     expect(evaluateFailure.window.closeRequested, isTrue);
   });
 
+  test('profile refresh without a numeric balance preserves the previous balance', () async {
+    final fixture = await makeFixture(
+      loginRefreshToken: 'refresh-1',
+      accountKeys: [fakeKey(id: '7', name: 'CCCode')],
+      revealedKey: 'sk-cccode',
+      models: const [RemoteModel('claude-sonnet-4-5')],
+    );
+    expect(await fixture.connector.connect(), isTrue);
+    expect(fixture.connector.accountBalance, 100);
+    fixture.omitBalance = true;
+    expect(await fixture.connector.refresh(), isTrue);
+    expect(fixture.connector.accountBalance, 100);
+  });
+
   test('signed-out refresh clears the previous account balance metadata', () async {
     final fixture = await makeFixture(
       loginRefreshToken: 'refresh-1',
@@ -461,6 +475,7 @@ void main() {
     expect(await fixture.connector.refresh(), isFalse);
     expect(fixture.connector.status, CcApiConnectionStatus.needsLogin);
     expect(fixture.connector.accountBalance, isNull);
+    expect(fixture.providers.provider('cc-api'), isNull);
     expect(fixture.store.state, isNull);
   });
 
@@ -554,14 +569,14 @@ Future<ConnectorFixture> makeFixture({
       }
       expect(headers['Authorization'], 'Bearer access-1');
       if (method == 'GET' && url.path == '/api/v1/auth/me') {
-        return const AccountResponse(200, {
+        return AccountResponse(200, {
           'code': 0,
           'message': 'success',
           'data': {
             'id': 1,
             'email': 'cccode@example.com',
             'username': 'CCCode',
-            'balance': 100,
+            if (!fixture.omitBalance) 'balance': 100,
           },
         });
       }
@@ -666,6 +681,7 @@ class ConnectorFixture {
   late CcApiConnector connector;
   bool listModelsInvoked = false;
   bool signedOut = false;
+  bool omitBalance = false;
   UpstreamException? listModelsError;
   CcApiKeyChooser? chooseKey;
   String? revealedKeyId;

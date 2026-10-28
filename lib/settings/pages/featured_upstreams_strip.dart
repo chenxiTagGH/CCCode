@@ -214,7 +214,10 @@ class _FeaturedUpstreamsStripState extends State<FeaturedUpstreamsStrip> {
         children: [
           // Fixed cards stay put; the rest scroll by them.
           if (widget.leading != null) ...[
-            widget.leading!,
+            Flexible(
+              fit: FlexFit.loose,
+              child: widget.leading!,
+            ),
             const SizedBox(width: 8),
           ],
           for (final upstream in theirs) ...[

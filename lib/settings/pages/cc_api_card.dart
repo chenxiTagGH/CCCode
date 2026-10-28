@@ -118,6 +118,7 @@ class _CcApiCardState extends State<CcApiCard> {
             ? constraints.maxWidth
             : math.max(0.0, screenWidth - 32);
         final width = math.min(_cardWidth, available);
+        final compact = width < 192;
         return SizedBox(
           height: FeaturedUpstreamsStrip.cardHeight,
           width: width,
@@ -145,7 +146,7 @@ class _CcApiCardState extends State<CcApiCard> {
                       dimension: 24,
                       child: Center(child: CcCodeLogo(size: 22)),
                     ),
-                    const SizedBox(width: 10),
+                    if (!compact) const SizedBox(width: 10),
                     Expanded(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -156,14 +157,18 @@ class _CcApiCardState extends State<CcApiCard> {
                         ],
                       ),
                     ),
-                    const SizedBox(width: 6),
+                    if (!compact) const SizedBox(width: 6),
                     if (_working || status == CcApiConnectionStatus.connecting)
                       SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: themeColors['textLink.foreground']))
-                    else ...[
-                      Text(action, style: SettingsText.description),
-                      const SizedBox(width: 4),
-                      Icon(Codicons.chevronRight, size: 14, color: SettingsColors.textSecondary),
-                    ],
+                    else if (!compact)
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(action, style: SettingsText.description),
+                          const SizedBox(width: 4),
+                          Icon(Codicons.chevronRight, size: 14, color: SettingsColors.textSecondary),
+                        ],
+                      ),
                   ],
                 ),
               ),
