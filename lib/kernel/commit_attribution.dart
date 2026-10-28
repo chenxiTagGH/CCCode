@@ -40,8 +40,10 @@ enum CommitAttribution {
   static String get baoCodeCommit => currentCommitTrailer();
   static String get baoCodePullRequest => currentPullRequestAttribution();
 
-  static String currentPullRequestAttribution() =>
-      '🤖 Generated with [CCCode](https://github.com/chenxiTagGH/CCCode)';
+  static String currentPullRequestAttribution() {
+    final value = currentValue();
+    return '🤖 Generated with [${value.name}](https://ccapitoken.cc)';
+  }
 
   static CommitAttribution parse(Object? setting) =>
       values.where((value) => value.name == setting).firstOrNull ?? fallback;

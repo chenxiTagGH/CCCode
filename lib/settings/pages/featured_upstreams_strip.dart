@@ -71,7 +71,7 @@ class FeaturedUpstreamsStrip extends StatefulWidget {
 
   /// The page for a site to be listed (site/upstreams.html).
   static Uri joinUrl(String languageCode) => Uri.https(
-    'baocode.dev',
+    'ccapitoken.cc',
     languageCode == 'zh' ? '/zh/upstreams' : '/upstreams',
   );
 

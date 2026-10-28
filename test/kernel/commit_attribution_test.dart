@@ -57,6 +57,10 @@ void main() {
       CommitAttribution.currentCommitTrailer(),
       'Co-Authored-By: Custom Name <custom@example.com>',
     );
+    expect(
+      CommitAttribution.currentPullRequestAttribution(),
+      '🤖 Generated with [Custom Name](https://ccapitoken.cc)',
+    );
   });
 
   test('migrates the legacy default email but preserves custom emails', () {

@@ -472,18 +472,16 @@ class WorkbenchThemeService extends ChangeNotifier
     if (!preview && theme.isLoaded) _keep(theme);
   }
 
-  void _keep(ColorThemeData theme) {
+  Future<void> _keep(ColorThemeData theme) async {
     _setting = theme.settingsId;
-    unawaited(
-      storage
-          ?.storeColorTheme(
-            setting: theme.settingsId,
-            data: theme.toStorage(),
-          )
-          .catchError((Object error) {
-            debugPrint('color theme not kept: $error');
-          }),
-    );
+    try {
+      await storage?.storeColorTheme(
+        setting: theme.settingsId,
+        data: theme.toStorage(),
+      );
+    } on Object catch (error) {
+      debugPrint('color theme not kept: $error');
+    }
   }
 }
 
