@@ -222,7 +222,7 @@ class AttentionService {
     unawaited(host.notify(id: _id(thread), title: title, body: body));
     final barkUrl = settings.barkUrl;
     if (barkUrl != null) {
-      final uri = Uri.tryParse(barkUrl);
+      final uri = BarkNotifier.parseBase(barkUrl);
       if (uri != null) {
         unawaited(
           barkNotifier.send(uri, title: title, body: body).catchError(

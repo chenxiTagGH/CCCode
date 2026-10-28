@@ -6,7 +6,8 @@ Implemented and committed configurable Bark notifications, including URI hardeni
 
 - Initial commit: `5bc16f264898c7323dd659641e758f925f22d8f0`
 - URI validation commit: `5a7c04bbb0b572c4adf153329214e3ec4362e0a6`
-- Malformed URI and diagnostics test commit: recorded after commit creation
+- Malformed URI and diagnostics test commit: `2fc2b6280078f61d8dff43349a7841c2172bf661`
+- Request/redirect/gating hardening commit: recorded after commit creation
 - Commit message: `feat: add configurable Bark notifications`
 - Working tree after commit: clean
 
@@ -14,10 +15,11 @@ Implemented and committed configurable Bark notifications, including URI hardeni
 
 - Added optional `notifications.barkUrl` parsing/normalization to `AttentionSettings`.
 - Added a Bark URL text field to notification settings. A non-empty value is persisted; clearing it removes the optional setting.
-- Added `BarkNotifier.send(Uri base, {required String title, required String body})`. It accepts only `http`/`https` bases with a host and no query or fragment, appends title/body through `Uri.replace(pathSegments: ...)` for correct segment encoding, bounds the full request to five seconds by default, and swallows failures. Failure logging contains only the error type or HTTP status, never the URL/key/title/body.
+- Added `BarkNotifier.send(Uri base, {required String title, required String body})`. It accepts only `http`/`https` bases with a host and no query or fragment, appends title/body through `Uri.replace(pathSegments: ...)` for correct segment encoding, disables redirects, bounds the full request and response-body drain to five seconds by default, and swallows failures. Failure logging contains only the error type or HTTP status, never the URL/key/title/body.
+- Added `BarkNotifier.parseBase(String)` so raw malformed configured URL strings can be tested and rejected before dispatch.
 - Integrated Bark dispatch alongside the existing `host.notify` for enabled attention events. Existing system notifications, sounds, and Agent execution flow remain in place. Service-level exception handling also isolates injected notifier failures.
 - Added English and Chinese localization entries and updated generated localization APIs.
-- Added tests for empty URL skip, encoded path segments, successful local HTTP response, unsupported schemes, query/fragment/missing-host rejection, malformed URI strings, network failure isolation, diagnostics redaction, URL settings normalization/persistence, and AttentionService integration.
+- Added tests for empty URL skip, encoded path segments, successful local HTTP response, unsupported schemes, query/fragment/missing-host rejection, raw malformed URI strings, redirects not being followed, network failure isolation, diagnostics redaction, URL settings normalization/persistence, and AttentionService gates for disabled notifications/events, archived threads, and unfocused/in-view behavior.
 
 ## Files
 
@@ -41,6 +43,7 @@ Implemented and committed configurable Bark notifications, including URI hardeni
 - `flutter test test/notifications/attention_service_test.dart test/notifications/bark_notifier_test.dart test/settings/notifications_page_test.dart`: could not start; exit code 127, `command not found: flutter` (initial implementation verification).
 - `flutter test test/notifications/bark_notifier_test.dart test/notifications/attention_service_test.dart test/settings/notifications_page_test.dart`: could not start; exit code 127, `command not found: flutter` (after URI validation fix).
 - `flutter test test/notifications/bark_notifier_test.dart`: could not start; exit code 127, `command not found: flutter` (after malformed URI and diagnostics-redaction tests).
+- `flutter test test/notifications/bark_notifier_test.dart test/notifications/attention_service_test.dart`: could not start; exit code 127, `command not found: flutter` (after response timeout, redirect, parser seam, and gating changes).
 - `git diff --check`: passed with exit code 0 (no output).
 - `git status --short` after commit: clean (no output).
 - `git show --stat --oneline --summary HEAD`: confirmed commit `5bc16f26` with 12 files changed, 212 insertions and 7 deletions.

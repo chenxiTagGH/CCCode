@@ -157,11 +157,16 @@ void main() {
 
   testWidgets('the agent in view notifies only while the window is not in '
       'front', (tester) async {
+    settings = const AttentionSettings(
+      when: NotifyWhen.unfocused,
+      barkUrl: 'https://example.test/key',
+    );
     start();
     final shown = workspace.selected;
     shown.session.send(const ComposerMessage(text: '加一个限流'));
     await _runUntilQuestion(tester, shown.session);
     expect(host.notifications, isEmpty);
+    expect(bark.sent, isEmpty);
     expect(host.sounds, isEmpty);
 
     // Away from the window: its turn ends unseen, and is told of.
@@ -171,6 +176,7 @@ void main() {
     shown.session.answer(_answer);
     await _runUntilDone(tester, shown.session);
     expect(host.notifications, hasLength(1));
+    expect(bark.sent, hasLength(1));
     expect(shown.status, ThreadStatus.unread);
 
     // Back at the window, what is in view is seen.
@@ -186,6 +192,7 @@ void main() {
       sound: NotificationSoundValue.none,
       when: NotifyWhen.always,
       tray: false,
+      barkUrl: 'https://example.test/key',
     );
     start();
     expect(host.trays, isEmpty);
@@ -194,11 +201,13 @@ void main() {
     await _runUntilQuestion(tester, shown.session);
     // Not for a question; no Dock bounce.
     expect(host.notifications, isEmpty);
+    expect(bark.sent, isEmpty);
     expect(host.attentionRequests, 0);
     shown.session.answer(_answer);
     await _runUntilDone(tester, shown.session);
     // Always: even the agent in view; without a sound.
     expect(host.notifications, hasLength(1));
+    expect(bark.sent, hasLength(1));
     expect(host.sounds, isEmpty);
 
     // Off: the count stays.
@@ -207,6 +216,7 @@ void main() {
     background.session.send(const ComposerMessage(text: '加一个限流'));
     await _runUntilQuestion(tester, background.session);
     expect(host.notifications, hasLength(1));
+    expect(bark.sent, hasLength(1));
     expect(host.badge, 2);
     // The tray, now on, shows it waiting.
     expect(host.trays.last!.waiting.single.title, 'Rate limit per API key');
@@ -251,6 +261,22 @@ void main() {
       NotificationSoundValue.isFile(NotificationSoundValue.gulpGulpGulpGulp),
       isFalse,
     );
+  });
+
+  testWidgets('archived threads do not send Bark', (tester) async {
+    settings = const AttentionSettings(
+      when: NotifyWhen.always,
+      barkUrl: 'https://example.test/key',
+    );
+    start();
+    final background = _thread(workspace, 'Rate limit per API key');
+    workspace.setArchived(background, true);
+    background.session.send(const ComposerMessage(text: '加一个限流'));
+    await _runUntilQuestion(tester, background.session);
+    expect(bark.sent, isEmpty);
+    expect(host.notifications, isEmpty);
+    background.session.stop();
+    await tester.pump(const Duration(seconds: 5));
   });
 
   testWidgets('sends Bark beside the host notification and isolates failure', (

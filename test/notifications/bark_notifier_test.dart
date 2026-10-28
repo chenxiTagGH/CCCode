@@ -56,18 +56,39 @@ void main() {
     },
   );
 
-  test('rejects malformed base URI strings', () async {
+  test('rejects malformed base URI strings', () {
     for (final value in [
       'http://[invalid/key',
       'https://%zz/key',
       '://missing-scheme/key',
     ]) {
-      final base = Uri.tryParse(value);
-      if (base != null) {
-        await BarkNotifier().send(base, title: 'title', body: 'body');
-      }
+      expect(BarkNotifier.parseBase(value), isNull);
     }
-    expect(paths, isEmpty);
+  });
+
+  test('does not follow redirects', () async {
+    final redirected = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+    addTearDown(() => redirected.close(force: true));
+    redirected.listen((request) {
+      fail('Bark request followed redirect to another host');
+    });
+    final redirectPort = redirected.port;
+    server!.close(force: true);
+    server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+    server!.listen((request) {
+      request.response
+        ..statusCode = HttpStatus.found
+        ..headers.set(
+          HttpHeaders.locationHeader,
+          'http://127.0.0.1:$redirectPort/capture',
+        )
+        ..close();
+    });
+    await BarkNotifier().send(
+      Uri.parse('http://127.0.0.1:${server!.port}/key'),
+      title: 'title',
+      body: 'body',
+    );
   });
 
   test('swallows network failures without logging URL or message content', () async {

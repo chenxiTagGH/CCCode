@@ -6,22 +6,31 @@ class BarkNotifier {
 
   final Duration timeout;
 
+  /// Parses and validates a configured Bark base URL without making a request.
+  static Uri? parseBase(String value) {
+    final base = Uri.tryParse(value.trim());
+    if (base == null ||
+        (base.scheme != 'http' && base.scheme != 'https') ||
+        base.host.isEmpty ||
+        base.hasQuery ||
+        base.hasFragment) {
+      return null;
+    }
+    return base;
+  }
+
   Future<void> send(
     Uri base, {
     required String title,
     required String body,
   }) async {
-    if ((base.scheme != 'http' && base.scheme != 'https') ||
-        base.host.isEmpty ||
-        base.hasQuery ||
-        base.hasFragment) {
-      return;
-    }
-    final pathSegments = [...base.pathSegments];
+    final validated = parseBase(base.toString());
+    if (validated == null) return;
+    final pathSegments = [...validated.pathSegments];
     while (pathSegments.isNotEmpty && pathSegments.last.isEmpty) {
       pathSegments.removeLast();
     }
-    final uri = base.replace(
+    final uri = validated.replace(
       pathSegments: [...pathSegments, title, body],
       query: null,
       fragment: null,
@@ -39,8 +48,9 @@ class BarkNotifier {
 
   Future<void> _request(HttpClient client, Uri uri) async {
     final request = await client.getUrl(uri);
+    request.followRedirects = false;
     final response = await request.close();
-    await response.drain<void>();
+    await response.drain<void>().timeout(timeout);
     if (response.statusCode < 200 || response.statusCode >= 300) {
       stderr.writeln('Bark notification failed: HTTP ${response.statusCode}');
     }
