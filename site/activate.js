@@ -4,7 +4,7 @@
 //
 // and waits (`&again=<id>` too when it asks once more: its channel not one
 // with accounts, the visitor might have come by another since, which this
-// browser now keeps). This page sends stats.baocode.dev where the visitor came to
+// browser now keeps). This page sends the internal stats.baocode.dev endpoint where the visitor came to
 // the site from, as site.js kept it in this browser, and CCCode, asking
 // there, goes on. Should CCCode not hear of it (its network, the server
 // down), the page hands it over itself: cccode://activate?…, opened or

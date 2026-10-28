@@ -1911,7 +1911,8 @@ class Workspace extends ChangeNotifier implements ColorThemeStorage {
     _colorThemeData = data;
     _colorThemeStored = true;
     // Not before what was kept is read: that would be written over.
-    unawaited(_restoring.then((_) => _save()));
+    await _restoring;
+    await _save();
   }
 
   /// What was kept, read once [load] has read it.
@@ -2062,8 +2063,8 @@ class Workspace extends ChangeNotifier implements ColorThemeStorage {
     }
   }
 
-  void _save() => unawaited(
-    _store?.write({
+  Future<void> _save() async {
+    await _store?.write({
       'kernel': _preferredKernel.id,
       'editor': _preferredEditor.name,
       'layout': _layout.name,
@@ -2125,8 +2126,8 @@ class Workspace extends ChangeNotifier implements ColorThemeStorage {
       'sidePanel': ?_sidePanelView,
       'colorTheme': ?_colorTheme,
       'colorThemeData': ?_colorThemeData,
-    }),
-  );
+    });
+  }
 
   /// The panes to save: as kept, until [load] has shown them again.
   Object? _chatViewToSave() {

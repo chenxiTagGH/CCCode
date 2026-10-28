@@ -42,12 +42,10 @@ enum CommitAttribution {
 
   static String currentPullRequestAttribution() {
     final value = currentValue();
-    final name = value.name
-        .replaceAll(r'\', r'\\')
-        .replaceAll('[', r'\[')
-        .replaceAll(']', r'\]')
-        .replaceAll('(', r'\(')
-        .replaceAll(')', r'\)');
+    final name = value.name.replaceAllMapped(
+      RegExp(r'([\\`*_{}\[\]()#+.!<>|~-])'),
+      (match) => '\\${match.group(1)}',
+    );
     return '🤖 Generated with [$name](https://ccapitoken.cc)';
   }
 

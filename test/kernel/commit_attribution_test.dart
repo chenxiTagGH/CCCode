@@ -62,10 +62,10 @@ void main() {
       '🤖 Generated with [Custom Name](https://ccapitoken.cc)',
     );
     CommitAttribution.currentValue =
-        () => (name: 'Name [unsafe](x)', email: 'custom@example.com');
+        () => (name: '*Build Bot* `v1`_#1!+', email: 'custom@example.com');
     expect(
       CommitAttribution.currentPullRequestAttribution(),
-      r'🤖 Generated with [Name \[unsafe\]\(x\)](https://ccapitoken.cc)',
+      r'🤖 Generated with [\*Build Bot\* \`v1\`\_\#1\!\+](https://ccapitoken.cc)',
     );
   });
 
