@@ -2,10 +2,11 @@
 
 ## Status
 
-Implemented and committed configurable Bark notifications, including a follow-up hardening change.
+Implemented and committed configurable Bark notifications, including URI hardening and focused test coverage follow-ups.
 
 - Initial commit: `5bc16f264898c7323dd659641e758f925f22d8f0`
-- Follow-up validation commit: `5a7c04bbb0b572c4adf153329214e3ec4362e0a6`
+- URI validation commit: `5a7c04bbb0b572c4adf153329214e3ec4362e0a6`
+- Malformed URI and diagnostics test commit: recorded after commit creation
 - Commit message: `feat: add configurable Bark notifications`
 - Working tree after commit: clean
 
@@ -16,7 +17,7 @@ Implemented and committed configurable Bark notifications, including a follow-up
 - Added `BarkNotifier.send(Uri base, {required String title, required String body})`. It accepts only `http`/`https` bases with a host and no query or fragment, appends title/body through `Uri.replace(pathSegments: ...)` for correct segment encoding, bounds the full request to five seconds by default, and swallows failures. Failure logging contains only the error type or HTTP status, never the URL/key/title/body.
 - Integrated Bark dispatch alongside the existing `host.notify` for enabled attention events. Existing system notifications, sounds, and Agent execution flow remain in place. Service-level exception handling also isolates injected notifier failures.
 - Added English and Chinese localization entries and updated generated localization APIs.
-- Added tests for empty URL skip, encoded path segments, successful local HTTP response, unsupported schemes, query/fragment/missing-host rejection, network failure isolation, URL settings normalization/persistence, and AttentionService integration.
+- Added tests for empty URL skip, encoded path segments, successful local HTTP response, unsupported schemes, query/fragment/missing-host rejection, malformed URI strings, network failure isolation, diagnostics redaction, URL settings normalization/persistence, and AttentionService integration.
 
 ## Files
 
@@ -39,6 +40,7 @@ Implemented and committed configurable Bark notifications, including a follow-up
 - `flutter test test/notifications/bark_notifier_test.dart test/notifications/attention_service_test.dart`: could not start; exit code 127, `command not found: flutter`.
 - `flutter test test/notifications/attention_service_test.dart test/notifications/bark_notifier_test.dart test/settings/notifications_page_test.dart`: could not start; exit code 127, `command not found: flutter` (initial implementation verification).
 - `flutter test test/notifications/bark_notifier_test.dart test/notifications/attention_service_test.dart test/settings/notifications_page_test.dart`: could not start; exit code 127, `command not found: flutter` (after URI validation fix).
+- `flutter test test/notifications/bark_notifier_test.dart`: could not start; exit code 127, `command not found: flutter` (after malformed URI and diagnostics-redaction tests).
 - `git diff --check`: passed with exit code 0 (no output).
 - `git status --short` after commit: clean (no output).
 - `git show --stat --oneline --summary HEAD`: confirmed commit `5bc16f26` with 12 files changed, 212 insertions and 7 deletions.

@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -54,14 +56,41 @@ void main() {
     },
   );
 
-  test('swallows network failures', () async {
-    await expectLater(
-      BarkNotifier(timeout: const Duration(milliseconds: 20)).send(
-        Uri.parse('http://127.0.0.1:1/key'),
-        title: 'title',
-        body: 'body',
+  test('rejects malformed base URI strings', () async {
+    for (final value in [
+      'http://[invalid/key',
+      'https://%zz/key',
+      '://missing-scheme/key',
+    ]) {
+      final base = Uri.tryParse(value);
+      if (base != null) {
+        await BarkNotifier().send(base, title: 'title', body: 'body');
+      }
+    }
+    expect(paths, isEmpty);
+  });
+
+  test('swallows network failures without logging URL or message content', () async {
+    final diagnostics = <int>[];
+    final output = StreamController<List<int>>();
+    output.stream.listen(diagnostics.addAll);
+    final sink = IOSink(output);
+    await IOOverrides.runZoned(
+      () => BarkNotifier(timeout: const Duration(milliseconds: 20)).send(
+        Uri.parse('http://127.0.0.1:1/BARK-SECRET-KEY'),
+        title: 'PRIVATE-TITLE',
+        body: 'PRIVATE-BODY',
       ),
-      completes,
+      stderr: () => sink,
     );
+    await sink.flush();
+    await sink.close();
+    await output.close();
+    final message = utf8.decode(diagnostics);
+    expect(message, contains('Bark notification failed'));
+    expect(message, isNot(contains('127.0.0.1')));
+    expect(message, isNot(contains('BARK-SECRET-KEY')));
+    expect(message, isNot(contains('PRIVATE-TITLE')));
+    expect(message, isNot(contains('PRIVATE-BODY')));
   });
 }
