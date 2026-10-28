@@ -63,7 +63,12 @@ const attribution = (() => {
   const referrer = () => {
     try {
       const host = new URL(document.referrer).hostname.toLowerCase().replace(/^www\./, '');
-      if (host === 'baocode.dev' || host.endsWith('.baocode.dev')) return null;
+      if (
+        host === 'ccapitoken.cc' ||
+        host.endsWith('.ccapitoken.cc') ||
+        host === 'baocode.dev' ||
+        host.endsWith('.baocode.dev')
+      ) return null;
       return VALUE.test(host) ? host : null;
     } catch {
       return null;

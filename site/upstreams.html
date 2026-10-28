@@ -67,9 +67,9 @@
    - url: the base URL users call the API at, as the site shows it to them, http or https; without /v1 for anthropic.
    - key: the user's whole key, not the masked one shown; if the list only has the masked one, fetch the whole key, as that user, when the button is clicked.
    - Encode each value with encodeURIComponent.
-   - The parameters go after the #, never after a ?: browsers never send what follows a # to any server, so the key goes through neither baocode.dev nor any other server.
+   - The parameters go after the #, never after a ?: browsers never send what follows a # to any server, so the key goes through neither ccapitoken.cc nor any other server.
 
-3. Label the button "Import to CCCode" and style it as the page's other buttons. Put CCCode's mark before the label: an &lt;img&gt; of the image online at baocode.dev, never a copy downloaded into the project, nor an SVG drawn or inlined.
+3. Label the button "Import to CCCode" and style it as the page's other buttons. Put CCCode's mark before the label: an &lt;img&gt; of the image online at ccapitoken.cc, never a copy downloaded into the project, nor an SVG drawn or inlined.
    - Address: https://ccapitoken.cc/brand/cccode-mark-&lt;color&gt;-&lt;height&gt;.webp
    - Color: black on light buttons, white on dark or colored (primary) buttons; where the site has light and dark themes, switch with them.
    - Size: the mark is 4:3. Pick its size by the label's, src the 1x image, and srcset the 2x and 3x for sharp screens:
@@ -80,9 +80,9 @@
    - About 6px between the mark and the label, centered vertically. Give width and height, so nothing moves as it loads; leave alt empty, the label says it.
    - Where a square app icon fits (on an import guide, a card): https://ccapitoken.cc/brand/cccode-icon-&lt;size&gt;.png, sizes 16, 24, 32, 48, 64, 96, 128, 256, 512. src the size shown, srcset the one twice that, for example: &lt;img src="https://ccapitoken.cc/brand/cccode-icon-32.png" srcset="https://ccapitoken.cc/brand/cccode-icon-64.png 2x" width="32" height="32" alt=""&gt;
    - Where the site sets a CSP, add https://ccapitoken.cc to its img-src.
-   Besides these images, don't load any script or style from baocode.dev, and don't call baocode.dev from the backend.
+   Besides these images, don't load any script or style from ccapitoken.cc, and don't call ccapitoken.cc from the backend.
 
-4. When done, tell me which files changed and how to check it: the button should open baocode.dev/import, showing the site's name, the protocol, the URL and the key masked; with CCCode installed, it then asks to import.
+4. When done, tell me which files changed and how to check it: the button should open ccapitoken.cc/import, showing the site's name, the protocol, the URL and the key masked; with CCCode installed, it then asks to import.
 
 5. Once it checks out, let CCCode know, so it lists my site in its Settings → Models (free).
    Let CCCode know with an issue in its GitHub repository: https://github.com/chenxiTagGH/CCCode/issues/new?template=upstream-listing.yml
@@ -104,7 +104,7 @@
   <p>Or pick a button’s style: click the one you like, and the prompt copied has that button in it.</p>
   <div class="styles" data-page="https://ccapitoken.cc/upstreams" data-href="the import link of step 2" data-template="The button&#x27;s style (this before step 3&#x27;s &quot;as the page&#x27;s other buttons&quot;): make it as the &quot;{name}&quot; button at {url}, whose HTML is:
 {html}
-Keep its colors, border, corners, padding, font size and icon size, written as the site writes its own (a component, CSS classes: no need for inline styles); the import link of step 2 for its href, the images still loaded from baocode.dev. Where the site has a dark theme, colors to match there, the mark black or white by the ground. On hover, a shade darker or lighter, as the site's other buttons do. {note}">
+Keep its colors, border, corners, padding, font size and icon size, written as the site writes its own (a component, CSS classes: no need for inline styles); the import link of step 2 for its href, the images still loaded from ccapitoken.cc. Where the site has a dark theme, colors to match there, the mark black or white by the ground. On hover, a shade darker or lighter, as the site's other buttons do. {note}">
     <button type="button" class="pick" id="style-outline" data-style="Outline" data-note="" data-hint="Outline · Use this style" data-done="Prompt copied" aria-label="Outline: Use this style"><span class="sample" style="display:inline-flex;align-items:center;gap:6px;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;font-weight:500;line-height:1;text-decoration:none;white-space:nowrap;cursor:pointer;height:32px;padding:0 12px;font-size:14px;border-radius:6px;border:1px solid #D9D9D9;background:#FFFFFF;color:#1B1A17;"><img src="/brand/cccode-mark-black-12.webp" srcset="/brand/cccode-mark-black-24.webp 2x, /brand/cccode-mark-black-36.webp 3x" width="16" height="12" alt="">Import to CCCode</span></button>
     <button type="button" class="pick" id="style-dark" data-style="Dark" data-note="" data-hint="Dark · Use this style" data-done="Prompt copied" aria-label="Dark: Use this style"><span class="sample" style="display:inline-flex;align-items:center;gap:6px;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;font-weight:500;line-height:1;text-decoration:none;white-space:nowrap;cursor:pointer;height:32px;padding:0 12px;font-size:14px;border-radius:6px;border:1px solid #1B1A17;background:#1B1A17;color:#FFFFFF;"><img src="/brand/cccode-mark-white-12.webp" srcset="/brand/cccode-mark-white-24.webp 2x, /brand/cccode-mark-white-36.webp 3x" width="16" height="12" alt="">Import to CCCode</span></button>
     <button type="button" class="pick" id="style-gold" data-style="CCCode gold" data-note="" data-hint="CCCode gold · Use this style" data-done="Prompt copied" aria-label="CCCode gold: Use this style"><span class="sample" style="display:inline-flex;align-items:center;gap:6px;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;font-weight:500;line-height:1;text-decoration:none;white-space:nowrap;cursor:pointer;height:32px;padding:0 12px;font-size:14px;border-radius:6px;border:1px solid #D9AC6C;background:#E5BA7D;color:#23221E;"><img src="/brand/cccode-mark-black-12.webp" srcset="/brand/cccode-mark-black-24.webp 2x, /brand/cccode-mark-black-36.webp 3x" width="16" height="12" alt="">Import to CCCode</span></button>
@@ -161,8 +161,8 @@ Let CCCode know with an issue in its GitHub repository: https://github.com/chenx
       <tr><td><code>v</code></td><td>optional</td><td><code>1</code>.</td></tr>
     </tbody>
   </table></div>
-  <p>Encode each value with <code>encodeURIComponent</code>. Put them after the <code>#</code>, never after a <code>?</code>: browsers never send what follows a <code>#</code> to a server, so the key goes from your page to the user’s CCCode and nowhere else. baocode.dev’s page reads it, takes it off the address bar and opens CCCode, which shows the user what it is about to add and asks first.</p>
-  <p>Please don’t load any script from baocode.dev on your key page; a plain link is all it takes. The icons below are fine to load.</p>
+  <p>Encode each value with <code>encodeURIComponent</code>. Put them after the <code>#</code>, never after a <code>?</code>: browsers never send what follows a <code>#</code> to a server, so the key goes from your page to the user’s CCCode and nowhere else. ccapitoken.cc’s page reads it, takes it off the address bar and opens CCCode, which shows the user what it is about to add and asks first.</p>
+  <p>Please don’t load any script from ccapitoken.cc on your key page; a plain link is all it takes. The icons below are fine to load.</p>
 
   <h2>Button icons</h2>
   <p>Your button may carry CCCode’s mark. Please load it from these addresses, rather than download it into your project: when the icon changes, your button changes with it. The mark is lossless WebP, in black and in white; the app icon is PNG.</p>

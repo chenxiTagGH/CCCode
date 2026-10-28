@@ -22,6 +22,7 @@ Task 1 theme renaming and customizable commit attribution are implemented. Legac
 - `a229d5048f555dd7f95da34a497d94c7ab4bb0d0` — `fix: finalize Task 1 persistence and attribution`
 - `f6e06fe12887fc25c97e79d44594df2e7d515bbc` — `fix: finalize Task 1 public links and startup migration`
 - `647a9e20e6d721df8f9009b435b532137c41a406` — `fix: complete Task 1 public URL migration`
+- Final follow-up commit: pending at report generation time.
 - `67fe869df428e34708fdcecb7987159f15ee5a3f` — `fix: finalize Task 1 migration durability`
 
 All implementation commits include:
@@ -59,7 +60,7 @@ Passed:
 - `jq empty packages/bao_editor/tool/textmate_themes/theme-bao/themes/bao-dark-color-theme.json packages/bao_editor/tool/textmate_themes/theme-bao/themes/bao-light-color-theme.json packages/bao_editor/assets/textmate/manifest.json`
 - `node --check packages/bao_editor/tool/generate_textmate_assets.mjs`
 - `git diff --check`
-- Static scan classified remaining `Bao` strings as intentional migration compatibility or planning/spec history; active product/docs/package references were updated. Visible About, channel setup, featured feeds, update download pages, browser extension links, site hreflang links, and upstream import/asset links now use `ccapitoken.cc`; internal `dl.baocode.dev` release/CDN targets remain unchanged.
+- Static scan classified remaining `Bao` strings as intentional migration compatibility or planning/spec history; active product/docs/package references were updated. Visible About, channel setup, featured feeds, update download pages, browser/privacy pages, site hreflang links, upstream import/asset links, import/activation pages, and channel scripts now use `ccapitoken.cc`; internal `dl.baocode.dev` extension/release/CDN targets remain unchanged, with `baocode.dev` retained only as an attribution-referrer compatibility exclusion.
 
 Unavailable:
 

@@ -67,9 +67,9 @@
    - url：用户调用 API 的 Base URL，和站点上展示给用户的一致，http 或 https；anthropic 协议不带 /v1。
    - key：用户这个令牌的完整 key，不是打码后的显示值；列表里只有打码值的话，在点击时用该用户的登录状态再取完整值。
    - 每个值都用 encodeURIComponent 编码。
-   - 参数必须放在 # 后面，绝不能放在 ? 后面：浏览器不会把 # 后面的内容发给任何服务器，key 不经过 baocode.dev 或任何服务器。
+   - 参数必须放在 # 后面，绝不能放在 ? 后面：浏览器不会把 # 后面的内容发给任何服务器，key 不经过 ccapitoken.cc 或任何服务器。
 
-3. 按钮文字用「导入到 CCCode」，样式和页面上现有的按钮保持一致。文字前放 CCCode 标志：用 &lt;img&gt; 引用 baocode.dev 上的在线图片，不要把图片下载进项目，也不要自己画或内联 SVG。
+3. 按钮文字用「导入到 CCCode」，样式和页面上现有的按钮保持一致。文字前放 CCCode 标志：用 &lt;img&gt; 引用 ccapitoken.cc 上的在线图片，不要把图片下载进项目，也不要自己画或内联 SVG。
    - 地址：https://ccapitoken.cc/brand/cccode-mark-&lt;颜色&gt;-&lt;高度&gt;.webp
    - 颜色：black 用在浅色按钮上，white 用在深色或彩色（主色）按钮上；站点有深浅两种主题的，跟着主题切换。
    - 尺寸：标志宽高比 4:3。按按钮文字大小选显示尺寸，src 用 1x 那张，srcset 给高分屏加 2x、3x：
@@ -80,9 +80,9 @@
    - 标志和文字间隔 6px 左右，垂直居中。写上 width 和 height，加载前不会跳动；alt 留空，按钮文字已经说明了。
    - 地方够、想放方形应用图标时（比如导入说明、卡片里）：https://ccapitoken.cc/brand/cccode-icon-&lt;尺寸&gt;.png，尺寸有 16、24、32、48、64、96、128、256、512。src 用显示尺寸那张，srcset 加 2 倍那张，例：&lt;img src="https://ccapitoken.cc/brand/cccode-icon-32.png" srcset="https://ccapitoken.cc/brand/cccode-icon-64.png 2x" width="32" height="32" alt=""&gt;
    - 站点设了 CSP 的，把 https://ccapitoken.cc 加进 img-src。
-   除了这些图片，不要引用 baocode.dev 的脚本或样式，后端也不要请求 baocode.dev。
+   除了这些图片，不要引用 ccapitoken.cc 的脚本或样式，后端也不要请求 ccapitoken.cc。
 
-4. 做完后告诉我改了哪些文件，以及怎么验证：点按钮应打开 baocode.dev/import，页面上显示站点名、协议、地址和打码后的 key；装了 CCCode 的话，会弹出导入确认。
+4. 做完后告诉我改了哪些文件，以及怎么验证：点按钮应打开 ccapitoken.cc/import，页面上显示站点名、协议、地址和打码后的 key；装了 CCCode 的话，会弹出导入确认。
 
 5. 验证通过后，帮我通知 CCCode 收录我的站点，在 CCCode 的 设置 → 模型 里展示（免费）。
    在 CCCode 的 GitHub 仓库开一个 issue 通知收录：https://github.com/chenxiTagGH/CCCode/issues/new?template=upstream-listing.yml
@@ -104,7 +104,7 @@
   <p>也可以挑一个按钮样式：点一下想要的按钮，复制的提示词就会带上它的样子。</p>
   <div class="styles" data-page="https://ccapitoken.cc/zh/upstreams" data-href="第 2 条的导入链接" data-template="按钮样式（这条优先于第 3 条里“和页面上现有的按钮保持一致”）：照 {url} 上「{name}」这个按钮做，它的 HTML 是：
 {html}
-照它的颜色、边框、圆角、内边距、字号和图标尺寸做，写成站点自己的写法（组件、CSS 类都行，不必用内联样式）；href 换成第 2 条的导入链接，图片仍然引用 baocode.dev 上的地址。站点有深色主题的，深色下换成相配的颜色，图标随底色换 black / white。悬停时稍微加深或变亮，和站点其他按钮的悬停效果一致。{note}">
+照它的颜色、边框、圆角、内边距、字号和图标尺寸做，写成站点自己的写法（组件、CSS 类都行，不必用内联样式）；href 换成第 2 条的导入链接，图片仍然引用 ccapitoken.cc 上的地址。站点有深色主题的，深色下换成相配的颜色，图标随底色换 black / white。悬停时稍微加深或变亮，和站点其他按钮的悬停效果一致。{note}">
     <button type="button" class="pick" id="style-outline" data-style="描边" data-note="" data-hint="描边 · 使用这个样式" data-done="已复制提示词" aria-label="描边：使用这个样式"><span class="sample" style="display:inline-flex;align-items:center;gap:6px;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;font-weight:500;line-height:1;text-decoration:none;white-space:nowrap;cursor:pointer;height:32px;padding:0 12px;font-size:14px;border-radius:6px;border:1px solid #D9D9D9;background:#FFFFFF;color:#1B1A17;"><img src="/brand/cccode-mark-black-12.webp" srcset="/brand/cccode-mark-black-24.webp 2x, /brand/cccode-mark-black-36.webp 3x" width="16" height="12" alt="">导入到 CCCode</span></button>
     <button type="button" class="pick" id="style-dark" data-style="深色" data-note="" data-hint="深色 · 使用这个样式" data-done="已复制提示词" aria-label="深色：使用这个样式"><span class="sample" style="display:inline-flex;align-items:center;gap:6px;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;font-weight:500;line-height:1;text-decoration:none;white-space:nowrap;cursor:pointer;height:32px;padding:0 12px;font-size:14px;border-radius:6px;border:1px solid #1B1A17;background:#1B1A17;color:#FFFFFF;"><img src="/brand/cccode-mark-white-12.webp" srcset="/brand/cccode-mark-white-24.webp 2x, /brand/cccode-mark-white-36.webp 3x" width="16" height="12" alt="">导入到 CCCode</span></button>
     <button type="button" class="pick" id="style-gold" data-style="CCCode 金" data-note="" data-hint="CCCode 金 · 使用这个样式" data-done="已复制提示词" aria-label="CCCode 金：使用这个样式"><span class="sample" style="display:inline-flex;align-items:center;gap:6px;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;font-weight:500;line-height:1;text-decoration:none;white-space:nowrap;cursor:pointer;height:32px;padding:0 12px;font-size:14px;border-radius:6px;border:1px solid #D9AC6C;background:#E5BA7D;color:#23221E;"><img src="/brand/cccode-mark-black-12.webp" srcset="/brand/cccode-mark-black-24.webp 2x, /brand/cccode-mark-black-36.webp 3x" width="16" height="12" alt="">导入到 CCCode</span></button>
@@ -161,8 +161,8 @@
       <tr><td><code>v</code></td><td>可选</td><td><code>1</code>。</td></tr>
     </tbody>
   </table></div>
-  <p>每个参数值都要用 <code>encodeURIComponent</code> 编码。参数必须放在 <code>#</code> 后面，不能放在 <code>?</code> 后面：浏览器不会把 <code>#</code> 后的内容发给任何服务器，key 只会从您的页面直接到用户的 CCCode。baocode.dev 的页面读取后会把它从地址栏中清除并打开 CCCode，CCCode 会先向用户展示要添加的内容，经确认后才添加。</p>
-  <p>请不要在令牌页引用 baocode.dev 的任何脚本，一个普通链接就够了；下面的图标可以引用。</p>
+  <p>每个参数值都要用 <code>encodeURIComponent</code> 编码。参数必须放在 <code>#</code> 后面，不能放在 <code>?</code> 后面：浏览器不会把 <code>#</code> 后的内容发给任何服务器，key 只会从您的页面直接到用户的 CCCode。ccapitoken.cc 的页面读取后会把它从地址栏中清除并打开 CCCode，CCCode 会先向用户展示要添加的内容，经确认后才添加。</p>
+  <p>请不要在令牌页引用 ccapitoken.cc 的任何脚本，一个普通链接就够了；下面的图标可以引用。</p>
 
   <h2>按钮图标</h2>
   <p>按钮上可以放 CCCode 的标志。请直接引用下面的在线图片，不要下载进您的项目：图标更新时，您的按钮会跟着更新。标志是无损 WebP，黑白两色；应用图标是 PNG。</p>

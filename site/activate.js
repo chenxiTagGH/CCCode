@@ -1,6 +1,6 @@
 // The channel build's first start: CCCode opens
 //
-//   https://baocode.dev/activate#i=<install id>
+//   https://ccapitoken.cc/activate#i=<install id>
 //
 // and waits (`&again=<id>` too when it asks once more: its channel not one
 // with accounts, the visitor might have come by another since, which this
@@ -64,7 +64,7 @@
       send(kept);
       return;
     }
-    root.querySelector('[data-page-link]').textContent = `https://baocode.dev/activate${location.hash}`;
+    root.querySelector('[data-page-link]').textContent = `https://ccapitoken.cc/activate${location.hash}`;
     show('missing');
     root.querySelector('[data-continue]').addEventListener('click', () => send(null));
   });
