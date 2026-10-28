@@ -382,15 +382,6 @@ class GeneralSettingsPage extends StatelessWidget {
                           },
                         ),
                       ),
-                      if (settings?[CommitAttribution.emailSettingKey]
-                              case final String email
-                              when !validAttributionEmail(email))
-                        Text(
-                          l10n.generalSettingsAttributionEmailInvalid,
-                          style: SettingsText.description.copyWith(
-                            color: themeColors['errorForeground'],
-                          ),
-                        ),
                     ],
                   ],
                   trailing: SettingsDropdown(

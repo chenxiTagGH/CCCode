@@ -337,7 +337,7 @@ class WorkbenchThemeService extends ChangeNotifier
     if (_current.settingsId != _setting || !_current.isLoaded || first) {
       if (_extensionThemes[_setting] case final theme?) {
         await theme.ensureLoaded(_read);
-        _apply(theme, preview: false);
+        await _apply(theme, preview: false);
       } else if ((await _loadManifest()).themeById(_setting) == null) {
         await _setColorTheme(_defaultSetting, preview: false);
       }
@@ -394,7 +394,9 @@ class WorkbenchThemeService extends ChangeNotifier
     if (theme == null) {
       if (_extensionThemes[_setting] case final extension?) {
         await extension.ensureLoaded(_read);
-        if (!identical(extension, _current)) _apply(extension, preview: false);
+        if (!identical(extension, _current)) {
+          await _apply(extension, preview: false);
+        }
         return;
       }
       // An extension's, maybe: the restored colors show until the
@@ -407,7 +409,9 @@ class WorkbenchThemeService extends ChangeNotifier
     }
     final data = _themeData(theme);
     await data.ensureLoaded(_read);
-    if (!identical(data, _current)) _apply(data, preview: false);
+    if (!identical(data, _current)) {
+      await _apply(data, preview: false);
+    }
   });
 
   /// The current theme, loaded; the setting's when none is.

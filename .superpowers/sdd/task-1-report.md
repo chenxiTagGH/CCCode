@@ -27,6 +27,7 @@ Task 1 theme renaming and customizable commit attribution are implemented. Legac
 - `ccc0b3670212d59fad11d6e061b25846397aabf0` — `fix: finalize Task 1 attribution and site safety`
 - `19bd9d96fda4b70616b62ac74b9c7376d1d0a340` — `fix: finalize Task 1 persistence and public links`
 - `e97ef8946e4dbca903549b60008bb7d47324432f` — `fix: complete Task 1 theme and documentation cleanup`
+- Final follow-up commit: pending at report generation time.
 - `67fe869df428e34708fdcecb7987159f15ee5a3f` — `fix: finalize Task 1 migration durability`
 
 All implementation commits include:
@@ -40,7 +41,7 @@ All implementation commits include:
 - Persisted custom fields are `chat.commitAttributionName` and `chat.commitAttributionEmail`.
 - Shared canonical email validation rejects malformed addresses, including leading/trailing/consecutive local-part dots; Unicode-aware name validation rejects Cc/Cf/Zl/Zp characters, including U+0085, U+2028, and U+2029.
 - Empty custom email values clear the email setting and restore `noreply@ccapitoken.cc`; attribution names must remain non-empty and unsafe values are rejected. Legacy `noreply@baocode.dev` normalizes after trimming and is persisted to settings on startup, while other valid user-entered emails are preserved and shown.
-- `ColorThemeStorage.storeColorTheme` is consistently asynchronous across the interface, `Workspace`, `ColorThemeSettings`, and callers; `setColorTheme` awaits `_keep` and the actual `PreferenceStore.write`, startup waits for theme-ID migration persistence, while ordinary runtime saves remain nonblocking.
+- `ColorThemeStorage.storeColorTheme` is consistently asynchronous across the interface, `Workspace`, `ColorThemeSettings`, and callers; all persistence-relevant `_apply`/`setColorTheme` paths await `_keep` and the actual `PreferenceStore.write`, startup waits for theme-ID migration persistence, while ordinary runtime saves remain nonblocking.
 - Pull-request attribution is generated dynamically from the current configured attribution name, escapes Markdown punctuation including emphasis, code, underscores, hashes, and exclamation marks, and uses the CCCode website URL; Featured Upstreams join links use `ccapitoken.cc`.
 - ColorThemeSettings now awaits delegated state persistence; activation HTML and import documentation use `ccapitoken.cc`.
 - Legacy attribution email migration is awaited in startup before initialization continues. Public site hreflang, channel download, changelog, and upstream import/asset/CSP/verification links use `ccapitoken.cc`; internal `dl.baocode.dev` release targets and `stats.baocode.dev` attribution endpoint remain unchanged and are documented as internal.
