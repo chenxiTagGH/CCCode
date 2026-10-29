@@ -24,11 +24,12 @@ class AttentionService {
     required this.settings,
     required this.l10n,
     required this.onOpen,
-    this.barkNotifier = BarkNotifier(),
+    BarkNotifier? barkNotifier,
     this.settingsChanges,
     this.shown,
     bool Function()? focused,
-  }) : _focused = focused ?? _windowFocused;
+  }) : barkNotifier = barkNotifier ?? BarkNotifier(),
+       _focused = focused ?? _windowFocused;
 
   final Workspace workspace;
   final AttentionHost host;

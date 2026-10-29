@@ -48,7 +48,9 @@ class TaskPlanDrawer extends StatelessWidget {
                 title: Text(plan.title, maxLines: 2, overflow: TextOverflow.ellipsis),
                 subtitle: Text(
                   '$status · ${plan.completedCount}/${plan.steps.length} · '
-                  '${l10n.taskPlanElapsed(_formatDuration(plan.elapsedAt(DateTime.now())))}',
+                  '${l10n.taskPlanElapsed(
+                    _TaskStepTile._formatDuration(plan.elapsedAt(DateTime.now())),
+                  )}',
                 ),
                 trailing: IconButton(
                   tooltip: l10n.commonClose,
