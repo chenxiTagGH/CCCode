@@ -226,7 +226,7 @@ for (const button of document.querySelectorAll('[data-sound]')) {
   });
 }
 
-// The release published on dl.baocode.dev, once its manifest loads: the
+// The release published on download.ccapitoken.cc, once its manifest loads: the
 // version, the day it was published, and each download's link (ending in its
 // hash, so a release redone is not served from the CDN's cache of the old
 // one) and size. Until then, and if it does not load, the page's own.
@@ -235,7 +235,7 @@ for (const button of document.querySelectorAll('[data-sound]')) {
   try {
     const ctl = new AbortController();
     setTimeout(() => ctl.abort(), 4000);
-    const res = await fetch('https://dl.baocode.dev/releases/latest.json', { signal: ctl.signal, cache: 'no-store' });
+    const res = await fetch('https://download.ccapitoken.cc/releases/latest.json', { signal: ctl.signal, cache: 'no-store' });
     const m = await res.json();
     const v = String(m.version).split('+')[0];
     const zh = document.documentElement.lang.startsWith('zh');
@@ -258,7 +258,7 @@ for (const button of document.querySelectorAll('[data-sound]')) {
   try {
     const ctl = new AbortController();
     setTimeout(() => ctl.abort(), 4000);
-    const res = await fetch('https://dl.baocode.dev/releases/mobile/latest.json', { signal: ctl.signal, cache: 'no-store' });
+    const res = await fetch('https://download.ccapitoken.cc/releases/mobile/latest.json', { signal: ctl.signal, cache: 'no-store' });
     const m = await res.json();
     const v = String(m.version).split('+')[0];
     const zh = document.documentElement.lang.startsWith('zh');
@@ -275,7 +275,7 @@ for (const button of document.querySelectorAll('[data-sound]')) {
   try {
     const ctl = new AbortController();
     setTimeout(() => ctl.abort(), 4000);
-    const res = await fetch('https://dl.baocode.dev/releases/extension/latest.json', { signal: ctl.signal, cache: 'no-store' });
+    const res = await fetch('https://download.ccapitoken.cc/releases/extension/latest.json', { signal: ctl.signal, cache: 'no-store' });
     const m = await res.json();
     const zh = document.documentElement.lang.startsWith('zh');
     for (const el of document.querySelectorAll('[data-extension-version]')) el.textContent = zh ? `版本 ${m.version}` : `Version ${m.version}`;

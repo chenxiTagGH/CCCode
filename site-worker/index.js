@@ -1,4 +1,4 @@
-// baocode.dev's Worker: site/ is served as static assets, and this runs only
+// ccapitoken.cc's Worker: site/ is served as static assets, and this runs only
 // for /dl/* (run_worker_first in wrangler.jsonc). /dl/windows, /dl/macos-arm64,
 // /dl/macos-x64, /dl/linux-x64 and /dl/linux-arm64 redirect to that build of
 // the release in latest.json, and
@@ -14,9 +14,9 @@
 // /activate reads, and a channel listed with its account site gets the
 // channel build, as on the page.
 
-const MANIFEST = 'https://dl.baocode.dev/releases/latest.json';
-const MOBILE_MANIFEST = 'https://dl.baocode.dev/releases/mobile/latest.json';
-const EXTENSION_MANIFEST = 'https://dl.baocode.dev/releases/extension/latest.json';
+const MANIFEST = 'https://download.ccapitoken.cc/releases/latest.json';
+const MOBILE_MANIFEST = 'https://download.ccapitoken.cc/releases/mobile/latest.json';
+const EXTENSION_MANIFEST = 'https://download.ccapitoken.cc/releases/extension/latest.json';
 const MOBILE = new Set(['android', 'ios']);
 // The phone apps off the site for now: their links go to the download page
 // instead of to a build. Android's, until it is back.

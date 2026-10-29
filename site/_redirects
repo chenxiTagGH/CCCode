@@ -1,6 +1,6 @@
 # Redirects for Cloudflare Pages
 # (https://developers.cloudflare.com/pages/configuration/redirects/).
 
-# Releases are served from R2 at dl.baocode.dev. Builds made before the move
-# look for their updates and remote servers at baocode.dev/releases/.
-/releases/*  https://dl.baocode.dev/releases/:splat  302
+# Releases are served from R2 at download.ccapitoken.cc. Builds made before the move
+# look for their updates and remote servers at ccapitoken.cc/releases/.
+/releases/*  https://download.ccapitoken.cc/releases/:splat  302

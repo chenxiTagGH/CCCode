@@ -1,4 +1,4 @@
-# Builds the phone app: Android (APK), put on dl.baocode.dev, where
+# Builds the phone app: Android (APK), put on download.ccapitoken.cc, where
 # the website/download links to it (/dl/android); iOS, uploaded to
 # TestFlight. docs/release.md, 10.
 #
@@ -6,7 +6,7 @@
 #                           build and publish 0.1.0 (the version of the
 #                           phone app's pubspec.yaml, on its main branch)
 #   git tag mobile-test-foo && git push origin mobile-test-foo
-#                           build, and put the APK at dl.baocode.dev/test/…,
+#                           build, and put the APK at download.ccapitoken.cc/test/…,
 #                           to send to testers (iOS to TestFlight all the same)
 #
 # The phone app is checked out from cccode-dev/mobile beside this one
@@ -123,7 +123,7 @@ jobs:
         if: always()
         run: rm -f "$RUNNER_TEMP/release.jks"
 
-  # iOS goes to TestFlight, not dl.baocode.dev: signed for the App Store
+  # iOS goes to TestFlight, not download.ccapitoken.cc: signed for the App Store
   # (Apple Distribution certificate, App Store profile) and uploaded, every
   # tag, mobile-test-* too. Its build number is this workflow's run number,
   # each upload's own (TestFlight refuses one it has had).
@@ -242,7 +242,7 @@ jobs:
           rm -rf "$HOME/.appstoreconnect/private_keys"
 
   share:
-    name: Put it at dl.baocode.dev/test/ for testers
+    name: Put it at download.ccapitoken.cc/test/ for testers
     needs: [check, android, ios]
     if: needs.check.outputs.publish != 'true'
     runs-on: ubuntu-latest
@@ -280,7 +280,7 @@ jobs:
             name=$(basename "$file")
             aws s3 cp "$file" "s3://$R2_BUCKET/$dir/$name" --cache-control 'public, max-age=86400' \
               --content-type "$(content_type "$name")"
-            url="https://dl.baocode.dev/$dir/$name"
+            url="https://download.ccapitoken.cc/$dir/$name"
             served=$(curl -fsSI "$url" | tr -d '\r' | awk 'tolower($1) == "content-length:" { print $2 }')
             [ "$served" = "$(stat -c %s "$file")" ] || { echo "::error::$url is not served as uploaded"; exit 1; }
             echo "- [$name]($url)" >> "$GITHUB_STEP_SUMMARY"
@@ -288,7 +288,7 @@ jobs:
           cat "$GITHUB_STEP_SUMMARY"
 
   publish:
-    name: Publish to dl.baocode.dev
+    name: Publish to download.ccapitoken.cc
     needs: [check, android, ios]
     if: needs.check.outputs.publish == 'true'
     runs-on: ubuntu-latest
@@ -331,7 +331,7 @@ jobs:
             local file=$1 sha size
             sha=$(sha256sum "$file" | cut -d' ' -f1)
             size=$(stat -c %s "$file")
-            jq -n --arg url "https://dl.baocode.dev/releases/mobile/$MARKETING/$(basename "$file")?sha256=${sha:0:16}" \
+            jq -n --arg url "https://download.ccapitoken.cc/releases/mobile/$MARKETING/$(basename "$file")?sha256=${sha:0:16}" \
               --arg sha "$sha" --argjson size "$size" '{url: $url, size: $size, sha256: $sha}'
           }
           jq -n --arg version "$VERSION" --arg date "$(date -u +%Y-%m-%dT%H:%M:%SZ)" --argjson beta "$beta" \
@@ -347,4 +347,4 @@ jobs:
         run: |
           aws s3 cp latest.json "s3://$R2_BUCKET/releases/mobile/latest.json" \
             --cache-control 'public, max-age=300' --content-type application/json
-          curl -fsS "https://dl.baocode.dev/releases/mobile/latest.json?$GITHUB_RUN_ID" | jq .
+          curl -fsS "https://download.ccapitoken.cc/releases/mobile/latest.json?$GITHUB_RUN_ID" | jq .

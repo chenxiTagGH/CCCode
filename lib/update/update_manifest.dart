@@ -6,7 +6,8 @@ import 'version.dart';
 
 /// Where the app looks for its next version: the release manifest
 /// the download site serves (docs/auto-update.md has its format).
-const defaultManifestUrl = 'https://dl.baocode.dev/releases/latest.json';
+const defaultManifestUrl =
+    'https://download.ccapitoken.cc/releases/latest.json';
 
 /// The environment variable that points the app at another manifest, to
 /// try a release before it is published (a local server's, say).
@@ -38,7 +39,7 @@ class UpdateUrlPolicy {
       ? const UpdateUrlPolicy()
       : UpdateUrlPolicy(extraOrigins: {manifest.origin});
 
-  static const domain = 'baocode.dev';
+  static const domain = 'ccapitoken.cc';
 
   final Set<String> extraOrigins;
 

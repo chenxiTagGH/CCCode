@@ -38,8 +38,8 @@ import 'package:crypto/crypto.dart';
 const _platforms = ['linux-x64', 'linux-arm64', 'darwin-x64', 'darwin-arm64'];
 
 /// Where the gzipped builds are downloaded from: `<base>/<VERSION>/<file>`.
-// Existing BaoCode download infrastructure; retain until a CCCode domain is supplied.
-const _downloadsBase = 'https://dl.baocode.dev/releases/remote';
+// CCCode download infrastructure served from download.ccapitoken.cc.
+const _downloadsBase = 'https://download.ccapitoken.cc/releases/remote';
 
 Future<void> main(List<String> arguments) async {
   final root = File.fromUri(Platform.script).parent.parent.absolute;

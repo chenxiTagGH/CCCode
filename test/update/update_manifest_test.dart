@@ -7,7 +7,7 @@ import 'package:baocode/update/version.dart';
 final _signature = base64.encode(List.filled(64, 7));
 
 Map<String, Object?> _asset({
-  String url = 'https://baocode.dev/releases/1.2.0/CCCode-1.2.0-setup.exe',
+  String url = 'https://ccapitoken.cc/releases/1.2.0/CCCode-1.2.0-setup.exe',
   Object? size = 1000,
   Object? sha256,
   Object? signature,
@@ -33,7 +33,7 @@ String _manifest({
       {
         'windows-x64': _asset(),
         'macos-arm64': _asset(
-          url: 'https://baocode.dev/releases/1.2.0/CCCode-1.2.0-mac.zip',
+          url: 'https://ccapitoken.cc/releases/1.2.0/CCCode-1.2.0-mac.zip',
         ),
       },
 });
@@ -74,7 +74,7 @@ void main() {
             platforms: {
               'windows-x64': _asset(
                 url:
-                    'https://baocode.dev/releases/1.2.0/'
+                    'https://ccapitoken.cc/releases/1.2.0/'
                     'CCCode-1.2.0-setup.exe?sha256=0123456789abcdef',
               ),
             },
@@ -131,7 +131,7 @@ void main() {
           platforms: {
             'windows-x64': _asset(size: null),
             'macos-arm64': _asset(
-              url: 'https://baocode.dev/releases/1.2.0/CCCode-1.2.0-mac.zip',
+              url: 'https://ccapitoken.cc/releases/1.2.0/CCCode-1.2.0-mac.zip',
             ),
           },
         ),
@@ -170,8 +170,8 @@ void main() {
         '..evil.example/x.exe',
         'https://notthe.example/x.exe',
         '.:8443/x.exe',
-        'https://user@baocode.dev/x.exe',
-        'ftp://baocode.dev/x.exe',
+        'https://user@ccapitoken.cc/x.exe',
+        'ftp://ccapitoken.cc/x.exe',
         'file:///tmp/x.exe',
         '/releases/x.exe',
       ]) {
@@ -182,8 +182,8 @@ void main() {
         );
       }
       for (final url in [
-        'https://baocode.dev/releases/x.exe',
-        'https://cdn.baocode.dev/releases/x.exe',
+        'https://ccapitoken.cc/releases/x.exe',
+        'https://cdn.ccapitoken.cc/releases/x.exe',
       ]) {
         expect(at(url).assetFor('windows-x64'), isNotNull, reason: url);
       }

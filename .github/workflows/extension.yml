@@ -1,12 +1,12 @@
 # Packs CCCode's browser extension (browser_extension/) and publishes it:
-# the zip to load unpacked on dl.baocode.dev, where the website/download
+# the zip to load unpacked on download.ccapitoken.cc, where the website/download
 # links to it (/dl/browser-extension), and the store's to the Chrome Web
 # Store. docs/release.md, 11.
 #
 #   git tag extension-v0.1.0 && git push origin extension-v0.1.0
 #                           publish 0.1.0 (manifest.json's version)
 #   git tag extension-test-foo && git push origin extension-test-foo
-#                           pack, and put both zips at dl.baocode.dev/test/…
+#                           pack, and put both zips at download.ccapitoken.cc/test/…
 #   a pull request that changes the extension
 #                           pack it, to see that it does
 name: Extension
@@ -84,7 +84,7 @@ jobs:
           path: build/browser_extension/CCCode-browser-*.zip
 
   share:
-    name: Put it at dl.baocode.dev/test/ for testers
+    name: Put it at download.ccapitoken.cc/test/ for testers
     needs: pack
     if: needs.pack.outputs.share == 'true'
     runs-on: ubuntu-latest
@@ -115,7 +115,7 @@ jobs:
             name=$(basename "$file")
             aws s3 cp "$file" "s3://$R2_BUCKET/$dir/$name" --cache-control 'public, max-age=86400' \
               --content-type application/zip
-            url="https://dl.baocode.dev/$dir/$name"
+            url="https://download.ccapitoken.cc/$dir/$name"
             served=$(curl -fsSI "$url" | tr -d '\r' | awk 'tolower($1) == "content-length:" { print $2 }')
             [ "$served" = "$(stat -c %s "$file")" ] || { echo "::error::$url is not served as uploaded"; exit 1; }
             echo "- [$name]($url)" >> "$GITHUB_STEP_SUMMARY"
@@ -123,7 +123,7 @@ jobs:
           cat "$GITHUB_STEP_SUMMARY"
 
   publish:
-    name: Publish to dl.baocode.dev
+    name: Publish to download.ccapitoken.cc
     needs: pack
     if: needs.pack.outputs.publish == 'true'
     runs-on: ubuntu-latest
@@ -156,7 +156,7 @@ jobs:
           file="dist/CCCode-browser-$VERSION.zip"
           sha=$(sha256sum "$file" | cut -d' ' -f1)
           size=$(stat -c %s "$file")
-          url="https://dl.baocode.dev/releases/extension/$VERSION/CCCode-browser-$VERSION.zip?sha256=${sha:0:16}"
+          url="https://download.ccapitoken.cc/releases/extension/$VERSION/CCCode-browser-$VERSION.zip?sha256=${sha:0:16}"
           jq -n --arg version "$VERSION" --arg date "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
             --arg id "$EXTENSION_ID" \
             --arg store "${STORE_URL:-https://chromewebstore.google.com/detail/$EXTENSION_ID}" \
@@ -171,7 +171,7 @@ jobs:
         run: |
           aws s3 cp latest.json "s3://$R2_BUCKET/releases/extension/latest.json" \
             --cache-control 'public, max-age=300' --content-type application/json
-          curl -fsS "https://dl.baocode.dev/releases/extension/latest.json?$GITHUB_RUN_ID" | jq .
+          curl -fsS "https://download.ccapitoken.cc/releases/extension/latest.json?$GITHUB_RUN_ID" | jq .
 
   store:
     name: Submit to the Chrome Web Store

@@ -1,4 +1,4 @@
-# Builds CCCode for macOS, Windows and Linux and publishes it to dl.baocode.dev
+# Builds CCCode for macOS, Windows and Linux and publishes it to download.ccapitoken.cc
 # (Cloudflare R2), where installed apps find their updates. docs/release.md
 # has the whole of it: versions, secrets, what goes where.
 #
@@ -8,7 +8,7 @@
 #                                              updating to its own
 #   git tag test-foo && git push origin test-foo
 #                                              build, and put the installers
-#                                              at dl.baocode.dev/test/…, to
+#                                              at download.ccapitoken.cc/test/…, to
 #                                              send to testers (no update)
 #   git tag test-channel-foo && git push origin test-channel-foo
 #                                              the same, of the channel build
@@ -104,7 +104,7 @@ jobs:
               echo "::error::Tag $GITHUB_REF_NAME, but pubspec.yaml is $version: the tag has to be v$marketing-channel"
               exit 1
             fi
-            published=$(curl -fsS https://dl.baocode.dev/releases/latest.json | jq -r .version)
+            published=$(curl -fsS https://download.ccapitoken.cc/releases/latest.json | jq -r .version)
             if [ "$published" != "$version" ]; then
               echo "::error::$published is published, pubspec.yaml is $version: the channel build alone goes beside the version published"
               exit 1
@@ -133,7 +133,7 @@ jobs:
         env:
           VERSION: ${{ steps.version.outputs.version }}
         run: |
-          published=$(curl -fsS https://dl.baocode.dev/releases/latest.json | jq -r .version || true)
+          published=$(curl -fsS https://download.ccapitoken.cc/releases/latest.json | jq -r .version || true)
           echo "Published: ${published:-none}, this: $VERSION"
           [ -z "$published" ] && exit 0
           # x.y.z+build, compared number by number.
@@ -150,7 +150,7 @@ jobs:
           EOF
 
   # Once, for both apps: they carry its servers.json, and download the
-  # build a host needs from dl.baocode.dev (docs/ssh-remote.md, 9.3). Its
+  # build a host needs from download.ccapitoken.cc (docs/ssh-remote.md, 9.3). Its
   # artifacts: remote (VERSION, servers.json, the .gz), remote-linux.
   remote:
     name: Remote server
@@ -400,7 +400,7 @@ jobs:
             build/installers/CCCode-*.tar.gz
 
   share:
-    name: Put it at dl.baocode.dev/test/ for testers
+    name: Put it at download.ccapitoken.cc/test/ for testers
     needs: [check, macos, windows, linux]
     if: needs.check.outputs.share == 'true'
     runs-on: ubuntu-latest
@@ -455,7 +455,7 @@ jobs:
           for file in dist/macos/CCCode-*.dmg dist/windows/CCCode-*-setup*.exe dist/linux/CCCode-*.deb; do
             name=$(basename "$file")
             aws s3 cp "$file" "s3://$R2_BUCKET/$dir/$name" --cache-control 'public, max-age=86400'
-            url="https://dl.baocode.dev/$dir/$name"
+            url="https://download.ccapitoken.cc/$dir/$name"
             served=$(curl -fsSI "$url" | tr -d '\r' | awk 'tolower($1) == "content-length:" { print $2 }')
             [ "$served" = "$(stat -c %s "$file")" ] || { echo "::error::$url is not served as uploaded"; exit 1; }
             echo "- [$name]($url)" >> "$GITHUB_STEP_SUMMARY"
@@ -463,7 +463,7 @@ jobs:
           cat "$GITHUB_STEP_SUMMARY"
 
   publish:
-    name: Publish to dl.baocode.dev
+    name: Publish to download.ccapitoken.cc
     needs: [check, remote, macos, windows, linux]
     if: needs.check.outputs.publish == 'true'
     runs-on: ubuntu-latest
@@ -533,7 +533,7 @@ jobs:
             # the standard build's, its notes and its downloads kept as they
             # are (release_manifest.dart keeps a manifest of the same version).
             editions=(-channel)
-            curl -fsS https://dl.baocode.dev/releases/latest.json -o out/latest.json
+            curl -fsS https://download.ccapitoken.cc/releases/latest.json -o out/latest.json
             [ "$(jq -r .version out/latest.json)" = "$VERSION" ] || { echo "::error::latest.json is not $VERSION"; exit 1; }
           fi
           for language in en zh; do
@@ -597,7 +597,7 @@ jobs:
           # without holding a release back.
           aws s3 cp out/latest.json "s3://$R2_BUCKET/releases/latest.json" \
             --cache-control 'public, max-age=300' --content-type application/json
-          curl -fsS "https://dl.baocode.dev/releases/latest.json?$GITHUB_RUN_ID" | jq .
+          curl -fsS "https://download.ccapitoken.cc/releases/latest.json?$GITHUB_RUN_ID" | jq .
       # The standard build's alone; the channel build alone makes none.
       - name: Make the GitHub release
         if: env.CHANNEL_ONLY != 'true'
