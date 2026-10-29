@@ -48,7 +48,7 @@ class TaskPlanDrawer extends StatelessWidget {
                 title: Text(plan.title, maxLines: 2, overflow: TextOverflow.ellipsis),
                 subtitle: Text(
                   '$status · ${plan.completedCount}/${plan.steps.length} · '
-                  '${l10n.taskPlanElapsed(_format(plan.elapsedAt(DateTime.now())))}',
+                  '${l10n.taskPlanElapsed(_formatDuration(plan.elapsedAt(DateTime.now())))}',
                 ),
                 trailing: IconButton(
                   tooltip: l10n.commonClose,
@@ -111,12 +111,12 @@ class _TaskStepTile extends StatelessWidget {
     };
     final detail = switch (step.status) {
       TaskStepStatus.pending => _estimate(step, l10n),
-      TaskStepStatus.running => l10n.taskPlanElapsed(_format(step.elapsedAt(now))),
-      TaskStepStatus.completed => l10n.taskPlanStepCompleted(_format(step.elapsedAt(now))),
+      TaskStepStatus.running => l10n.taskPlanElapsed(_formatDuration(step.elapsedAt(now))),
+      TaskStepStatus.completed => l10n.taskPlanStepCompleted(_formatDuration(step.elapsedAt(now))),
       TaskStepStatus.failed => step.error == null
-          ? l10n.taskPlanStepFailed(_format(step.elapsedAt(now)))
-          : '${l10n.taskPlanStepFailed(_format(step.elapsedAt(now)))}: ${step.error}',
-      TaskStepStatus.paused => l10n.taskPlanStepPaused(_format(step.elapsedAt(now))),
+          ? l10n.taskPlanStepFailed(_formatDuration(step.elapsedAt(now)))
+          : '${l10n.taskPlanStepFailed(_formatDuration(step.elapsedAt(now)))}: ${step.error}',
+      TaskStepStatus.paused => l10n.taskPlanStepPaused(_formatDuration(step.elapsedAt(now))),
       TaskStepStatus.cancelled => l10n.taskPlanStepCancelled,
     };
     return Semantics(
@@ -146,10 +146,10 @@ class _TaskStepTile extends StatelessWidget {
     final min = step.estimateMin;
     final max = step.estimateMax;
     if (min == null && max == null) return l10n.taskPlanEstimateUnknown;
-    return l10n.taskPlanEstimate(_format(min ?? max!), _format(max ?? min!));
+    return l10n.taskPlanEstimate(_formatDuration(min ?? max!), _formatDuration(max ?? min!));
   }
 
-  static String _format(Duration duration) {
+  static String _formatDuration(Duration duration) {
     final seconds = duration.inSeconds;
     if (seconds < 60) return '${seconds}s';
     final minutes = seconds ~/ 60;

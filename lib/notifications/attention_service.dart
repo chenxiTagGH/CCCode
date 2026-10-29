@@ -24,7 +24,7 @@ class AttentionService {
     required this.settings,
     required this.l10n,
     required this.onOpen,
-    this.barkNotifier = const BarkNotifier(),
+    this.barkNotifier = BarkNotifier(),
     this.settingsChanges,
     this.shown,
     bool Function()? focused,

@@ -33,9 +33,11 @@ class TaskPlanIndicator extends StatelessWidget {
       TaskPlanStatus.pending => Theme.of(context).colorScheme.onSurfaceVariant,
     };
     final current = plan.currentStep;
-    final progress = current?.status == TaskStepStatus.running
-        ? ' · ${l10n.taskPlanElapsed(current.elapsedAt(DateTime.now()))}'
-        : '';
+    final progress = switch (current) {
+      final step? when step.status == TaskStepStatus.running =>
+        ' · ${l10n.taskPlanElapsed(_formatDuration(step.elapsedAt(DateTime.now())))}',
+      _ => '',
+    };
     return Semantics(
       button: true,
       label: '$status, ${plan.completedCount}/${plan.steps.length}$progress',
@@ -65,5 +67,13 @@ class TaskPlanIndicator extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  static String _formatDuration(Duration duration) {
+    final seconds = duration.inSeconds;
+    if (seconds < 60) return '${seconds}s';
+    final minutes = seconds ~/ 60;
+    final remainder = seconds % 60;
+    return remainder == 0 ? '${minutes}m' : '${minutes}m ${remainder}s';
   }
 }
