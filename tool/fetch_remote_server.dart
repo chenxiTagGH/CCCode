@@ -14,8 +14,8 @@
 import 'dart:convert';
 import 'dart:io';
 
-// Existing BaoCode download infrastructure; retain until a CCCode domain is supplied.
-const _base = 'https://dl.baocode.dev/releases/remote';
+// CCCode download infrastructure served from download.ccapitoken.cc.
+const _base = 'https://download.ccapitoken.cc/releases/remote';
 
 Future<void> main(List<String> arguments) async {
   final root = File.fromUri(Platform.script).parent.parent.absolute;

@@ -236,7 +236,7 @@ Future<void> main(List<String> arguments) async {
     stdout
       ..writeln()
       ..writeln('The app downloads the remote server published:')
-      ..writeln('  https://dl.baocode.dev/releases/remote/$remoteVersion/');
+      ..writeln('  https://download.ccapitoken.cc/releases/remote/$remoteVersion/');
   } else {
     stdout
       ..writeln()
@@ -246,7 +246,7 @@ Future<void> main(List<String> arguments) async {
       ..writeln('and package with --remote-release):')
       ..writeln(
         '  ${downloads.path}\\*  ->  '
-        'https://dl.baocode.dev/releases/remote/$remoteVersion/',
+        'https://download.ccapitoken.cc/releases/remote/$remoteVersion/',
       );
   }
   stdout.writeln();

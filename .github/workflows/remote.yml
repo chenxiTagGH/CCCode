@@ -4,7 +4,7 @@
 #
 #   git tag server-foo && git push origin server-foo
 #                                      build, and publish the builds at
-#                                      https://dl.baocode.dev/releases/remote/
+#                                      https://download.ccapitoken.cc/releases/remote/
 #                                      <VERSION>/, latest.json there naming
 #                                      them: for apps packaged locally with
 #                                      --remote-release (tool/build_*.dart)
@@ -53,7 +53,7 @@ jobs:
           unzip -q "$RUNNER_TEMP/dart-x64.zip" -d "$RUNNER_TEMP/dart-x64"
           "$RUNNER_TEMP/dart-x64/dart-sdk/bin/dart" --version
       # Once, for both apps: they carry its servers.json, and download the
-      # build a host needs from dl.baocode.dev (docs/ssh-remote.md, 9.3).
+      # build a host needs from download.ccapitoken.cc (docs/ssh-remote.md, 9.3).
       - name: Build for Linux and macOS, x64 and arm64
         run: |
           dart run tool/build_remote_server.dart --out build/remote --all \
@@ -99,7 +99,7 @@ jobs:
           tool/test_remote_server.sh build/remote
 
   publish:
-    name: Publish to https://dl.baocode.dev/releases/remote/
+    name: Publish to https://download.ccapitoken.cc/releases/remote/
     needs: [build, linux]
     # Its own server-* tag only: called by Release, the release publishes.
     if: github.event_name == 'push' && startsWith(github.ref_name, 'server-')

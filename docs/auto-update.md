@@ -2,7 +2,7 @@
 
 CCCode 的自动检查与升级：怎么工作、服务端约定、签名、出问题怎么查，以及以后改代码时要注意什么。版本号怎么定、怎么发版、CI 和 Cloudflare 怎么配，见 [release.md](release.md)。
 
-- 更新服务器：`.`（Cloudflare R2；`baocode.dev/releases/*` 302 到这里）
+- 更新服务器：`download.ccapitoken.cc`（Cloudflare R2；`ccapitoken.cc/releases/*` 302 到这里）
 - 平台：macOS（Apple silicon 和 Intel 各一个包）、Windows（x64）
 - 代码：`lib/update/`，测试：`test/update/`，发布工具：`tool/release_manifest.dart`
 
@@ -36,7 +36,7 @@ CCCode 的自动检查与升级：怎么工作、服务端约定、签名、出�
 | CI 构建与发布 | 已完成：`.github/workflows/release.yml`，见 [release.md](release.md) |
 | macOS 打包（dmg + 更新用 zip） | 已完成：`tool/build_macos.dart` |
 | macOS 代码签名与公证 | 脚本已支持；**等 Apple 开发者账号**，见 [release.md 7.3](release.md#73-applemacos-签名与公证) |
-| dl.baocode.dev（R2） | **需要准备**：见 [release.md 7.1](release.md#71-cloudflare) |
+| download.ccapitoken.cc（R2） | **需要准备**：见 [release.md 7.1](release.md#71-cloudflare) |
 | 真机端到端验证 | **未做**：见第 11 节 |
 
 签名密钥已经生成：私钥在 `~/.cccode-release/update-signing.key`（不在仓库里），公钥写在 `lib/update/update_signature.dart`。
@@ -305,14 +305,14 @@ main.dart onExitRequested
 
 允许：
 
-- `./...`、`https://<任意子域>.the website/...`（主机名不区分大小写）
+- `./...`、`https://<任意子域>.ccapitoken.cc/...`（主机名不区分大小写）
 
 拒绝：
 
 - `http://`、其他协议、相对路径
 - 带端口：`.:8443/`
-- 带用户信息：`https://user@the website/`
-- 相似域名：`the website.evil.example`、`notthe website`
+- 带用户信息：`https://user@ccapitoken.cc/`
+- 相似域名：`ccapitoken.cc.evil.example`、`notccapitoken.cc`
 
 例外：设置了 `CCCODE_UPDATE_URL` 时，清单同源（协议 + 主机 + 端口）的链接也会被接受，方便本地测试。
 
@@ -378,7 +378,7 @@ dart run tool/release_manifest.dart --generate-key <路径>
 
 - **不要**提交到仓库，不要放进网盘的同步目录明文保存，不要发到聊天工具里。
 - 离线备份至少两份，例如密码管理器一份、加密 U 盘一份。
-- **泄露的后果**：拿到私钥的人可以让所有已安装的 CCCode 运行他们的程序（当然还需要能控制 dl.baocode.dev 或用户的网络）。
+- **泄露的后果**：拿到私钥的人可以让所有已安装的 CCCode 运行他们的程序（当然还需要能控制 download.ccapitoken.cc 或用户的网络）。
 - **丢失的后果**：已经安装的版本再也收不到自动更新，只能让用户手动去下载页重装。
 
 ### 6.4 轮换密钥
@@ -396,13 +396,13 @@ dart run tool/release_manifest.dart --generate-key <路径>
 
 ## 7. 发版步骤
 
-见 [release.md](release.md)：用 `tool/bump_version.dart` 改版本号，推送 `v<版本>` 标签，CI 构建、签名、上传到 `dl.baocode.dev`，`latest.json` 最后上传。CI 不可用时的手动步骤见 [release.md 第 9 节](release.md#9-不用-ci手动发布)。
+见 [release.md](release.md)：用 `tool/bump_version.dart` 改版本号，推送 `v<版本>` 标签，CI 构建、签名、上传到 `download.ccapitoken.cc`，`latest.json` 最后上传。CI 不可用时的手动步骤见 [release.md 第 9 节](release.md#9-不用-ci手动发布)。
 
 ---
 
 ## 8. 本地测试
 
-不用发布到 dl.baocode.dev，就能在本机完整走一遍更新流程：
+不用发布到 download.ccapitoken.cc，就能在本机完整走一遍更新流程：
 
 ```sh
 # 1. 准备一个“更新版本”：版本号比要测试的那个构建高，签名后写到一个目录
@@ -568,4 +568,4 @@ flutter test test/update
 - **没有增量更新**：每次都下载完整的安装包。
 - **拒绝 UAC 之后**：应用已经退出，需要用户手动重新打开（下次启动会再提示更新）。
 - **macOS 的 /Applications 归 root 所有时**：当前用户能改名 .app 但删不掉旧版本的内容时，`.cccode-old` 可能会残留。
-- **服务端还没准备**：R2 存储桶、`dl.baocode.dev`、GitHub 的 `release` 环境，见 [release.md 第 7 节](release.md#7-第一次发布前的准备)。
+- **服务端还没准备**：R2 存储桶、`download.ccapitoken.cc`、GitHub 的 `release` 环境，见 [release.md 第 7 节](release.md#7-第一次发布前的准备)。

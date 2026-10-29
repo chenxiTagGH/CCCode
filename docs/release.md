@@ -13,7 +13,7 @@ CCCode 的版本号怎么定、一个版本怎么发出去、发到哪里、已�
 2. [版本号](#2-版本号)
 3. [发一个版本](#3-发一个版本)
 4. [CI 做了什么](#4-ci-做了什么)
-5. [dl.baocode.dev 上有什么](#5-dlcccodedev-上有什么)
+5. [download.ccapitoken.cc 上有什么](#5-downloadccapitokencc-上有什么)
 6. [更新的数据流](#6-更新的数据流)
 7. [第一次发布前的准备](#7-第一次发布前的准备)
 8. [出了问题](#8-出了问题)
@@ -40,7 +40,7 @@ CCCode 的版本号怎么定、一个版本怎么发出去、发到哪里、已�
                                └ publish  签 latest.json，上传 ────────▶ R2 存储桶
                                           建 GitHub Release              │
                                                                          ▼
-                                                              dl.baocode.dev（CDN）
+                                                              download.ccapitoken.cc（CDN）
                                                                releases/latest.json
                                                                releases/<版本>/…
                                                                releases/remote/…
@@ -54,7 +54,7 @@ CCCode 的版本号怎么定、一个版本怎么发出去、发到哪里、已�
 
 - **网站和安装包分开放**：网站是 Worker 的静态资源，推送 `main` 就发布，和应用的版本无关（见 3 节“发布官网”）；安装包在 R2 上，只有推送 `v*` 标签时才由 CI 发布。静态资源单个文件不能超过 25 MiB，dmg 放不下。
 - **流量不收钱**：Worker 静态资源的请求不计费；R2 的下载流量免费，存储每月 10 GB 以内免费。
-- **旧地址**：`site/_redirects` 把 `the website/releases/*` 302 到 `dl.baocode.dev/releases/*`，给改地址前打出来的构建用（应用的 `HttpClient` 会跟随重定向）。
+- **旧地址**：`site/_redirects` 把 `ccapitoken.cc/releases/*` 302 到 `download.ccapitoken.cc/releases/*`，给改地址前打出来的构建用（应用的 `HttpClient` 会跟随重定向）。
 
 ## 2. 版本号
 
@@ -110,7 +110,7 @@ git push origin v1.2.0                          # 从这里开始 CI 接手
 
 完成后确认：
 
-- [ ] `curl -s https://dl.baocode.dev/releases/latest.json` 是新版本
+- [ ] `curl -s https://download.ccapitoken.cc/releases/latest.json` 是新版本
 - [ ] `./download` 显示新版本，两个按钮都能下载
 - [ ] `./changelog` 有这个版本
 - [ ] 装着旧版本的机器上点“检查更新”，能发现、下载、重启装上
@@ -132,7 +132,7 @@ CI 会照常构建，覆盖 R2 上的文件，重新建 GitHub Release。
 git tag test-upstream-import && git push origin test-upstream-import
 ```
 
-CI 照常构建，然后把安装包传到 `dl.baocode.dev/test/<版本>-<标签去掉 test->-<运行编号>/`，链接写在这次运行的 Summary 里，直接发给测试的人，不用登录 GitHub。用的是 `release` 环境里已有的 R2 令牌（环境允许 `test-*` 标签，见 7.2），不签更新清单。同一个标签再测一次：`git tag -f … && git push -f origin …`。
+CI 照常构建，然后把安装包传到 `download.ccapitoken.cc/test/<版本>-<标签去掉 test->-<运行编号>/`，链接写在这次运行的 Summary 里，直接发给测试的人，不用登录 GitHub。用的是 `release` 环境里已有的 R2 令牌（环境允许 `test-*` 标签，见 7.2），不签更新清单。同一个标签再测一次：`git tag -f … && git push -f origin …`。
 
 - 不是更新：`test/` 不在 `releases/` 下，`latest.json` 不变，已安装的应用不会收到它。
 - 版本号就是分支上 `pubspec.yaml` 的版本。测试的人之后会照常收到比它新的正式版。
@@ -167,7 +167,7 @@ dart run tool/build_macos.dart --remote-release              # macOS 同理
 
 | Job | 机器 | 做什么 |
 | --- | --- | --- |
-| `check` | Ubuntu | pubspec.yaml 和 `version.dart` 一致；版本是 `x.y.z+build`；标签是 `v<x.y.z>`；不比 `dl.baocode.dev` 上已发布的版本旧（一样就是重新发布，给个提示） |
+| `check` | Ubuntu | pubspec.yaml 和 `version.dart` 一致；版本是 `x.y.z+build`；标签是 `v<x.y.z>`；不比 `download.ccapitoken.cc` 上已发布的版本旧（一样就是重新发布，给个提示） |
 | `remote` | | 调用 `remote.yml`（推 `server-*` 标签时它也单独运行并发布，见第 3 节），下面两步 |
 | `remote` › `build` | macOS 15 | 下载和 Flutter 同版本的 x64 Dart SDK → 编译远程服务端（`--all`：Linux x64/arm64 交叉编译；macOS arm64 用本机的 dart，macOS x64 用 x64 的 dart 经 Rosetta，`dart compile exe` 只能在 Mac 上、按 dart 自己的架构编 macOS 版）→ `tool/test_remote_server_macos.sh`：在这台 Mac 上把两份 macOS 版各跑一遍 → 上传 `remote`（`VERSION`、`servers.json`、`.gz`）和 `remote-linux`（Linux 的两个二进制）两个产物 |
 | `remote` › `linux` | Ubuntu | `tool/test_remote_server.sh`：在 Docker 里的 Ubuntu 20.04 / 24.04、Debian 12、Rocky Linux 8 上，两种架构各跑一遍（arm64 用 QEMU 模拟），要能启动、回答 `initialize`、列出目录 |
@@ -184,9 +184,9 @@ dart run tool/build_macos.dart --remote-release              # macOS 同理
 - **密钥只在 `release` 环境里**，只有 `v*` 标签能用（见 7.2）。PR 和手动运行拿不到。
 - Flutter 版本固定在工作流的 `FLUTTER_VERSION`，升级 Flutter 时一起改。
 
-## 5. dl.baocode.dev 上有什么
+## 5. download.ccapitoken.cc 上有什么
 
-R2 存储桶，绑定自定义域名 `dl.baocode.dev`，前面是 Cloudflare 的 CDN。
+R2 存储桶，绑定自定义域名 `download.ccapitoken.cc`，前面是 Cloudflare 的 CDN。
 
 ```
 releases/
@@ -221,8 +221,8 @@ releases/
 
 **已安装的应用**（`update.mode` 是默认的“自动检查并下载”时）：
 
-1. 启动 30 秒后、之后每 6 小时，GET `https://dl.baocode.dev/releases/latest.json`。
-2. 解析清单；下载链接必须是 `https://*.the website`。版本不比自己新，或者没有本平台的条目 → 已是最新，结束。
+1. 启动 30 秒后、之后每 6 小时，GET `https://download.ccapitoken.cc/releases/latest.json`。
+2. 解析清单；下载链接必须是 `https://*.ccapitoken.cc`。版本不比自己新，或者没有本平台的条目 → 已是最新，结束。
 3. 后台下载本平台的安装包（Mac 按处理器取 Apple silicon 或 Intel 的包，见 [auto-update.md 5.2](auto-update.md#52-latestjson-格式)）到 `<数据目录>/updates/<版本>/`，支持断点续传。
 4. 依次校验大小 → SHA-256 → Ed25519 签名（公钥内置在应用里）。任何一项不过就删掉，报错。macOS 还会检查新 .app 的 bundle id，以及在当前应用有正式签名时，新 .app 是不是同一个 Team 签的。
 5. 主窗口右下角弹通知。用户点“立即重启更新”后，走和平时退出一样的确认（未保存的文件、运行中的 agent 和终端），确认了才安装：
@@ -238,7 +238,7 @@ releases/
 
 | | 防的是什么 | 没有它会怎样 |
 | --- | --- | --- |
-| 更新签名私钥（Ed25519） | 有人篡改 `dl.baocode.dev` 上的文件或劫持网络，给所有用户推恶意更新 | 发不了更新；泄露的话，后果见 [auto-update.md 6.3](auto-update.md#63-保管) |
+| 更新签名私钥（Ed25519） | 有人篡改 `download.ccapitoken.cc` 上的文件或劫持网络，给所有用户推恶意更新 | 发不了更新；泄露的话，后果见 [auto-update.md 6.3](auto-update.md#63-保管) |
 | Apple Developer ID + 公证 | macOS 的 Gatekeeper 拦截从网上下载的未知应用 | 用户第一次打开 dmg 里的应用时被拦：“已损坏，无法打开” |
 | Windows 代码签名（还没做） | SmartScreen 的“未知发布者”警告 | 第一次安装时多点一次“仍要运行” |
 
@@ -251,7 +251,7 @@ releases/
 ### 7.1 Cloudflare
 
 1. **R2 存储桶**：R2 → Create bucket，名字比如 `cccode-downloads`。
-2. **自定义域名**：存储桶 → Settings → Custom Domains → Connect Domain → `dl.baocode.dev`。不要开 `r2.dev` 公共地址。
+2. **自定义域名**：存储桶 → Settings → Custom Domains → Connect Domain → `download.ccapitoken.cc`。不要开 `r2.dev` 公共地址。
 3. **CORS**（给下载页读 `latest.json`）：存储桶 → Settings → CORS Policy：
    ```json
    [
@@ -379,7 +379,7 @@ macOS 本机签名时用的环境变量：
 
 ```sh
 git tag mobile-v0.1.0 && git push origin mobile-v0.1.0      # 发布：标签要和手机版的版本一致
-git tag mobile-test-foo && git push origin mobile-test-foo  # 测试包：APK 传到 dl.baocode.dev/test/mobile-…，iOS 照样传 TestFlight
+git tag mobile-test-foo && git push origin mobile-test-foo  # 测试包：APK 传到 download.ccapitoken.cc/test/mobile-…，iOS 照样传 TestFlight
 ```
 
 CI 从 `cccode-dev/mobile` 的 main 取代码（放在本仓库旁边，`../monad` 的包照常能找到），分两台机器构建：
@@ -410,7 +410,7 @@ TestFlight 上每个 build 都要回答出口合规（加密）问题，否则�
 
 环境的部署规则里要允许 `mobile-*` 标签。
 
-下载页这两张卡片各带一个二维码（`site/qr/android.svg`、`site/qr/ios.svg`，鼠标悬停或点击卡片时显示）：码里是卡片自己那个按钮的链接，也就是 `/dl/android`、`/dl/ios`，扫到就跳到当时最新的那版安装包。链接变了就先跑 `dart run tool/make_download_qr.dart` 重新生成（`test/tool/download_qr_test.dart` 会检查页面、按钮和码三者一致）。**别把 `dl.baocode.dev` 上带哈希的直链写进码里**：那地址每次发版都换，码是要能一直用的。`latest.json` 里已经没有 iOS 的包：`/dl/ios` 跳到 TestFlight 公开测试的链接（`site-worker/index.js` 的 `TESTFLIGHT`，App Store Connect → CCCode → TestFlight → Public beta），每个 build 都是这一个，上了 App Store 再换。Android 的卡片暂时下线（`MOBILE_OFFLINE`），`/dl/android` 跳回下载页。
+下载页这两张卡片各带一个二维码（`site/qr/android.svg`、`site/qr/ios.svg`，鼠标悬停或点击卡片时显示）：码里是卡片自己那个按钮的链接，也就是 `/dl/android`、`/dl/ios`，扫到就跳到当时最新的那版安装包。链接变了就先跑 `dart run tool/make_download_qr.dart` 重新生成（`test/tool/download_qr_test.dart` 会检查页面、按钮和码三者一致）。**别把 `download.ccapitoken.cc` 上带哈希的直链写进码里**：那地址每次发版都换，码是要能一直用的。`latest.json` 里已经没有 iOS 的包：`/dl/ios` 跳到 TestFlight 公开测试的链接（`site-worker/index.js` 的 `TESTFLIGHT`，App Store Connect → CCCode → TestFlight → Public beta），每个 build 都是这一个，上了 App Store 再换。Android 的卡片暂时下线（`MOBILE_OFFLINE`），`/dl/android` 跳回下载页。
 
 > 发布密钥库丢了就再也发不了能覆盖安装的 APK：本机和 CI 之外务必另存一份。
 
@@ -426,7 +426,7 @@ TestFlight 上每个 build 都要回答出口合规（加密）问题，否则�
 ```sh
 # 先改 browser_extension/manifest.json 的 version（商店要求每次上传版本号都更大）
 git tag extension-v0.2.0 && git push origin extension-v0.2.0         # 发布：标签要和 manifest 的版本一致
-git tag extension-test-foo && git push origin extension-test-foo     # 只打包，传到 dl.baocode.dev/test/extension-…
+git tag extension-test-foo && git push origin extension-test-foo     # 只打包，传到 download.ccapitoken.cc/test/extension-…
 ```
 
 本地打包：`tool/pack_browser_extension.sh`，产物在 `build/browser_extension/`。
