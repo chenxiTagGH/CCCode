@@ -68,7 +68,7 @@ void main() {
     }
   });
 
-  test('delivers HTTPS URI with title and body path segments', () async {
+  test('delivers HTTPS URI with title, body, and default CC AI API icon', () async {
     Uri? requested;
     final notifier = BarkNotifier(
       request: (uri) async {
@@ -84,6 +84,39 @@ void main() {
     expect(requested?.scheme, 'https');
     expect(requested?.host, 'api.day.app');
     expect(requested?.pathSegments, ['key', 'title / 你好', 'body? & value']);
+    expect(requested?.queryParameters, {
+      'icon': BarkNotifier.defaultIconUrl,
+    });
+  });
+
+  test('allows a custom icon or no icon', () async {
+    final requested = <Uri>[];
+    final notifier = BarkNotifier(
+      iconUrl: 'https://example.test/custom.png',
+      request: (uri) async {
+        requested.add(uri);
+        return HttpStatus.ok;
+      },
+    );
+    await notifier.send(
+      Uri.parse('https://api.day.app/key'),
+      title: 'title',
+      body: 'body',
+    );
+    expect(
+      requested.single.queryParameters['icon'],
+      'https://example.test/custom.png',
+    );
+
+    requested.clear();
+    await BarkNotifier(
+      iconUrl: '  ',
+      request: (uri) async {
+        requested.add(uri);
+        return HttpStatus.ok;
+      },
+    ).send(Uri.parse('https://api.day.app/key'), title: 'title', body: 'body');
+    expect(requested.single.hasQuery, isFalse);
   });
 
   test('drops overlapping sends while one request is in flight', () async {

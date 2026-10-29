@@ -82,6 +82,7 @@ import 'channel/channel_gate.dart';
 import 'channel/channel_setup.dart';
 import 'channel/channel_setup_platform.dart';
 import 'settings/app_locale.dart';
+import 'models/cc_api_store.dart';
 import 'settings/app_settings.dart';
 import 'settings/data_dir_startup.dart';
 import 'settings/user_settings.dart';
@@ -105,6 +106,7 @@ import 'theme/code_font.dart';
 import 'theme/pixel_snapped_text_scaler.dart';
 import 'theme/ui_zoom.dart';
 import 'theme/workbench_theme.dart';
+import 'tasks/task_plan_demo.dart';
 import 'update/update_controller.dart';
 import 'update/update_platform.dart';
 import 'update/update_service.dart';
@@ -458,6 +460,8 @@ Future<void> main(List<String> arguments) async {
     settings = AppSettings(
       locale: locale,
       files: files,
+      ccApiStore: GlobalCcApiStore(files.storage),
+      ccApiChanges: files.storage,
       catalog: catalog,
       sync: sync,
       installs: VsCodeInstalls.current(),
@@ -489,6 +493,7 @@ Future<void> main(List<String> arguments) async {
     themeExtensions.followIconThemeSetting(files!.settings);
   }
   final app = CCCodeApp(
+    taskPlanDemo: arguments.contains('--task-plan-demo'),
     windows: windows,
     workspace: workspace,
     appLocale: locale,
@@ -643,6 +648,7 @@ class CCCodeApp extends StatefulWidget {
   const CCCodeApp({
     super.key,
     this.workspace,
+    this.taskPlanDemo = false,
     this.themeExtensions,
     this.languagesFor,
     this.gitFor,
@@ -657,6 +663,9 @@ class CCCodeApp extends StatefulWidget {
 
   /// The app's windows; by default, the one ([AppWindows.multi] false).
   final AppWindows? windows;
+
+  /// Shows the temporary task-plan visual demo instead of the workbench.
+  final bool taskPlanDemo;
 
   /// What the search palette searches conversations with; none when null.
   final ConversationSearch? conversations;
@@ -887,27 +896,29 @@ class _CCCodeAppState extends State<CCCodeApp> {
       GlobalCupertinoLocalizations.delegate,
       GlobalWidgetsLocalizations.delegate,
     ],
-    home: window.isStash
-        ? Material(
-            type: MaterialType.transparency,
-            child: StashPanelView(
-              controller: StashController.current!,
-              viewId: window.viewId,
-            ),
-          )
-        : Workbench(
-            key: ValueKey((window.viewId, window.generation)),
-            workspace: _workspace,
-            windows: _windows,
-            window: window,
-            languagesFor: widget.languagesFor,
-            themeExtensions: widget.themeExtensions,
-            gitFor: widget.gitFor,
-            repositoriesIn: widget.repositoriesIn,
-            terminalBackend: widget.terminalBackend,
-            settings: _settings,
-            conversations: widget.conversations ?? const NoConversationSearch(),
-            customizations: widget.customizations,
-          ),
+    home: widget.taskPlanDemo
+        ? const TaskPlanDemoScreen()
+        : window.isStash
+            ? Material(
+                type: MaterialType.transparency,
+                child: StashPanelView(
+                  controller: StashController.current!,
+                  viewId: window.viewId,
+                ),
+              )
+            : Workbench(
+                key: ValueKey((window.viewId, window.generation)),
+                workspace: _workspace,
+                windows: _windows,
+                window: window,
+                languagesFor: widget.languagesFor,
+                themeExtensions: widget.themeExtensions,
+                gitFor: widget.gitFor,
+                repositoriesIn: widget.repositoriesIn,
+                terminalBackend: widget.terminalBackend,
+                settings: _settings,
+                conversations: widget.conversations ?? const NoConversationSearch(),
+                customizations: widget.customizations,
+              ),
   );
 }

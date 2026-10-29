@@ -30,6 +30,30 @@
   <h1>Changelog</h1>
   <p class="subtitle">What changed in each version of CCCode.</p>
 
+  <section class="release" id="v1.8.0">
+    <h2 class="plain"><a href="#v1.8.0">1.8.0</a></h2>
+    <p>Branding and workflow</p>
+    <p>This release brings CCCode's branding, CC API account details and task progress together in the workspace, and adds Bark notifications plus an isolated way to inspect the task drawer.</p>
+    <p>New</p>
+    <ul>
+    <li>The sidebar now uses the CC logo at the bottom and shows the CC API account balance when available; clicking the logo opens About.</li>
+    <li>Structured task plans: when the agent reports tasks, an entry appears in the upper-right corner and a right-side drawer shows steps, progress, elapsed time and estimates.</li>
+    <li>Task plans support pause, resume, retry and stop, while running and failed plans remain visible for review.</li>
+    <li>A temporary <code>--task-plan-demo</code> launch argument demonstrates the task entry and right-side drawer with three preset tasks, isolated from real sessions.</li>
+    <li>Bark notifications use the CC AI API logo as their default avatar, while custom and empty icon configurations remain supported.</li>
+    </ul>
+    <p>Improved</p>
+    <ul>
+    <li>The task drawer stays open while a plan runs instead of disappearing shortly after it appears, and failed plans remain available in the UI.</li>
+    <li>The download and changelog pages now use the new CC AI API brand visuals across their English and Chinese versions.</li>
+    </ul>
+    <p>Fixed</p>
+    <ul>
+    <li>Task-plan entry and drawer visibility are now stable as task status changes.</li>
+    <li>Bark notification requests now include the default icon parameter.</li>
+    </ul>
+  </section>
+
   <section class="release" id="v1.6.0">
     <h2 class="plain"><a href="#v1.6.0">1.6.0</a></h2>
     <p>Performance</p>

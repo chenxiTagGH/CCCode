@@ -2887,6 +2887,8 @@ class _WorkbenchState extends State<Workbench> implements WindowDelegate {
       onOpenAbout: () => unawaited(showAboutCCCode(context)),
       updates: widget.settings?.updates?.service,
       onUpdate: _restartToUpdate,
+      ccApiStorage: widget.settings?.ccApiStore,
+      ccApiChanges: widget.settings?.ccApiChanges,
       onSearch: () => unawaited(_openPalette()),
       setup: switch (_tips) {
         final tips? when _main => FeatureTipsEntry(controller: tips),

@@ -26,12 +26,40 @@ Future<void> main(List<String> arguments) async {
   final root = File.fromUri(Platform.script).parent.parent.absolute;
   final pages = changelogPages(readReleaseNotes(root));
   for (final MapEntry(key: path, value: html) in pages.entries) {
-    final file = File.fromUri(root.uri.resolve(path));
-    file.parent.createSync(recursive: true);
-    file.writeAsStringSync(html);
-    stdout.writeln(file.path);
+    _write(root, path, html);
+  }
+
+  // The redesigned site is deployed from cc-site/ while the original site/
+  // remains the source of the app's release pages and their tests. Keep the
+  // same release notes available there too when that directory is present.
+  if (Directory('${root.path}/cc-site').existsSync()) {
+    for (final MapEntry(key: path, value: html) in pages.entries) {
+      final target = path == 'site/changelog.html'
+          ? 'cc-site/changelog.html'
+          : 'cc-site/zh/changelog.html';
+      _write(root, target, _forCcSite(html));
+    }
   }
 }
+
+void _write(Directory root, String path, String html) {
+  final file = File.fromUri(root.uri.resolve(path));
+  file.parent.createSync(recursive: true);
+  file.writeAsStringSync(html);
+  stdout.writeln(file.path);
+}
+
+String _forCcSite(String html) => html
+    .replaceFirst('<link rel="icon" href="/icon.png">',
+        '<link rel="icon" href="/assets/cc-ai-api-logo.svg">')
+    .replaceFirst('<link rel="stylesheet" href="/style.css">',
+        '<link rel="stylesheet" href="/styles.css">')
+    .replaceFirst('<script src="/head.js"></script>\n', '')
+    .replaceFirst('src="/icon.png"',
+        'src="/assets/cc-ai-api-logo.svg"')
+    .replaceFirst('<script src="/site.js"></script>',
+        '<script src="/script.js"></script>')
+    .replaceFirst('<body>', '<body class="changelog-page">');
 
 /// The notes in [root]'s release-notes/, by version, then by language.
 Map<AppVersion, Map<String, String>> readReleaseNotes(Directory root) {

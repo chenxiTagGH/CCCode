@@ -7,10 +7,16 @@ class BarkNotifier {
   BarkNotifier({
     this.timeout = const Duration(seconds: 5),
     this.request,
+    this.iconUrl = defaultIconUrl,
   });
+
+  /// The public CC AI API logo shown by Bark as the notification avatar.
+  static const defaultIconUrl =
+      'https://ccapitoken.cc/assets/cc-ai-api-logo.svg';
 
   final Duration timeout;
   final BarkRequest? request;
+  final String iconUrl;
   bool _busy = false;
 
   /// Parses and validates a configured Bark base URL without making a request.
@@ -40,9 +46,10 @@ class BarkNotifier {
     while (pathSegments.isNotEmpty && pathSegments.last.isEmpty) {
       pathSegments.removeLast();
     }
+    final icon = iconUrl.trim();
     final uri = validated.replace(
       pathSegments: [...pathSegments, title, body],
-      query: null,
+      queryParameters: {if (icon.isNotEmpty) 'icon': icon},
       fragment: null,
     );
     final client = HttpClient()..connectionTimeout = timeout;

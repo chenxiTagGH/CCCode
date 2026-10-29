@@ -54,6 +54,14 @@ void main() {
     controller.dispose();
   });
 
+  testWidgets('drawer stays open while the task runs', (tester) async {
+    final controller = TaskPlanController()..value = plan();
+    await tester.pumpWidget(app(TaskPlanPanel(controller: controller, child: const SizedBox())));
+    await tester.pump(const Duration(seconds: 2));
+    expect(find.text('Prepare release'), findsOneWidget);
+    controller.dispose();
+  });
+
   testWidgets('failed plan keeps drawer visible', (tester) async {
     final controller = TaskPlanController()..value = plan(status: TaskPlanStatus.failed);
     await tester.pumpWidget(app(TaskPlanPanel(controller: controller, child: const SizedBox())));

@@ -1,0 +1,23 @@
+<svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">CC AI API Logo</title>
+  <desc id="desc">Two open API routing loops form a subtle double C around an AI spark.</desc>
+  <g stroke-linecap="round" stroke-linejoin="round">
+    <path d="M59 15C37 7 14 20 14 40C14 60 37 73 59 65" stroke="#FFFFFF" stroke-width="16"/>
+    <path d="M59 15C37 7 14 20 14 40C14 60 37 73 59 65" stroke="#0B132B" stroke-width="13"/>
+    <path d="M59 15C37 7 14 20 14 40C14 60 37 73 59 65" stroke="#18CDE2" stroke-width="8"/>
+
+    <path d="M57 28C46 22 32 28 32 40C32 52 46 58 57 52" stroke="#FFFFFF" stroke-width="13"/>
+    <path d="M57 28C46 22 32 28 32 40C32 52 46 58 57 52" stroke="#0B132B" stroke-width="10"/>
+    <path d="M57 28C46 22 32 28 32 40C32 52 46 58 57 52" stroke="#4A69FF" stroke-width="6"/>
+  </g>
+
+  <circle cx="59" cy="15" r="5.5" fill="#FFFFFF"/>
+  <circle cx="59" cy="15" r="4" fill="#0B132B"/>
+  <circle cx="59" cy="15" r="2.4" fill="#18CDE2"/>
+  <circle cx="59" cy="65" r="5.5" fill="#FFFFFF"/>
+  <circle cx="59" cy="65" r="4" fill="#0B132B"/>
+  <circle cx="59" cy="65" r="2.4" fill="#18CDE2"/>
+
+  <path d="M63 31L65.8 37.2L72 40L65.8 42.8L63 49L60.2 42.8L54 40L60.2 37.2L63 31Z" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="6" stroke-linejoin="round"/>
+  <path d="M63 31L65.8 37.2L72 40L65.8 42.8L63 49L60.2 42.8L54 40L60.2 37.2L63 31Z" fill="#FFBF3F" stroke="#0B132B" stroke-width="2.6" stroke-linejoin="round"/>
+</svg>

@@ -32,10 +32,8 @@ class TaskPlanPanel extends StatefulWidget {
 class _TaskPlanPanelState extends State<TaskPlanPanel> {
   Timer? _clock;
   bool _drawerOpen = false;
-  bool _autoRevealPending = false;
   int _lastPlanHash = 0;
   TaskPlanStatus? _lastStatus;
-  int _revealGeneration = 0;
 
   @override
   void initState() {
@@ -59,7 +57,6 @@ class _TaskPlanPanelState extends State<TaskPlanPanel> {
     if (plan == null) {
       _lastStatus = null;
       _lastPlanHash = 0;
-      _revealGeneration++;
       _clock?.cancel();
       _clock = null;
       if (mounted) setState(() => _drawerOpen = false);
@@ -70,31 +67,12 @@ class _TaskPlanPanelState extends State<TaskPlanPanel> {
       Object.hashAll(plan.steps.map((step) => Object.hash(step.id, step.title))),
     );
     final isNewPlan = hash != _lastPlanHash;
-    final failedNow = plan.status == TaskPlanStatus.failed;
-    final justFailed = failedNow && _lastStatus != TaskPlanStatus.failed;
+    final justFailed =
+        plan.status == TaskPlanStatus.failed && _lastStatus != TaskPlanStatus.failed;
     _lastStatus = plan.status;
     if (isNewPlan || justFailed) {
       _lastPlanHash = hash;
-      if (mounted) {
-        final generation = ++_revealGeneration;
-        setState(() {
-          _drawerOpen = true;
-          _autoRevealPending = !failedNow;
-        });
-        if (_autoRevealPending) {
-          Future<void>.delayed(const Duration(milliseconds: 1500), () {
-            if (mounted &&
-                generation == _revealGeneration &&
-                _autoRevealPending &&
-                widget.controller.value == plan) {
-              setState(() {
-                _drawerOpen = false;
-                _autoRevealPending = false;
-              });
-            }
-          });
-        }
-      }
+      if (mounted) setState(() => _drawerOpen = true);
     }
     final ticking = _drawerOpen && plan.status == TaskPlanStatus.running;
     if (ticking && _clock == null) {
@@ -139,10 +117,7 @@ class _TaskPlanPanelState extends State<TaskPlanPanel> {
                       alignment: Alignment.centerRight,
                       child: TaskPlanDrawer(
                         plan: plan,
-                        onClose: () => setState(() {
-                          _drawerOpen = false;
-                          _autoRevealPending = false;
-                        }),
+                        onClose: () => setState(() => _drawerOpen = false),
                         onPause: widget.onPause,
                         onResume: widget.onResume,
                         onRetry: widget.onRetry,
