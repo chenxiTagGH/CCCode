@@ -37,13 +37,17 @@ on:
         type: choice
         default: both
         options: [both, standard, channel]
+      publish:
+        description: Publish this v* tag to R2 and GitHub Release
+        type: boolean
+        default: false
 
 permissions:
   contents: read
 
 # One release at a time; one that started is never cancelled halfway
-# through its upload. A build for testers, or run by hand, publishes no
-# release, and waits for none.
+# through its upload. Test builds and manual builds without publish enabled
+# do not publish, and wait for no release.
 concurrency:
   group: ${{ startsWith(github.ref, 'refs/tags/v') && 'release' || format('build-{0}', github.run_id) }}
   cancel-in-progress: false
@@ -93,6 +97,17 @@ jobs:
             share=true
             editions='["standard"]'
           elif [ "$GITHUB_EVENT_NAME" = workflow_dispatch ]; then
+            if [ "${{ inputs.publish }}" = true ]; then
+              if [ "$GITHUB_REF_TYPE" != tag ] || [[ "$GITHUB_REF_NAME" != v* ]]; then
+                echo "::error::Manual publishing requires a v* tag ref"
+                exit 1
+              fi
+              if [ "$GITHUB_REF_NAME" != "v$marketing" ]; then
+                echo "::error::Tag $GITHUB_REF_NAME, but pubspec.yaml is $version: the tag has to be v$marketing"
+                exit 1
+              fi
+              publish=true
+            fi
             case "$EDITIONS" in
               standard) editions='["standard"]' ;;
               channel) editions='["channel"]' ;;
