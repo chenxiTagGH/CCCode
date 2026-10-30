@@ -60,7 +60,7 @@ class SidePanelTab {
 /// commands; and the plan the agent wrote, alone, while there is one.
 /// The browser's page is there once a browser of the user's has connected
 /// (see lib/browser/browser_bridge.dart).
-enum SidePanelSection { files, changes, terminal, browser, plan }
+enum SidePanelSection { files, changes, terminal, browser, plan, taskPlan }
 
 /// The pages there whether or not there is anything on them: not the
 /// plan's, there only once the agent wrote one.
@@ -103,7 +103,9 @@ class SidePanelTabs {
   SidePanelTab? get current => switch (section) {
     SidePanelSection.files => active,
     SidePanelSection.changes => activeDiff,
-    SidePanelSection.terminal || SidePanelSection.browser => null,
+    SidePanelSection.terminal ||
+    SidePanelSection.browser ||
+    SidePanelSection.taskPlan => null,
     SidePanelSection.plan => plan,
   };
 }
@@ -571,7 +573,8 @@ class AgentSidePanel extends ChangeNotifier {
     switch (tabs.section) {
       case SidePanelSection.files ||
           SidePanelSection.changes ||
-          SidePanelSection.plan:
+          SidePanelSection.plan ||
+          SidePanelSection.taskPlan:
         if (tabs.current case final tab?) return close(conversation, tab);
       case SidePanelSection.terminal:
         if (tabs.terminal case final id?) {

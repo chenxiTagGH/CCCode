@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
@@ -113,16 +114,36 @@ class _TaskPlanPanelState extends State<TaskPlanPanel> {
                 ),
                 if (_drawerOpen)
                   Positioned.fill(
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: TaskPlanDrawer(
-                        plan: plan,
-                        onClose: () => setState(() => _drawerOpen = false),
-                        onPause: widget.onPause,
-                        onResume: widget.onResume,
-                        onRetry: widget.onRetry,
-                        onStop: widget.onStop,
-                      ),
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        final width = math.min(
+                          360.0,
+                          math.max(0.0, constraints.maxWidth - 24),
+                        );
+                        final height = math.min(
+                          420.0,
+                          math.max(0.0, constraints.maxHeight - 24),
+                        );
+                        return Align(
+                          alignment: Alignment.topRight,
+                          child: Padding(
+                            padding: const EdgeInsets.all(12),
+                            child: SizedBox(
+                              width: width,
+                              height: height,
+                              child: TaskPlanDrawer(
+                                plan: plan,
+                                onClose: () =>
+                                    setState(() => _drawerOpen = false),
+                                onPause: widget.onPause,
+                                onResume: widget.onResume,
+                                onRetry: widget.onRetry,
+                                onStop: widget.onStop,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   ),
               ],

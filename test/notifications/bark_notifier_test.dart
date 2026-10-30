@@ -68,7 +68,7 @@ void main() {
     }
   });
 
-  test('delivers HTTPS URI with title, body, and default CC AI API icon', () async {
+  test('delivers HTTPS URI with title, body, and default PNG icon', () async {
     Uri? requested;
     final notifier = BarkNotifier(
       request: (uri) async {

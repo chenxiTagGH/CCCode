@@ -48,6 +48,7 @@ import '../../theme/app_theme.dart';
 import '../../theme/codicons.dart';
 import '../../theme/material_file_icons.dart';
 import '../../theme/workbench_theme.dart' show themeColors;
+import '../../tasks/task_plan_drawer.dart';
 import '../chat_session.dart';
 import '../widgets/code_citation.dart' show CodeColorizer;
 import '../widgets/plan_start.dart';
@@ -512,6 +513,7 @@ class AgentSidePanelView extends StatelessWidget {
     listenable: Listenable.merge([
       panel,
       session,
+      session.taskPlanController,
       // A file's change kept or undone, part by part.
       ?session.changeReview,
       ..._gits,
@@ -520,6 +522,10 @@ class AgentSidePanelView extends StatelessWidget {
     ]),
     builder: (context, _) {
       final tabs = panel.tabsOf(session);
+      final shown = tabs.shown == SidePanelSection.taskPlan &&
+              session.taskPlan == null
+          ? SidePanelSection.changes
+          : tabs.shown;
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -527,12 +533,13 @@ class AgentSidePanelView extends StatelessWidget {
             panel: panel,
             session: session,
             tabs: tabs,
+            shown: shown,
             changes: _gits.fold(0, (sum, git) => sum + (git.state?.count ?? 0)),
             inset: titleBarInset,
             leading: leading,
           ),
           Expanded(
-            child: switch (tabs.shown) {
+            child: switch (shown) {
               SidePanelSection.files => _filesPage(context, tabs),
               SidePanelSection.changes => _changesPage(context, tabs),
               SidePanelSection.terminal => _terminalPage(context, tabs),
@@ -540,6 +547,9 @@ class AgentSidePanelView extends StatelessWidget {
                 key: ValueKey(('page', SidePanelSection.browser)),
               ),
               SidePanelSection.plan => _planPage(context, tabs.plan!),
+              SidePanelSection.taskPlan => session.taskPlan == null
+                  ? _changesPage(context, tabs)
+                  : _taskPlanPage(),
             },
           ),
         ],
@@ -951,6 +961,17 @@ class AgentSidePanelView extends StatelessWidget {
     );
   }
 
+  Widget _taskPlanPage() => TaskPlanDrawer(
+    key: const ValueKey(('page', SidePanelSection.taskPlan)),
+    plan: session.taskPlan!,
+    onClose: panel.hide,
+    onPause: session.pauseTask,
+    onResume: session.resumeTask,
+    onRetry: session.retryTask,
+    onStop: session.cancelTask,
+    expand: true,
+  );
+
   /// The plan the agent wrote, on its own: no list, its tab over it.
   Widget _planPage(BuildContext context, SidePanelTab plan) => Column(
     key: const ValueKey(('page', SidePanelSection.plan)),
@@ -1307,6 +1328,7 @@ extension SidePanelSectionUi on SidePanelSection {
     SidePanelSection.terminal => Codicons.terminal,
     SidePanelSection.browser => Codicons.globe,
     SidePanelSection.plan => Codicons.checklist,
+    SidePanelSection.taskPlan => Codicons.tasklist,
   };
 
   /// The command that shows it; none for the plan's, there only at times.
@@ -1314,7 +1336,9 @@ extension SidePanelSectionUi on SidePanelSection {
     SidePanelSection.files => ChatCommandIds.sidePanelFiles,
     SidePanelSection.changes => ChatCommandIds.sidePanelChanges,
     SidePanelSection.terminal => ChatCommandIds.sidePanelTerminal,
-    SidePanelSection.browser || SidePanelSection.plan => null,
+    SidePanelSection.browser ||
+    SidePanelSection.plan ||
+    SidePanelSection.taskPlan => null,
   };
 
   String label(BuildContext context) => switch (this) {
@@ -1323,6 +1347,7 @@ extension SidePanelSectionUi on SidePanelSection {
     SidePanelSection.terminal => context.l10n.sidePanelTerminal,
     SidePanelSection.browser => context.l10n.sidePanelBrowser,
     SidePanelSection.plan => context.l10n.sidePanelPlan,
+    SidePanelSection.taskPlan => context.l10n.taskPlanOpen,
   };
 }
 
@@ -1358,7 +1383,8 @@ class SidePanelRail extends StatelessWidget {
           0,
     SidePanelSection.files ||
     SidePanelSection.browser ||
-    SidePanelSection.plan => 0,
+    SidePanelSection.plan ||
+    SidePanelSection.taskPlan => 0,
   };
 
   static const _button = 26.0;
@@ -1370,7 +1396,11 @@ class SidePanelRail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ListenableBuilder(
-    listenable: Listenable.merge([?session, ...gits]),
+    listenable: Listenable.merge([
+      ?session,
+      if (session != null) session!.taskPlanController,
+      ...gits,
+    ]),
     builder: (context, _) => Container(
       key: const ValueKey('side-panel-rail'),
       width: width,
@@ -1411,6 +1441,16 @@ class SidePanelRail extends StatelessWidget {
               ],
             ),
           ],
+          if (session?.taskPlan != null) ...[
+            const SizedBox(height: _gap),
+            SidebarIconButton(
+              key: const ValueKey('side-panel-task-plan'),
+              icon: SidePanelSection.taskPlan.icon,
+              tooltip: SidePanelSection.taskPlan.label(context),
+              size: _button,
+              onTap: () => onSelect(SidePanelSection.taskPlan),
+            ),
+          ],
         ],
       ),
     ),
@@ -1425,6 +1465,7 @@ class _SectionBar extends StatelessWidget {
     required this.panel,
     required this.session,
     required this.tabs,
+    required this.shown,
     required this.changes,
     this.inset = 0,
     this.leading,
@@ -1432,6 +1473,7 @@ class _SectionBar extends StatelessWidget {
   final AgentSidePanel panel;
   final ChatSession session;
   final SidePanelTabs tabs;
+  final SidePanelSection shown;
 
   /// Room kept at the left of the tabs (see
   /// [AgentSidePanelView.titleBarInset]).
@@ -1455,6 +1497,7 @@ class _SectionBar extends StatelessWidget {
     ...alwaysShownSections,
     if (BrowserBridge.instance.used) SidePanelSection.browser,
     if (tabs.plan != null) SidePanelSection.plan,
+    if (session.taskPlan != null) SidePanelSection.taskPlan,
   ];
 
   /// What the tabs of [sections] take with their names (see
@@ -1512,7 +1555,6 @@ class _SectionBar extends StatelessWidget {
       child: LayoutBuilder(
         builder: (context, constraints) {
           final sections = _sections;
-          final shown = tabs.shown;
           final compact =
               constraints.maxWidth <
               _fullWidth(context, sections, {
@@ -1538,7 +1580,8 @@ class _SectionBar extends StatelessWidget {
                   count: switch (section) {
                     SidePanelSection.files ||
                     SidePanelSection.browser ||
-                    SidePanelSection.plan => 0,
+                    SidePanelSection.plan ||
+                    SidePanelSection.taskPlan => 0,
                     SidePanelSection.changes => changes,
                     SidePanelSection.terminal => running,
                   },
@@ -1561,7 +1604,8 @@ class _SectionBar extends StatelessWidget {
               ),
               const SizedBox(width: 2),
               // The plan's page has no list to show or hide.
-              if (shown != SidePanelSection.plan) ...[
+              if (shown != SidePanelSection.plan &&
+                  shown != SidePanelSection.taskPlan) ...[
                 Center(
                   child: IdeActionButton(
                     key: const ValueKey('side-panel-list-toggle'),

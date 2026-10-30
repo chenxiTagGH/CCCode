@@ -78,10 +78,12 @@ import 'search/claude_conversation_search.dart';
 import 'search/conversation_search.dart';
 import 'channel/account/account_send.dart';
 import 'channel/account/channel_account.dart';
+import 'channel/account/login_window.dart';
 import 'channel/channel_gate.dart';
 import 'channel/channel_setup.dart';
 import 'channel/channel_setup_platform.dart';
 import 'settings/app_locale.dart';
+import 'models/cc_api_connector.dart';
 import 'models/cc_api_store.dart';
 import 'settings/app_settings.dart';
 import 'settings/data_dir_startup.dart';
@@ -457,11 +459,18 @@ Future<void> main(List<String> arguments) async {
       catalog: catalog,
     )..start();
     await sync.ready;
+    final ccApiStore = GlobalCcApiStore(files.storage);
+    final ccApi = CcApiConnector(
+      providers: ModelProviders.current,
+      store: ccApiStore,
+      openWindow: ChannelLoginWindow.new,
+      send: sendToAccountSite,
+      listModels: listUpstreamModels,
+    );
     settings = AppSettings(
       locale: locale,
       files: files,
-      ccApiStore: GlobalCcApiStore(files.storage),
-      ccApiChanges: files.storage,
+      ccApi: ccApi,
       catalog: catalog,
       sync: sync,
       installs: VsCodeInstalls.current(),

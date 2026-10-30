@@ -36,6 +36,8 @@ void main() {
     bool footer = true,
     KernelOption? selected,
     List<ModelSettingChoice> Function(KernelOption option)? settingsOf,
+    VoidCallback? onOpen,
+    String? Function(KernelOptionGroup group)? groupAside,
   }) async {
     picked.clear();
     managed = 0;
@@ -65,6 +67,8 @@ void main() {
                         onTap: () => managed++,
                       )
                     : null,
+                onOpen: onOpen,
+                groupAside: groupAside,
                 onSelected: (option) => picked.add(option.id),
               ),
             ),
@@ -100,6 +104,28 @@ void main() {
     expect(find.byIcon(Icons.warning_amber_rounded), findsOneWidget);
     // The id and window under the name.
     expect(find.text('gpt-5 · 128K'), findsOneWidget);
+  });
+
+  testWidgets('opening calls its refresh hook and shows group aside text', (
+    tester,
+  ) async {
+    var opened = 0;
+    await pump(
+      tester,
+      [
+        _option('default', 'Default', _builtin),
+        _option('@gw/gpt-5', 'GPT-5', _gateway),
+      ],
+      onOpen: () => opened++,
+      groupAside: (group) => group.id == 'gw' ? '\$379.75' : null,
+    );
+    await open(tester, 'Default');
+    expect(opened, 1);
+    expect(find.text('\$379.75'), findsOneWidget);
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
+    await open(tester, 'Default');
+    expect(opened, 2);
   });
 
   testWidgets('many options are filtered as one types; Enter picks the '

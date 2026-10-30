@@ -22,6 +22,7 @@ import 'package:baocode/chat/side_panel/file_preview.dart';
 import 'package:baocode/chat/side_panel/side_panel_controller.dart';
 import 'package:baocode/chat/chat_column.dart';
 import 'package:baocode/chat/side_panel/side_panel_view.dart';
+import 'package:baocode/tasks/task_plan.dart';
 import 'package:baocode/chat/widgets/edit_step.dart';
 import 'package:baocode/chat/widgets/fold_line.dart';
 import 'package:baocode/chat/widgets/markdown_view.dart';
@@ -830,6 +831,54 @@ void main() {
       find.byKey(const ValueKey(('rail', SidePanelSection.changes))),
       findsNothing,
     );
+  });
+
+  testWidgets('the task plan rail entry opens the task plan section', (
+    tester,
+  ) async {
+    final session = ChatSession(historyCount: 0);
+    addTearDown(session.dispose);
+    session.taskPlanController.value = TaskPlan(
+      title: 'Release checklist',
+      steps: const [
+        TaskStep(id: 'one', title: 'Build the release'),
+      ],
+    );
+    SidePanelSection? selected;
+    await tester.pumpWidget(
+      _app(
+        SidePanelRail(
+          onSelect: (section) => selected = section,
+          session: session,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey('side-panel-task-plan')), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('side-panel-task-plan')));
+    expect(selected, SidePanelSection.taskPlan);
+  });
+
+  testWidgets('the task plan section renders the current plan and controls', (
+    tester,
+  ) async {
+    final (:panel, :session, files: _) = await _pumpChat(tester);
+    session.taskPlanController.value = TaskPlan(
+      title: 'Release checklist',
+      steps: const [
+        TaskStep(id: 'one', title: 'Build the release'),
+        TaskStep(id: 'two', title: 'Publish the release'),
+      ],
+    );
+    panel.showSection(session, SidePanelSection.taskPlan);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Release checklist'), findsOneWidget);
+    expect(find.text('Build the release'), findsOneWidget);
+    expect(find.text('Publish the release'), findsOneWidget);
+    expect(find.text('Pause'), findsOneWidget);
+    expect(find.text('Stop'), findsOneWidget);
   });
 
   testWidgets('the terminal rail badge counts running background commands', (

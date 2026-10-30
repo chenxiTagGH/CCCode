@@ -10,9 +10,9 @@ class BarkNotifier {
     this.iconUrl = defaultIconUrl,
   });
 
-  /// The public CC AI API logo shown by Bark as the notification avatar.
+  /// Bark expects a raster image for the notification avatar.
   static const defaultIconUrl =
-      'https://ccapitoken.cc/assets/cc-ai-api-logo.svg';
+      'https://raw.githubusercontent.com/chenxiTagGH/CCCode/v1.8.0/site/icon.png';
 
   final Duration timeout;
   final BarkRequest? request;

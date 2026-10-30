@@ -7,6 +7,7 @@ import '../../ide/ide_dialog.dart';
 import '../../kernel/agent_kernel.dart';
 import '../../kernel/kernel_types.dart';
 import '../../l10n/l10n.dart';
+import '../../models/cc_api_connector.dart';
 import '../../models/model_welcome.dart';
 import '../../settings/settings_dialog.dart'
     show SettingsOpener, SettingsSection;
@@ -21,10 +22,11 @@ import 'composer_picker.dart';
 /// effort, its context) beside it: the composer's, and the one a plan is
 /// started with. With no model to run on, one that sets a model up
 /// ([showModelWelcome]); nothing where the kernel picks no model.
-class SessionModelPicker extends StatelessWidget {
+class SessionModelPicker extends StatefulWidget {
   const SessionModelPicker({
     super.key,
     required this.session,
+    this.ccApi,
     this.pickerKey,
     this.tooltip,
     this.tapRegionGroupId,
@@ -32,6 +34,7 @@ class SessionModelPicker extends StatelessWidget {
   });
 
   final ChatSession session;
+  final CcApiConnector? ccApi;
 
   /// The picker's own, to open it from a keybinding.
   final GlobalKey<ComposerPickerState>? pickerKey;
@@ -41,6 +44,67 @@ class SessionModelPicker extends StatelessWidget {
   final String? tooltip;
   final Object? tapRegionGroupId;
   final FocusNode? focusNode;
+
+  @override
+  State<SessionModelPicker> createState() => _SessionModelPickerState();
+}
+
+class _SessionModelPickerState extends State<SessionModelPicker> {
+  ChatSession get session => widget.session;
+  GlobalKey<ComposerPickerState>? get pickerKey => widget.pickerKey;
+  String? get tooltip => widget.tooltip;
+  Object? get tapRegionGroupId => widget.tapRegionGroupId;
+  FocusNode? get focusNode => widget.focusNode;
+
+  double? _balance;
+  bool _refreshing = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _balance = widget.ccApi?.accountBalance;
+  }
+
+  @override
+  void didUpdateWidget(covariant SessionModelPicker oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.ccApi != oldWidget.ccApi) {
+      _balance = widget.ccApi?.accountBalance;
+    }
+  }
+
+  Future<void> _refreshBalance() async {
+    final connector = widget.ccApi;
+    if (connector == null || _refreshing) return;
+    setState(() => _refreshing = true);
+    try {
+      await connector.refresh();
+    } catch (_) {
+      // A stale balance must not stop the model menu from being usable.
+    } finally {
+      if (mounted) {
+        setState(() {
+          _refreshing = false;
+          _balance = connector.accountBalance ?? _balance;
+        });
+      }
+    }
+  }
+
+  String? _ccApiBalance(BuildContext context) {
+    final balance = _balance ?? widget.ccApi?.accountBalance;
+    if (balance == null) return null;
+    final l10n = context.l10n;
+    return l10n.modelsCcApiBalanceAmount(
+      l10n.modelsCcApiCurrencySymbol,
+      balance.toStringAsFixed(2),
+    );
+  }
+
+  String? _groupAside(BuildContext context, KernelOptionGroup group) {
+    if (group.id != CcApiConnector.providerId) return null;
+    return _ccApiBalance(context);
+  }
 
   /// The model with its settings, e.g. "Opus · 1M · High": the context
   /// only when it is not the standard one; its upstream before it only
@@ -145,6 +209,8 @@ class SessionModelPicker extends StatelessWidget {
       tooltip: tooltip,
       menuWidth: 260,
       searchPlaceholder: l10n.modelsSearch,
+      onOpen: () => unawaited(_refreshBalance()),
+      groupAside: (group) => _groupAside(context, group),
       footer: switch (SettingsOpener.maybeOf(context)) {
         final open? => (
           label: ChannelSetup.channelBuild

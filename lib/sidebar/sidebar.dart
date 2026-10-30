@@ -3,8 +3,6 @@ import 'dart:async';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-
 import '../base/give_way_row.dart';
 import '../base/smooth_scroll.dart';
 import '../chat/chat_keys.dart';
@@ -23,7 +21,6 @@ import '../ide/ide_hover.dart';
 import '../ide/ide_spinning.dart';
 import '../ide/ide_list.dart';
 import '../l10n/l10n.dart';
-import '../models/cc_api_store.dart';
 import '../keybindings/chat_keybindings.dart';
 import '../keybindings/keybinding_service.dart';
 import '../keybindings/default_keybindings.dart' show openSettingsCommandId;
@@ -173,7 +170,6 @@ class Sidebar extends StatefulWidget {
     this.onOpenFolderOn,
     this.editSshHost,
     this.onOpenSettings,
-    this.onOpenAbout,
     this.onSearch,
     this.onCustomize,
     this.customizing = false,
@@ -188,19 +184,11 @@ class Sidebar extends StatefulWidget {
     this.updates,
     this.onUpdate,
     this.setup,
-    this.ccApiStorage,
-    this.ccApiChanges,
   });
 
   /// Over the foot's row: the setup checklist folded ("Setup n/m"), which
   /// shows nothing when the checklist does not fold there.
   final Widget? setup;
-
-  /// The CC API's account metadata, whose balance is shown beside the brand.
-  final CcApiStore? ccApiStorage;
-
-  /// Changes to the account metadata, so the displayed balance stays current.
-  final Listenable? ccApiChanges;
 
   final Workspace workspace;
 
@@ -249,9 +237,6 @@ class Sidebar extends StatefulWidget {
 
   /// Opens the settings: the gear at the bottom; none without it.
   final VoidCallback? onOpenSettings;
-
-  /// Opens the About dialog from the CCCode logo.
-  final VoidCallback? onOpenAbout;
 
   /// Opens the search palette (agents, what was said in them, files,
   /// actions); no Search row without it.
@@ -1867,87 +1852,21 @@ class _SidebarState extends State<Sidebar>
     if (count == 0 &&
         settings == null &&
         update == null &&
-        widget.setup == null &&
-        widget.onOpenAbout == null) {
+        widget.setup == null) {
       return const SizedBox.shrink();
     }
     // No line over it: the list fades out above it instead.
-    Widget? brand;
-    if (widget.onOpenAbout case final openAbout?) {
-      brand = _buildBrandButton(openAbout, widget.ccApiStorage);
-      if (widget.ccApiChanges case final changes?) {
-        brand = ListenableBuilder(
-          listenable: changes,
-          builder: (_, _) => _buildBrandButton(openAbout, widget.ccApiStorage),
-        );
-      }
-    }
     return Padding(
       padding: const EdgeInsets.all(6),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          if (brand case final brand?) ...[brand, const SizedBox(height: 4)],
           ?widget.setup,
           _buildFooterButtons(count, settings, update),
         ],
       ),
     );
-  }
-
-  Widget _buildBrandButton(VoidCallback onTap, CcApiStore? storage) {
-    final balance = _ccApiBalance(storage);
-    final balanceText = balance == null
-        ? null
-        : context.l10n.modelsCcApiBalanceAmount(
-            context.l10n.modelsCcApiCurrencySymbol,
-            balance,
-          );
-    final label = balanceText == null ? 'CCCode' : 'CCCode, $balanceText';
-    return Tooltip(
-      message: label,
-      child: Semantics(
-        button: true,
-        label: label,
-        child: GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTap: onTap,
-          child: SizedBox(
-            height: 20,
-            child: Row(
-              children: [
-                Expanded(
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: SvgPicture.asset(
-                      'assets/branding/cccode_logo.svg',
-                      height: 14,
-                      fit: BoxFit.contain,
-                    ),
-                  ),
-                ),
-                if (balanceText != null)
-                  Text(
-                    balanceText,
-                    style: TextStyle(
-                      color: AppColors.textMuted,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  String? _ccApiBalance(CcApiStore? storage) {
-    final account = storage?.readState()?['account'];
-    final value = account is Map ? account['balance'] : null;
-    return value is num ? value.toStringAsFixed(2) : null;
   }
 
   Widget _buildFooterButtons(

@@ -54,6 +54,27 @@ void main() {
     controller.dispose();
   });
 
+  testWidgets('panel drawer stays compact at the top right', (tester) async {
+    final controller = TaskPlanController()..value = plan();
+    await tester.pumpWidget(
+      app(
+        SizedBox(
+          width: 1200,
+          height: 800,
+          child: TaskPlanPanel(controller: controller, child: const SizedBox()),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    final drawer = find.byType(TaskPlanDrawer);
+    expect(tester.getTopLeft(drawer).dx, greaterThan(800));
+    expect(tester.getTopLeft(drawer).dy, closeTo(12, 1));
+    expect(tester.getSize(drawer).width, lessThan(400));
+    expect(tester.getSize(drawer).height, lessThan(500));
+    controller.dispose();
+  });
+
   testWidgets('drawer stays open while the task runs', (tester) async {
     final controller = TaskPlanController()..value = plan();
     await tester.pumpWidget(app(TaskPlanPanel(controller: controller, child: const SizedBox())));

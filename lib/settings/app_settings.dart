@@ -16,7 +16,7 @@ import '../keybindings/keymap.dart';
 import '../keybindings/vscode_import.dart';
 import '../l10n/l10n.dart';
 import '../link/link_host.dart';
-import '../models/cc_api_store.dart';
+import '../models/cc_api_connector.dart';
 import '../models/model_providers.dart';
 import '../stash/stash_controller.dart';
 import '../theme/workbench_theme.dart' show WorkbenchThemeService;
@@ -56,8 +56,7 @@ class AppSettings {
     required this.locale,
     KeybindingService? keybindings,
     this.files,
-    this.ccApiStore,
-    this.ccApiChanges,
+    this.ccApi,
     this.catalog,
     this.sync,
     this.installs,
@@ -75,11 +74,8 @@ class AppSettings {
   /// The settings files in the data directory; none under test.
   final SettingsFiles? files;
 
-  /// The CC API account metadata shown in the sidebar.
-  final CcApiStore? ccApiStore;
-
-  /// Changes to the CC API account metadata.
-  final Listenable? ccApiChanges;
+  /// The shared CC API connector used by Settings and the model picker.
+  final CcApiConnector? ccApi;
 
   /// The keymaps to pick from.
   final KeymapCatalog? catalog;
@@ -174,6 +170,7 @@ class AppSettings {
         return ModelsSettingsPage(
           providers: ModelProviders.current,
           workspace: workspace,
+          ccApi: ccApi,
         );
       case SettingsSection.network:
         return NetworkSettingsPage(settings: files?.settings);
