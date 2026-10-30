@@ -33,6 +33,8 @@ class ImageRequest {
     this.aspectRatio,
     this.quality,
     this.background,
+    this.outputFormat,
+    this.outputCompression,
     this.count = 1,
     this.references = const [],
   });
@@ -50,6 +52,12 @@ class ImageRequest {
 
   /// `transparent`, `opaque` or `auto` (GPT Image's).
   final String? background;
+
+  /// `png`, `jpeg` or `webp` (GPT Image's).
+  final String? outputFormat;
+
+  /// 0–100 for JPEG or WebP output (GPT Image's).
+  final int? outputCompression;
 
   /// How many pictures.
   final int count;
@@ -107,7 +115,7 @@ String? imageSizeFor(String model, ImageRequest request) {
     fixed = const ['1024x1024', '1792x1024', '1024x1792'];
   } else if (name.startsWith('dall-e')) {
     fixed = const ['1024x1024'];
-  } else if (RegExp(r'^(?:gpt-image-1|chatgpt-image)').hasMatch(name)) {
+  } else if (RegExp(r'^(?:gpt-image|chatgpt-image)').hasMatch(name)) {
     fixed = const ['1024x1024', '1536x1024', '1024x1536'];
   }
   if (fixed != null) {
@@ -155,6 +163,9 @@ Map<String, Object?> imageGenerationBody(
     if (gptImage) ...{
       'quality': ?request.quality,
       'background': ?request.background,
+      'output_format': ?request.outputFormat,
+      if (request.outputCompression case final compression?)
+        'output_compression': compression,
     },
     if (dalle) ...{
       if (request.quality case 'high' || 'hd') 'quality': 'hd',
@@ -182,6 +193,9 @@ Map<String, String> imageEditFields(String model, ImageRequest request) {
     if (gptImage) ...{
       'quality': ?request.quality,
       'background': ?request.background,
+      'output_format': ?request.outputFormat,
+      if (request.outputCompression case final compression?)
+        'output_compression': '$compression',
     },
   };
 }

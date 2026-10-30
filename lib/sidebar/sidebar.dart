@@ -3,8 +3,6 @@ import 'dart:async';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-
 import '../base/give_way_row.dart';
 import '../base/smooth_scroll.dart';
 import '../chat/chat_keys.dart';
@@ -172,7 +170,6 @@ class Sidebar extends StatefulWidget {
     this.onOpenFolderOn,
     this.editSshHost,
     this.onOpenSettings,
-    this.onOpenAbout,
     this.onSearch,
     this.onCustomize,
     this.customizing = false,
@@ -240,9 +237,6 @@ class Sidebar extends StatefulWidget {
 
   /// Opens the settings: the gear at the bottom; none without it.
   final VoidCallback? onOpenSettings;
-
-  /// Opens the About dialog from the CCCode logo.
-  final VoidCallback? onOpenAbout;
 
   /// Opens the search palette (agents, what was said in them, files,
   /// actions); no Search row without it.
@@ -1858,8 +1852,7 @@ class _SidebarState extends State<Sidebar>
     if (count == 0 &&
         settings == null &&
         update == null &&
-        widget.setup == null &&
-        widget.onOpenAbout == null) {
+        widget.setup == null) {
       return const SizedBox.shrink();
     }
     // No line over it: the list fades out above it instead.
@@ -1869,37 +1862,9 @@ class _SidebarState extends State<Sidebar>
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          if (widget.onOpenAbout case final openAbout?) ...[
-            _buildBrandButton(openAbout),
-            const SizedBox(height: 4),
-          ],
           ?widget.setup,
           _buildFooterButtons(count, settings, update),
         ],
-      ),
-    );
-  }
-
-  Widget _buildBrandButton(VoidCallback onTap) {
-    return Tooltip(
-      message: 'CCCode',
-      child: Semantics(
-        button: true,
-        label: 'CCCode',
-        child: GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTap: onTap,
-          child: SizedBox(
-            height: 34,
-            child: Center(
-              child: SvgPicture.asset(
-                'assets/branding/cccode_logo.svg',
-                height: 24,
-                fit: BoxFit.contain,
-              ),
-            ),
-          ),
-        ),
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
@@ -32,10 +33,8 @@ class TaskPlanPanel extends StatefulWidget {
 class _TaskPlanPanelState extends State<TaskPlanPanel> {
   Timer? _clock;
   bool _drawerOpen = false;
-  bool _autoRevealPending = false;
   int _lastPlanHash = 0;
   TaskPlanStatus? _lastStatus;
-  int _revealGeneration = 0;
 
   @override
   void initState() {
@@ -59,7 +58,6 @@ class _TaskPlanPanelState extends State<TaskPlanPanel> {
     if (plan == null) {
       _lastStatus = null;
       _lastPlanHash = 0;
-      _revealGeneration++;
       _clock?.cancel();
       _clock = null;
       if (mounted) setState(() => _drawerOpen = false);
@@ -70,31 +68,12 @@ class _TaskPlanPanelState extends State<TaskPlanPanel> {
       Object.hashAll(plan.steps.map((step) => Object.hash(step.id, step.title))),
     );
     final isNewPlan = hash != _lastPlanHash;
-    final failedNow = plan.status == TaskPlanStatus.failed;
-    final justFailed = failedNow && _lastStatus != TaskPlanStatus.failed;
+    final justFailed =
+        plan.status == TaskPlanStatus.failed && _lastStatus != TaskPlanStatus.failed;
     _lastStatus = plan.status;
     if (isNewPlan || justFailed) {
       _lastPlanHash = hash;
-      if (mounted) {
-        final generation = ++_revealGeneration;
-        setState(() {
-          _drawerOpen = true;
-          _autoRevealPending = !failedNow;
-        });
-        if (_autoRevealPending) {
-          Future<void>.delayed(const Duration(milliseconds: 1500), () {
-            if (mounted &&
-                generation == _revealGeneration &&
-                _autoRevealPending &&
-                widget.controller.value == plan) {
-              setState(() {
-                _drawerOpen = false;
-                _autoRevealPending = false;
-              });
-            }
-          });
-        }
-      }
+      if (mounted) setState(() => _drawerOpen = true);
     }
     final ticking = _drawerOpen && plan.status == TaskPlanStatus.running;
     if (ticking && _clock == null) {
@@ -135,19 +114,36 @@ class _TaskPlanPanelState extends State<TaskPlanPanel> {
                 ),
                 if (_drawerOpen)
                   Positioned.fill(
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: TaskPlanDrawer(
-                        plan: plan,
-                        onClose: () => setState(() {
-                          _drawerOpen = false;
-                          _autoRevealPending = false;
-                        }),
-                        onPause: widget.onPause,
-                        onResume: widget.onResume,
-                        onRetry: widget.onRetry,
-                        onStop: widget.onStop,
-                      ),
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        final width = math.min(
+                          360.0,
+                          math.max(0.0, constraints.maxWidth - 24),
+                        );
+                        final height = math.min(
+                          420.0,
+                          math.max(0.0, constraints.maxHeight - 24),
+                        );
+                        return Align(
+                          alignment: Alignment.topRight,
+                          child: Padding(
+                            padding: const EdgeInsets.all(12),
+                            child: SizedBox(
+                              width: width,
+                              height: height,
+                              child: TaskPlanDrawer(
+                                plan: plan,
+                                onClose: () =>
+                                    setState(() => _drawerOpen = false),
+                                onPause: widget.onPause,
+                                onResume: widget.onResume,
+                                onRetry: widget.onRetry,
+                                onStop: widget.onStop,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   ),
               ],

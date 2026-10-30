@@ -1,0 +1,592 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CCCode Changelog</title>
+<meta name="description" content="What changed in each version of CCCode.">
+<link rel="icon" href="/assets/cc-ai-api-logo.svg">
+<link rel="stylesheet" href="/styles.css">
+<link rel="alternate" hreflang="en" href="https://ccapitoken.cc/changelog">
+<link rel="alternate" hreflang="zh" href="https://ccapitoken.cc/zh/changelog">
+</head>
+<body class="changelog-page">
+<!-- Made by tool/build_changelog.dart from release-notes/: edit those, not this. -->
+<canvas class="grid" aria-hidden="true"></canvas>
+<svg class="sprite" aria-hidden="true">
+  <!-- Lucide (ISC), https://lucide.dev -->
+  <symbol id="ic-github" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5c.08-1.25-.27-2.48-1-3.5c.28-1.15.28-2.35 0-3.5c0 0-1 0-3 1.5c-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5c-.39.49-.68 1.05-.85 1.65S8.93 17.38 9 18v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></g></symbol>
+</svg>
+<header class="top">
+  <a class="brand" href="/"><img src="/assets/cc-ai-api-logo.svg" alt="">CCCode</a>
+  <a href="/download">Download</a>
+  <a href="/changelog" aria-current="page">Changelog</a>
+  <a href="https://github.com/chenxiTagGH/CCCode"><svg class="ic" aria-hidden="true"><use href="#ic-github"/></svg>GitHub</a>
+  <a class="lang" href="/zh/changelog" hreflang="zh" lang="zh-CN">中文</a>
+</header>
+
+<main class="page changelog">
+  <h1>Changelog</h1>
+  <p class="subtitle">What changed in each version of CCCode.</p>
+
+  <section class="release" id="v1.8.0">
+    <h2 class="plain"><a href="#v1.8.0">1.8.0</a></h2>
+    <p>Branding and workflow</p>
+    <p>This release brings CCCode's branding, CC API account details and task progress together in the workspace, and adds Bark notifications plus an isolated way to inspect the task drawer.</p>
+    <p>New</p>
+    <ul>
+    <li>The sidebar now uses the CC logo at the bottom and shows the CC API account balance when available; clicking the logo opens About.</li>
+    <li>Structured task plans: when the agent reports tasks, an entry appears in the upper-right corner and a right-side drawer shows steps, progress, elapsed time and estimates.</li>
+    <li>Task plans support pause, resume, retry and stop, while running and failed plans remain visible for review.</li>
+    <li>A temporary <code>--task-plan-demo</code> launch argument demonstrates the task entry and right-side drawer with three preset tasks, isolated from real sessions.</li>
+    <li>Bark notifications use the CC AI API logo as their default avatar, while custom and empty icon configurations remain supported.</li>
+    </ul>
+    <p>Improved</p>
+    <ul>
+    <li>The task drawer stays open while a plan runs instead of disappearing shortly after it appears, and failed plans remain available in the UI.</li>
+    <li>The download and changelog pages now use the new CC AI API brand visuals across their English and Chinese versions.</li>
+    </ul>
+    <p>Fixed</p>
+    <ul>
+    <li>Task-plan entry and drawer visibility are now stable as task status changes.</li>
+    <li>Bark notification requests now include the default icon parameter.</li>
+    </ul>
+  </section>
+
+  <section class="release" id="v1.6.0">
+    <h2 class="plain"><a href="#v1.6.0">1.6.0</a></h2>
+    <p>Performance</p>
+    <p>This release is about speed and memory: in a long conversation, a reply streaming in, scrolling and dragging the minimap all keep up with you; the app holds much less memory as it runs; and on Windows the interface draws several times faster. Besides, Stash keeps in step with your projects' GitHub / GitLab issues, and an SSH connection that drops picks up the same session again, with nothing running there lost.</p>
+    <p>Performance</p>
+    <ul>
+    <li>Windows draws with Skia, as macOS does, not Flutter's new default Impeller: measured, a frame of the chat takes a fraction of the time to draw, in about half the memory.</li>
+    <li>Long conversations stream more smoothly: each file path in a reply is no longer looked up in every file the session has read. On a real 92-turn conversation, a frame went from 6.8 ms to 4.5 ms, and janky frames from 18 to none.</li>
+    <li>Very long replies and thoughts let go of what is far out of view, keeping only its height, and show it again as it comes back; a thought draws only what is in view; code, tables and math scrolled sideways are kept as pictures. Select All and copying still get all of the text.</li>
+    <li>Dragging the minimap or the scrollbar fast no longer builds what is out of view meanwhile, catching up over a few frames after; a reply scrolled away and back is not parsed again. Dragged back and forth fast, a frame went from 12.9 ms to 2.5 ms.</li>
+    <li>Less memory: Skia's texture cache is held to 32 MB rather than 150 to 300 MB, and decoded images to 48 MB; on macOS large blocks freed go back to the system, some 180 MB while a long thought streams.</li>
+    <li>Leaner editors: files of the same language share one syntax highlighting worker, its patterns compiled once (TypeScript's 334 were compiled in some 3,500 places), and line layouts are held to about 32 MB.</li>
+    <li>In plan mode the prompt cache is read again: each turn wrote the whole conversation to it anew, slower and dearer.</li>
+    <li>A trackpad flings the editors on as it does lists; on macOS lists no longer bounce at their ends.</li>
+    </ul>
+    <p>New</p>
+    <ul>
+    <li>Stash and issues, both ways: in a project that is a GitHub / GitLab repository, open issues become stashes, one row each with its status, title, conversation and issue. Kept in step: changed there, taken here; changed here, pushed once you confirm; changed on both sides, yours to pick; an issue closed, its stash is done. Every open issue by default; Settings → Stash → Issues as stashes keeps it to yours, or off.</li>
+    <li>Stash news: new comments on an issue, one closed or reopened, a linked pull request's checks failing, changes asked for, merged: each marked on its row, and those about you counted beside Stash in the sidebar. A pull request failing or asked for changes is fixed in its conversation in a click; a merged one asks whether the stash is done.</li>
+    <li>A stash can be published as an issue: what goes is shown first, local paths and secrets pointed out, local pictures uploaded with it. Merging stashes can close a merged one's issue as a duplicate.</li>
+    <li>A new markdown editor: stashes, markdown previews in the side panel and the chat's input are edited as they read, the marks showing only where the caret is. Tables are edited in their cells: rows and columns added and removed, cells picked, copied and pasted as in a spreadsheet; a link shows a bubble to open, copy, edit or remove it.</li>
+    <li>Customize: skills, rules, commands and subagents open in the markdown editor, edited as they read or as their source; front matter shows as properties, edited as a form.</li>
+    <li>SSH drops lose nothing: after a network hiccup the connection goes back to the same session, its terminals, Claude Code and language servers still running there (kept up to three hours while disconnected), no output lost or repeated; a silent network is noticed within 30 seconds.</li>
+    <li>Going on after the usage limit: on Claude's own account, the model picker has Continue After Limit Reset. On, a conversation stopped at the limit goes on once it resets, even with the computer asleep past it; one due while the app was closed goes on as it opens.</li>
+    <li>The Claude Code CLI, recommended: where Claude Code is installed it is the core by default; a conversation on the built-in core suggests switching, above its input, downloading the CLI in a click, or Not Now.</li>
+    <li>Models: subagents and the Opus / Sonnet / Haiku tiers can use another upstream's models; a model can have its own endpoint (Anthropic, Chat Completions, Responses); an upstream or a model is duplicated in a click; models an upstream no longer lists are removed at once.</li>
+    <li>The minimap: each of your messages is a clear mark on it. The pointer near one snaps to it and shows at once the message and the replies around it; a click goes there.</li>
+    <li>The input: a / starting any word opens the command menu; a command's tag shows its whole description on hover, and Open details opens its file in the side panel. @ finds folders too. File, folder and code chips in the input open what they name.</li>
+    <li>While the agent works, Enter in the empty input sends the first queued message now; background tasks (subagents among them) keep going.</li>
+    <li>A changed file's right click opens it in the browser (HTML), its default app or another editor, shows it in the file manager, or copies its path.</li>
+    <li>The side panel's markdown preview takes pictures and files dropped or pasted in, copied beside the document and linked; a right click shows a link's file in the file manager.</li>
+    </ul>
+    <p>Fixed</p>
+    <ul>
+    <li>A conversation switched away from and back to is where you left it, its steps still open.</li>
+    <li>A conversation renamed in Claude Code (/rename) is renamed in the list.</li>
+    <li>With &quot;viewMode&quot;: &quot;verbose&quot; in Claude's settings, Stash's polish, the input's polish and commit messages no longer fail.</li>
+    <li>A single ~ (a range such as 10-12~10-16) no longer strikes text out.</li>
+    <li>The markdown preview fills the view, wide tables no longer cut off; zoomed in, a drag in it selects under the pointer.</li>
+    <li>With the side panel at the left and the sidebar hidden, its tabs keep clear of the traffic lights on macOS, and the sidebar's toggle is there too; dragging its edge follows the pointer from the width shown.</li>
+    <li>Go to Definition in a remote project opens the right file on its host.</li>
+    <li>Windows: updating or uninstalling ends the browser extension's host first, no longer failing with &quot;DeleteFile failed; code 5&quot;.</li>
+    </ul>
+  </section>
+
+  <section class="release" id="v1.5.0">
+    <h2 class="plain"><a href="#v1.5.0">1.5.0</a></h2>
+    <p>Easy SSH</p>
+    <p>Connecting to a server no longer starts with setting up ssh in a terminal: type its address in CCCode and connect, with the password, key and jump host in one form, and no terminal to accept the server's key the first time. Settings has a new SSH Servers page, where all your servers are kept, each with the core it runs.</p>
+    <p>New</p>
+    <ul>
+    <li>Add an SSH server: Add SSH Server… in the list of remote projects asks for the host, port and user, and how to sign in: a password, a private key, or Automatic (as ssh does in a terminal). A pasted user@host:port is split up, the keys in ~/.ssh are offered, and a password is kept in the system keychain. Saved, it connects in one click; a failed connection's page and the sidebar edit it too.</li>
+    <li>Jump hosts: pick a saved server to connect through, each asking for its own password.</li>
+    <li>A server connected to for the first time has its key remembered by itself. One whose key changed is told as such, and once you know it was reinstalled, its old key can be removed to connect again.</li>
+    <li>Settings → SSH Servers: the servers added in the app and the hosts the sidebar has used, to edit, connect, disconnect or remove; the hosts of ~/.ssh/config are listed apart, their file a click away.</li>
+    <li>A core for each server: Automatic (the server's Claude Code CLI if it has one, else the built-in core), the built-in core, or the Claude Code CLI (installed there if missing). Remote hosts no longer follow this machine's core setting.</li>
+    <li>Passwords on Windows 10: the installer carries a recent OpenSSH, used where the system's is too old or missing.</li>
+    <li>Settings → About: the version, the site, the changelog and the issues, and a way to star CCCode on GitHub. Accounts is now Git Accounts.</li>
+    <li>The browser extension works on Linux, in Chrome, Chromium, Edge, Brave and Vivaldi.</li>
+    <li>A file another tool asks CCCode to open as file:line:column (a front-end inspector's Open in Editor, say) opens at that line and column.</li>
+    </ul>
+    <p>Improved</p>
+    <ul>
+    <li>Typing in the IDE is smoother: an edit goes through only the lines it changed, the input method is given only the lines around the caret, and typing no longer redraws the whole IDE.</li>
+    <li>Switching chat tabs in the IDE is faster: the chats seen last are kept, shown again at once where you left them.</li>
+    <li>Changes in the side panel open in the IDE's diff editor: the deleted code in the text where it is narrow, side by side once wide enough, with the overview of the changes at the right, and long files no longer slow it down.</li>
+    <li>The live time, speed and tokens under a reply while the agent works are one switch now (Settings → General).</li>
+    <li>Through OpenCode's gateway, the requests of a conversation hit its prompt cache: faster, and cheaper.</li>
+    <li>The model menu opens scrolled to the model in use.</li>
+    </ul>
+    <p>Fixed</p>
+    <ul>
+    <li>A picture zoomed in the preview is no longer clipped to its first size.</li>
+    <li>Generated images, screenshots and pictures read stay in a conversation switched away from and back to.</li>
+    <li>After switching to another provider's model mid-conversation, messages go to the model picked; with the model in use removed, the one the picker shows is used rather than &quot;Not logged in&quot;.</li>
+    <li>Go to Definition (F12) centers its target, even one already on screen.</li>
+    <li>Windows: zoomed in, the title bar's buttons are clickable all the way to their right edge; installing language servers no longer fails with &quot;not a valid Win32 application&quot;.</li>
+    <li>The file manager is called by each system's own name (Finder, File Explorer…).</li>
+    </ul>
+  </section>
+
+  <section class="release" id="v1.4.0">
+    <h2 class="plain"><a href="#v1.4.0">1.4.0</a></h2>
+    <p>Hello, Linux</p>
+    <p>CCCode runs on Linux now: a package for Ubuntu and other Debian-based distributions, x64 and arm64, that keeps itself up to date like the Mac and Windows apps. And setting up a model the first time is a welcome rather than an error.</p>
+    <p>New</p>
+    <ul>
+    <li>Linux: download the .deb for your processor from ccapitoken.cc/download (Ubuntu 22.04 or later, and other Debian-based distributions). It opens folders and files with the system's dialogs, has the system's right-click menus, and pastes text, files and pictures. Thanks to qyh1221, whose port this is.</li>
+    <li>Linux updates itself: a new version is downloaded and checked as on the other systems, then installed once you enter your password, and CCCode opens again. A copy run from the tarball is pointed to the download page instead.</li>
+    <li>Setting up a model: with no model to run on yet (CCCode's own core, before any upstream is added), a welcome explains what an upstream is and adds one in a click, opening its page in Settings → Models. The conversation starts by itself as soon as a model is there, with no retry. Until then, Set Up a Model sits in the model picker's place under the input, and in the command palette.</li>
+    <li>From your phone, Start on a plan the agent put to you starts it, as the desktop's button does.</li>
+    </ul>
+    <p>Improved</p>
+    <ul>
+    <li>An upstream's models are listed by name, in its settings page, the fetched list and the model picker.</li>
+    </ul>
+  </section>
+
+  <section class="release" id="v1.3.0">
+    <h2 class="plain"><a href="#v1.3.0">1.3.0</a></h2>
+    <p>Good Friends with Chrome</p>
+    <p>This release is about the browser: agents can use your own Chrome now, opening pages, clicking, typing and debugging with your sign-ins, every step of it in view in the side panel. Agents can also make pictures with your upstreams' image models, and pictures show right in the chat. CCCode has a core of its own; an agent's changes can be reviewed part by part beside the chat; long conversations open faster, and the mouse wheel keeps up with your hand. And a batch of problems is fixed.</p>
+    <p>New</p>
+    <ul>
+    <li>The browser: add the CCCode extension (from the Chrome Web Store, or as a zip loaded unpacked) and agents can open pages, read them, click and type in your own Chrome, Edge, Brave or Arc, signed in as you are. They touch only the tabs you share with them (the CCCode button in the browser's toolbar shares the tab you're on). The side panel shows the page they're working in as it happens, and you can work in it too. Turn it on or off and install it in Settings → Browser, on macOS and Windows.</li>
+    <li>Debugging in the browser: agents read the console and network requests, set breakpoints and step through code, see variables by their source-mapped names, find a page's React and Vue components and event handlers, look into performance, memory and unused CSS, block, mock and rewrite requests, and run a tab as on a phone or a slow network.</li>
+    <li>A debugging history of the browser: the pages, requests and console errors and warnings of the tabs you share are kept as they happen, with no recording to start. Say &quot;saving just failed&quot; and the agent looks it up itself. Detailed history keeps request and response bodies too, and your clicks and typing (never passwords). It stays on this computer; Settings shows how much room it takes and clears it, and you're told once it passes 1 GB.</li>
+    <li>Show the agent how: an agent can ask you to do something once in the browser, keep each step as a file in the project, and do it again in your browser later.</li>
+    <li>Making pictures: agents generate images with your upstreams' image models (the Images API, chat interfaces such as OpenRouter's and Gemini's, Codex's gpt-image-2). Pick the default image model in Settings → Models, or Ask each time to choose in the chat; image models stay out of the chat's model picker.</li>
+    <li>Pictures in the chat: what a tool returns as a picture (an image file read, a browser screenshot, an MCP tool's image) and local images in a message show in the conversation. Click one to see it whole, and ← → go through every picture in the chat; right-click to open it in the side panel or the IDE, copy its path or show it in Finder. Image files open in the side panel too.</li>
+    <li>The built-in core: CCCode's own Claude Code core, with CLAUDE.md, skills, subagents, commands, hooks, plugins and MCP servers, on remote hosts too. Switch in Settings → General → Claude Code → Core: the CLI where Claude Code is installed, the built-in core otherwise. The built-in core uses only the upstreams added in Settings → Models; pick the CLI for a Claude subscription.</li>
+    <li>Reviewing changes beside the chat: the side panel's editor shows an agent's pending changes in the code, as the IDE does, each part to undo or keep on its own. The bar above goes to the previous and next change and keeps or undoes a file, or everything at once. The side panel's editor finds and replaces too.</li>
+    <li>Live usage: while an agent works, the time so far, the writing speed and the tokens roll by under the status line; a finished turn shows its time, speed, cost and tokens, still there when the session is opened again.</li>
+    <li>The status line's musings are now mostly about the step just done, its command or file by name.</li>
+    <li>Polish in the composer: the button beside the context ring has the model tidy your words, keeping tags, images, code and paths as they are, and it can be undone. Turn it off in Settings → General if you don't need it.</li>
+    <li>The side panel can move to the conversation's left: the button in its bar, or Toggle Side Panel Position in the command palette and the View menu.</li>
+    <li>Settings → Appearance → As a Reply Comes: Stay at its start stops following once your message reaches the top, so you read the reply from its beginning.</li>
+    <li>Settings → General turns off Suggest Next Prompt, saving the extra request each turn; Settings → Appearance hides the times in the sidebar.</li>
+    <li>The + on the Stash page starts a new note right there on the right, ready to type in.</li>
+    <li>Diagnostics: an event log of windows, views and the theme goes with the diagnostics uploaded from Settings → Updates, to track down windows that stop responding.</li>
+    </ul>
+    <p>Improved</p>
+    <ul>
+    <li>A long conversation is read from its end, the earlier turns as you scroll to the top: it opens much faster. A very long turn loads a page at a time too.</li>
+    <li>The mouse wheel glides, eased and close behind your hand, in the chat, file trees, lists and editors, high refresh rate screens included. Trackpads are as they were.</li>
+    <li>Checkpoints keep only the files an agent edited instead of snapshots of the whole project, which could take gigabytes; old checkpoint repositories are deleted, and a session's checkpoints a month unused are tidied away.</li>
+    <li>Several thoughts in a row show as one.</li>
+    <li>Messages sent while an agent works: queued ones are taken one at a time, and one sent now goes alone.</li>
+    <li>Usage statistics: one anonymous ping a day, holding only a random install ID, the version, the operating system and the processor; the Send Usage Data switch is gone from the settings.</li>
+    </ul>
+    <p>Fixed</p>
+    <ul>
+    <li>Another model or upstream picked while a task runs takes the next message, instead of the one before.</li>
+    <li>In a remote project, files from this computer dropped into the composer are copied to the remote host first.</li>
+    <li>Networks listed in NO_PROXY (such as Tailscale's 100.64.0.0/10) go around the proxy, and are passed on to Claude Code too.</li>
+    <li>The main window opens where it was left, as big, maximized if it was.</li>
+    <li>Windows: back in the window after Alt+Tab, the first key types and the window keeps drawing; waking from sleep is no longer taken for a hang.</li>
+    <li>macOS: closing a window in full screen no longer leaves a black Space.</li>
+    <li>Terminal: functions bash exports (environment modules' module and ml) reach the terminal whole.</li>
+    <li>The explorer shows a symbolic link as what it leads to, in remote projects too.</li>
+    <li>Stash: a note an agent writes on Windows shows without a restart; the page's filters stay as you last set them; clicking a card's conversation opens the note.</li>
+    <li>Sidebar: an agent opened from elsewhere, a new one included, is the one selected; with Stash or Customize shown, the earlier conversation isn't highlighted as well; what has no room gives way instead of being pushed out of its row.</li>
+    <li>A subagent continued opens from its row above the composer and goes on in its own card.</li>
+    <li>Conversations side by side each have their own side panel bar.</li>
+    <li>And smaller fixes: Tab takes the suggestion past an empty IME composition; a table's scrollbar shows again alongside the minimap; inline tags sit centered on their text; a message's editor gets all its room; the Customize details' buttons sit flush right; a link to a heading with a % in it opens.</li>
+    </ul>
+  </section>
+
+  <section class="release" id="v1.2.0">
+    <h2 class="plain"><a href="#v1.2.0">1.2.0</a></h2>
+    <p>Meet Stash</p>
+    <p>A big release. Stash is new: jot down ideas, screenshots and links from any app, hand them to an agent when they're ready, and see how each one is going at a glance; sign in to GitHub or GitLab to import issues into it and keep issues and pull requests up to date. The phone app's beta is now on the download page. Git, the Fast IDE, remote hosts and model settings gain a good deal more, and a long list of problems is fixed.</p>
+    <p>New</p>
+    <ul>
+    <li>Stash: an inbox for whatever comes to mind. Set a global shortcut in Settings → Stash and press it in any app to bring up a floating panel and note something down (none is set by default, so as not to clash with other apps). Text, screenshots, files, links, code, tables and formulas all go in, and each note has its own number, like an issue.</li>
+    <li>Keeping Stash tidy: pin notes, drag them into order, filter by time, project and status, and merge duplicates; search finds text inside images too, and AI search finds notes by meaning.</li>
+    <li>Handing a note to an agent: click Implement in CCCode and choose a new git worktree or the current branch, or @ the note in a chat. The chat and the note are linked, and the note's card shows how the chat is going.</li>
+    <li>AI to say it clearly: Polish smooths the selected text, and Clarify turns a one-liner into a full request, using its images and attachments; both can be undone.</li>
+    <li>Accounts (Settings → Accounts): sign in to GitHub or GitLab, in the browser or with a token, GitHub Enterprise and self-hosted GitLab included. Issues and pull requests linked from Stash show their latest state and checks; import issues from your projects' repositories, and reply to or close an issue once you've confirmed, with a warning first if the text looks like it holds a local path or a secret. Tokens are kept only in this computer's keychain.</li>
+    <li>The phone app (beta): download it for Android or iOS from the download page, pair it with your computer, and follow and steer its agents from your phone.</li>
+    <li>Phones through a Cloudflare Tunnel: write the public address in Settings → Mobile as wss://your-domain, and leave the domain's Always Use HTTPS on.</li>
+    <li>Branch bar: the current Git branch over the chat, to search, switch and create branches; a workspace of several folders lists each folder's branch. Switching waits while an agent runs, so as not to pull the ground from under it.</li>
+    <li>In plan mode, the plan's card has a Start button: leave plan mode and get going on the plan in one click.</li>
+    <li>Each chat picks its own model; Codex's Fast tier has moved there, and both Responses and Codex upstreams support Fast.</li>
+    <li>Find in Chat (⌘F / Ctrl+F), and Paste as Plain Text (⇧⌘V / Ctrl+Shift+V).</li>
+    <li>Settings → Appearance → Interface Size scales text, icons and spacing together; the terminal's text follows it, or takes a size of its own.</li>
+    <li>Settings → Customize: create, edit and delete project and global rules, skills, subagents, commands, MCP servers, hooks and plugins right in the settings.</li>
+    <li>Custom request headers for each upstream in the model settings, with the session ID and model name available as variables.</li>
+    <li>Git: fetch, pull and push; pick the repository in a project with several, with submodules as repositories of their own; the graph can show every branch, names each commit's branches and tags, and lists a commit's files as a tree.</li>
+    <li>Files: search the whole project's text from the side panel; open a file link from a chat in the side panel, preview it or open it in the browser; Open in Terminal in the explorer, and choose which files and folders it hides in the settings.</li>
+    <li>Fast IDE: turn on Show agent changes as diffs to have each file an agent changes open as a diff as it goes; change a file's language mode by hand; format JSON and other files without a language server.</li>
+    <li>Remote hosts: the host indicator in the status bar has a menu, and files on a remote host open directly over SSH, with the ones opened lately listed.</li>
+    </ul>
+    <p>Improved</p>
+    <ul>
+    <li>The sidebar's agent list is rebuilt, with multi-selection to pin, archive and delete several at once; archived agents can show in the IDE too.</li>
+    <li>The Fast IDE opens in the main window by default, in place of the chat; switch back to a window per folder in the settings.</li>
+    <li>An earlier conversation shows that it's loading while it opens, and very long conversations run more smoothly.</li>
+    <li>The subagents and background tasks running show over the composer, a click away.</li>
+    <li>Quick Open in a remote project waits on neither the connection nor the ranking.</li>
+    </ul>
+    <p>Fixed</p>
+    <ul>
+    <li>A queued message taken back to edit lands in the composer instead of being lost, and one sent now ahead of the rest is no longer lost either.</li>
+    <li>A project folder that has been deleted or moved is reported in the app's language.</li>
+    <li>The model providers' keys come along when the data folder moves.</li>
+    <li>Claude Code's own models are always listed, and kept between runs.</li>
+    <li>A key the base URL refuses is reported, rather than left as an empty list.</li>
+    <li>The window buttons' place, the editor's icons, trackpad scrolling, and list selection and highlighting match the IDE's in many small ways.</li>
+    <li>And a batch of smaller fixes: text typed into a URL jumping about, the model's name cut short in a narrow composer, saves of one Stash note overwriting each other, and more.</li>
+    </ul>
+  </section>
+
+  <section class="release" id="v1.1.0">
+    <h2 class="plain"><a href="#v1.1.0">1.1.0</a></h2>
+    <p>Nice and bouncy</p>
+    <p>This release lays the groundwork for your phone: CCCode on a phone can pair with your computer, to see and steer its agents. The conversation also has a minimap, so a long one can be taken in at a glance and any part of it reached with a click; under each reply there is now a copy button and what the turn used.</p>
+    <p>New</p>
+    <ul>
+    <li>Phones (preview): a new Settings → Mobile page. Pair a phone by scanning a QR code, or let a phone on the same network find the computer; both sides show a security code to check, then they connect directly over the local network or the internet, end-to-end encrypted, and keep working when the computer's IP changes. Off until you show the QR code; the first time, macOS asks whether CCCode may use the local network. The phone app is coming soon.</li>
+    <li>Conversation minimap: a miniature of the whole conversation beside it, your messages, code, tables and changes each telling apart. While you scroll, a drop of liquid glass marks where you are, magnifying what is under it a little, like the macOS Dock; click or drag it to go anywhere.</li>
+    <li>While the minimap shows, it takes the place of the scrollbar on the right, and the messages leave a little more room either side; in a narrow window it hides and the scrollbar is back.</li>
+    <li>Settings → Appearance: turn off Conversation Minimap to keep the scrollbar on the right, as before; with it on, set how opaque its glass is (0% to 150%), and how much it stretches as it follows you scrolling (Off, Subtle, Medium, Bouncy).</li>
+    <li>Turn footer: under a finished reply, a Copy reply button and how long the turn took; with Claude Code, also, faintly, how fast the model wrote, the tokens the turn used and what it cost; hover for the details.</li>
+    </ul>
+    <p>Improved</p>
+    <ul>
+    <li>Over a subagent's conversation, the way back reads &quot;← Conversation&quot;, the arrow and the word one button, lit on hover or keyboard focus.</li>
+    <li>A running agent's loader in the sidebar is a little smaller, in keeping with the list's text.</li>
+    </ul>
+  </section>
+
+  <section class="release" id="v1.0.9">
+    <h2 class="plain"><a href="#v1.0.9">1.0.9</a></h2>
+    <p>Pixel loaders</p>
+    <p>A small release: a new pixel loading animation for agents and subagents, with the style and speed yours to pick, and a tidier settings window on Windows and in narrow windows.</p>
+    <p>New</p>
+    <ul>
+    <li>Pixel loaders: an agent at work and a running subagent show a 3×3 pixel animation, Fill and Empty by default, slightly tinted with the theme's accent.</li>
+    <li>Settings → Appearance: pick the loading style for &quot;Agent Working&quot; and &quot;Subagent Running&quot; separately, from over a dozen styles (the old ring among them), and set their speed.</li>
+    </ul>
+    <p>Improved</p>
+    <ul>
+    <li>An agent whose turn is over keeps showing as running in the sidebar, the conversation list and the IDE while its background tasks (subagents, shells) are still running.</li>
+    <li>Subagents running in the background use the same loader as the others; Move to Background has a new icon, and background shells above the input show a terminal icon instead of a spinner.</li>
+    <li>On Windows, with the settings open, the header no longer shows the conversation's controls and title; the settings' page list toggle takes their place.</li>
+    <li>Settings pages in a narrow window have less padding on the sides, leaving the cards more room.</li>
+    </ul>
+  </section>
+
+  <section class="release" id="v1.0.8">
+    <h2 class="plain"><a href="#v1.0.8">1.0.8</a></h2>
+    <p>Much sharper</p>
+    <p>A wide-ranging release: import upstreams from a site in one click, manage SSH hosts from the sidebar, undo and drag files in and out of the explorer, get Claude Code downloaded for you on first use, and a batch of long-standing fixes.</p>
+    <p>New</p>
+    <ul>
+    <li>One-click upstream import: click the import button on a site that offers it and, once you confirm, the upstream is added with your own key (only its name, protocol, address and key are taken). Settings → Models lists the sites officially listed at the top, those you use first; the list follows ccapitoken.cc, with no new release needed.</li>
+    <li>The model picker shows each model's maker logo, and each upstream's heading has an icon. Pick one yourself (a maker's logo, the site's icon, an emoji, a built-in icon or an image you upload); unset, the maker is told from the address, or the site's icon is fetched.</li>
+    <li>Queued messages: what you send while the agent works no longer lands in the conversation. It waits above the input, sent in turn, and each can be taken back to edit, sent now (stopping the current task), or removed.</li>
+    <li>Open Project in the sidebar, and SSH hosts managed there: switch between this machine and a host, add, rename, disconnect or remove hosts. The new chat's folder menu lists SSH hosts and their projects too, and picks a folder on a host directly.</li>
+    <li>SSH password sign-in on Windows (OpenSSH 8.4 or newer).</li>
+    <li>Explorer: creating, deleting and moving files can be undone and redone (Cmd/Ctrl+Z); drag files in from other apps, or out of the window into them (a remote project's are downloaded first); copy a remote project's files to the system clipboard, and paste this machine's files into it to upload them; a folder you cannot read says so.</li>
+    <li>Auto save: turn on Auto Save in the File menu, or set files.autoSave (after a pause in editing, on switching editors or on leaving the window), as in VS Code.</li>
+    <li>The Skills page (formerly Customize) works for remote projects, managing the skills, subagents, commands, rules and MCP servers on the remote host. New ones can have Chinese names.</li>
+    <li>Each MCP server is checked for whether it connects: one that doesn't says why (its exit code, a timeout, a sign-in it needs) with its output log, and can be checked again, one or all.</li>
+    <li>Claude Code installed for you: with none on this machine, your first conversation downloads it, showing progress. By default the newest of those installed and downloaded by CCCode is used; set a path in Settings → General to use one of your own.</li>
+    <li>Settings → Updates → Diagnostic Logs: when something goes wrong, upload the error logs to the developer with a note, and get a report ID back. Nothing is sent until you click Upload, and your home folder shows as ~ in the logs.</li>
+    <li>The settings' page list can be resized by dragging and hidden with ⌘B; in a narrow window it becomes a drawer.</li>
+    <li>Models that summarize their thinking, such as GPT, show a thought by its summary's title, its text when opened.</li>
+    <li>In the review, a changed image shows as the image, not as text.</li>
+    <li>Question cards can be collapsed and expanded.</li>
+    </ul>
+    <p>Improved</p>
+    <ul>
+    <li>Each model keeps its own effort and context length, and switching models no longer sends a test request first.</li>
+    <li>With a subagent model set, every subagent uses it (except those defined to inherit); subagents could run on the main model before.</li>
+    <li>Sharper text on Windows: sizes are snapped to whole pixels and text is rendered closer to Chrome.</li>
+    <li>Updates are checked 10 seconds after launch, then every 5 minutes, so new releases arrive sooner.</li>
+    <li>Model picker: a search box to click into, list edges that fade out, smoother hovering, and the context menu's colors.</li>
+    <li>Hovers stay within 90% of the window's width, clear of its edges.</li>
+    </ul>
+    <p>Fixed</p>
+    <ul>
+    <li>After stopping a task, tools, commands and subagents still running no longer spin forever: they show as failed (Claude Code and Codex).</li>
+    <li>A long conversation's scrollbar is to scale and no longer jumps as you drag it. A turn the agent takes up on its own (a background task's report, say) no longer jumps to the bottom or folds away what you are reading.</li>
+    <li>Tools running code --version and the like no longer open an empty CCCode window.</li>
+    <li>Cancelling an SSH sign-in, or a wrong password, no longer brings the password prompt back again and again; remote projects restored at launch no longer each ask.</li>
+    <li>On Windows, opening the changed files of an SSH project no longer shows a grey error box.</li>
+    <li>On macOS, commands the agent runs can send Apple Events to other apps (e.g. with osascript); they were refused outright before.</li>
+    </ul>
+  </section>
+
+  <section class="release" id="v1.0.7">
+    <h2 class="plain"><a href="#v1.0.7">1.0.7</a></h2>
+    <p>The same everywhere, different everywhere</p>
+    <p>This release is mostly about polishing the interface, and adds support for VS Code theme extensions.</p>
+    <p>New</p>
+    <ul>
+    <li>VS Code theme extensions: search Open VSX in the Extensions view, or drop in a .vsix file, to install its color themes and file icon themes. An extension's page shows its README, features, changelog and compatibility; you can check for updates, switch to a pre-release, enable or disable it. No extension code runs: only the themes are used.</li>
+    <li>The Extensions view has Themes and Language Servers tabs, and lists popular themes.</li>
+    <li>Pick a file icon theme with Preferences: File Icon Theme in the Command Palette, previewing each with the arrow keys. JetBrains-style icons are drawn for the light or dark theme in use.</li>
+    <li>New built-in themes, CC Dark and CC Light, now the default dark and light themes.</li>
+    <li>Mention files with @ in the input: pick any file or folder in the workspace, every folder of a multi-folder workspace included, or type a path starting with /, ~/ or a drive letter to complete any file on your machine (on the remote host, for a remote project).</li>
+    <li>Settings → Appearance → User message style: a bubble on the right (the default), or full width with the current turn's message staying at the top as you scroll.</li>
+    <li>Settings → Appearance → Terminal font size: follows the interface text size by default, or set it on its own.</li>
+    <li>Test models in Settings → Models: from a model's menu, or all of them at once (three at a time). Tests go through Claude Code itself, the way a conversation does; each shows how long it took, and on failure, the reply or error on hover.</li>
+    <li>ChatGPT (Codex) upstreams have a Codex version setting: the backend lists only the models that version supports, so if a new model is missing, enter a newer version and refresh the model list.</li>
+    <li>Fork a conversation from its menu in the sidebar to carry on from a copy of it, remote projects included.</li>
+    <li>Wherever a file can be revealed in Finder, it can be saved as a copy with Save As; a remote project's file is downloaded.</li>
+    <li>The sidebar's Archived menu adds Unarchive All and Delete All Archived.</li>
+    <li>In a multi-folder workspace, the agent's changes in every folder show in the review.</li>
+    <li>The agent is told which file is open in the editor, the cursor's line and what is selected, as Claude Code is in an IDE.</li>
+    <li>With no folder open, open a single file to chat with an agent about it.</li>
+    <li>The context usage panel adds Prompt cache: the cache hit rate of the last request and of the main conversation, with what was read, written and uncached on hover. It is not shown for third-party models that don't report their cache.</li>
+    <li>File icon themes can use WOFF fonts (Chalice, for one), with font icons sized as in VS Code.</li>
+    </ul>
+    <p>Interface</p>
+    <ul>
+    <li>An empty conversation shows the CCCode logo.</li>
+    <li>Message bubbles and the input share one fill and border; the focused input shows a shadow instead of changing its border color.</li>
+    <li>With several conversations side by side, the current one has a faint outline, inset from the window's edges.</li>
+    <li>Conversations fade out at their top and bottom edges as they scroll.</li>
+    <li>Switches in Settings scale with the interface font; the active tab's top line is softer; the tab strip no longer fades at its ends.</li>
+    <li>The sidebar's Changes page shows the Source Control graph under the changes, both collapsible and resizable.</li>
+    <li>The terminal in the agent's side panel uses the editor's background, matching its surroundings.</li>
+    <li>The dividers between the sidebar's sections run edge to edge.</li>
+    <li>Settings → Updates shows this version's notes when it is the newest.</li>
+    </ul>
+    <p>Fixed</p>
+    <ul>
+    <li>The context ring updates after the context is compacted (Claude Code and Codex).</li>
+    <li>In SSH projects, Go to Definition opens the right file (on Windows, the path could lose its leading /).</li>
+    <li>Changes inside a Git repository nested in the project show in the review.</li>
+    <li>On Windows, typing with an input method no longer turns tags and images in the input into text.</li>
+    <li>A drag starting on a reply below a plan preview no longer selects the preview's hidden plan text.</li>
+    <li>Requests to upstreams send Claude Code's user agent, so relays such as agentrouter.org no longer answer 401 &quot;unauthorized client detected&quot;.</li>
+    <li>shields.io badges in READMEs and the Markdown preview no longer show their text far too large.</li>
+    <li>Fixed the code area's scroll shadow turning black in some themes.</li>
+    <li>The first review snapshot of a project with many files no longer freezes the interface for seconds.</li>
+    <li>On a Chinese Windows, saving keys and running commands no longer fail when PowerShell's output isn't UTF-8.</li>
+    </ul>
+    <p>Changed</p>
+    <ul>
+    <li>Removed six themes: Monokai, Abyss, Quiet Light, Dark (Visual Studio), Dark 2026 and Light 2026. If you were using one, CCCode switches you to CC Dark or CC Light.</li>
+    </ul>
+  </section>
+
+  <section class="release" id="v1.0.6">
+    <h2 class="plain"><a href="#v1.0.6">1.0.6</a></h2>
+    <p>New</p>
+    <ul>
+    <li>Added a ChatGPT (Codex) upstream: add it in Settings → Models and sign in with your ChatGPT account to use Codex models on your subscription's quota, with no API key.</li>
+    <li>Add several accounts to one ChatGPT upstream and choose how requests are spread across them: Round Robin, Fill First or Most Remaining. When an account runs out of quota, requests move on to the next one automatically.</li>
+    <li>Settings shows each account's plan, the quota used and when it resets.</li>
+    <li>When an MCP server asks for information, a card now asks you: fill in its form field by field, or approve a link it wants opened (such as a sign-in page) in your browser.</li>
+    </ul>
+    <p>Improved</p>
+    <ul>
+    <li>In full access, the agent's questions and plans awaiting approval still wait for you; other permission requests are approved automatically as before.</li>
+    <li>If port 1455, which ChatGPT sign-in returns to, is taken by another program, sign in in the browser as usual and paste the address it ends on back into Settings.</li>
+    </ul>
+  </section>
+
+  <section class="release" id="v1.0.5">
+    <h2 class="plain"><a href="#v1.0.5">1.0.5</a></h2>
+    <p>New</p>
+    <ul>
+    <li>Network settings let you use the system proxy, set one manually or connect directly. Test connections to several sites at once, with response times and details when a connection fails.</li>
+    <li>Added two built-in notification sounds: man-oh-yeah and Gulp Gulp Gulp Gulp.</li>
+    </ul>
+    <p>Improved</p>
+    <ul>
+    <li>Interface text scaling and code font size now work independently: editor and side-panel code views follow the code font size, while conversation text and interface labels follow the interface scale. Font changes apply immediately.</li>
+    <li>Notification sounds and previews now overlap instead of interrupting a sound already playing, on both macOS and Windows.</li>
+    <li>Menus keep an 8px gap from the window edges; long lists scroll within that space.</li>
+    </ul>
+    <p>Fixed</p>
+    <ul>
+    <li>Scrolling long diffs in the editor and side-panel previews stays smooth, including with many changed lines.</li>
+    <li>Selecting text in a conversation no longer gets disrupted when the available text widgets change.</li>
+    <li>Dragging across the chat-width setting no longer changes its value accidentally.</li>
+    </ul>
+  </section>
+
+  <section class="release" id="v1.0.4">
+    <h2 class="plain"><a href="#v1.0.4">1.0.4</a></h2>
+    <p>Improved</p>
+    <ul>
+    <li>Source Control and the side panel’s Changes page no longer freeze when there are huge numbers of changes (say, a home folder made a Git repository): the first 10,000 show with a notice, file changes then no longer refresh them (Refresh does), and scrolling and dragging the scrollbar stay smooth (#6)</li>
+    <li>Diffs of large files, or of files changed throughout, no longer freeze the window: the diff editor, the side panel’s diff preview and inline blame compute them in the background</li>
+    <li>SSH remote projects get the same limit, and no longer send the whole Git status back when there are many changes</li>
+    <li>Language servers’ file watching skips Git’s objects and the files of packages in node_modules, and takes many changes at once a batch at a time, without slowing the window</li>
+    </ul>
+    <p>New</p>
+    <ul>
+    <li>The side panel’s Changes page finds Git repositories in subfolders, as Source Control does, and lets you switch between them</li>
+    </ul>
+    <p>Fixed</p>
+    <ul>
+    <li>An agent’s goal (/goal) was misreported: a goal given up on or ended by an error read as met, also after resuming a session; and its clock kept running when nothing worked on it</li>
+    <li>Dragging to select text in a conversation sometimes selected nothing until the app restarted</li>
+    <li>Selecting text in a conversation went wrong as a queued message was sent or the status changed</li>
+    <li>Anthropic-compatible endpoints (such as those of DeepSeek, Zhipu and Alibaba Cloud) now list their models</li>
+    </ul>
+  </section>
+
+  <section class="release" id="v1.0.3">
+    <h2 class="plain"><a href="#v1.0.3">1.0.3</a></h2>
+    <p>1.0.2 won't open on Windows?</p>
+    <ul>
+    <li>If 1.0.2 quits as soon as it starts, without a window, its built-in update can't run either: download 1.0.3 from <a href="https://ccapitoken.cc/download">https://ccapitoken.cc/download</a> and install it over the old version. Your settings and conversations are kept.</li>
+    </ul>
+    <p>Fixed</p>
+    <ul>
+    <li>Windows: on some PCs 1.0.2 quit right after starting, without showing a window (when the Visual C++ runtime installed was an older one). CCCode now carries the runtime it needs instead of using the system's</li>
+    <li>Windows: Claude Code installed with Volta failed to start, reported as not recognized</li>
+    </ul>
+  </section>
+
+  <section class="release" id="v1.0.2">
+    <h2 class="plain"><a href="#v1.0.2">1.0.2</a></h2>
+    <p>Update didn’t install?</p>
+    <ul>
+    <li>If after Restart to Update the app closed and opened again on the old version (1.0.0 and the first 1.0.1 build may do this), please download 1.0.2 from <a href="https://ccapitoken.cc/download">https://ccapitoken.cc/download</a> and install it over your current version; your settings and conversations are kept.</li>
+    </ul>
+    <p>New</p>
+    <ul>
+    <li>Settings → Appearance: choose the code font, its size and ligatures, and the interface text size, with a preview as you go; the terminal uses the font and size too</li>
+    <li>A very long text pasted into the input goes in as a tag (such as “Pasted text #1 +120 lines”) instead of freezing the window; hover it to preview, and the whole text is sent with the message</li>
+    </ul>
+    <p>New in 1.0.1</p>
+    <ul>
+    <li>A side panel beside the chat: browse the project’s files, review, stage and commit Git changes (with a commit message Claude can draft), and open terminals and the commands an agent runs in the background</li>
+    <li>See the files Claude changed in the side panel, and edit and save them there</li>
+    <li>Workspaces: put several folders together and let an agent work across them all; Git repositories nested in them are found too</li>
+    <li>Refer to other conversations with @ in the input, and copy a session’s ID from an agent’s menu in the sidebar</li>
+    <li>SSH remote projects on macOS hosts</li>
+    <li>Mermaid diagrams in chat and Markdown files drawn as diagrams, offline, and zoomable</li>
+    <li>The agent’s plan shown as a card, and a setting for the width of the chat</li>
+    <li>Copy, cut and paste files in the explorer</li>
+    <li>A background command’s output in the side panel is shown in a real terminal, with the terminal’s font, colors, selection, find and links</li>
+    </ul>
+    <p>Improved in 1.0.1</p>
+    <ul>
+    <li>Claude Code’s first-run onboarding is skipped for you, and you’re told when Claude Code can’t be found</li>
+    <li>A file opened again is colored at once, without waiting to be highlighted anew</li>
+    <li>In a narrow window, the sidebar and the side panel give way to whichever was opened last</li>
+    <li>Windows: a new install is for the current user by default, so neither installing nor updating needs administrator rights; installing for all users is still a choice</li>
+    <li>More reliable updates: on Windows, the administrator prompt an update asks for comes up in front; an update that didn’t install is told at the next launch, with the download page and the install log</li>
+    <li>A version you skipped still shows the Update button in the sidebar; it just isn’t offered in a notification</li>
+    <li>Errors, the Windows window log and hang reports are kept in the data folder’s logs folder, to find out what went wrong</li>
+    <li>The interaction panel shows the shortcut to go back</li>
+    </ul>
+    <p>Fixed in 1.0.1</p>
+    <ul>
+    <li>With themes such as Dark 2026 and Dark Modern, the program, strings and options of a command in the chat were invisible</li>
+    <li>With light themes, commands and their output in the chat were too faint; they now keep the terminal’s contrast</li>
+    <li>A project icon in cyan or magenta showed no color with some themes</li>
+    <li>Moving the data directory names the files another program holds open, instead of only reporting that copying failed</li>
+    <li>A suggested prompt with a backslash (a Windows path) or a line break turned the input into a grey error box</li>
+    <li>Windows: after a display slept, or a window was resized while hidden, the window’s content froze</li>
+    <li>Windows: a maximized window on a second screen, restored from minimized, didn’t fill the screen or take input</li>
+    <li>The side panel’s rail showed while Customize was open</li>
+    <li>Windows: About showed the wrong version, and not the app’s icon</li>
+    </ul>
+  </section>
+
+  <section class="release" id="v1.0.1">
+    <h2 class="plain"><a href="#v1.0.1">1.0.1</a></h2>
+    <p>To 1.0.0 users</p>
+    <ul>
+    <li>Our mistake: 1.0.0 can’t install updates. After Restart to Update the app closes, and opens again as 1.0.0. We’re sorry.</li>
+    <li>Please download 1.0.1 from <a href="https://ccapitoken.cc/download">https://ccapitoken.cc/download</a> and install it over your current version; your settings and conversations are kept. From 1.0.1 on, updates install by themselves.</li>
+    </ul>
+    <p>New</p>
+    <ul>
+    <li>A side panel beside the chat: browse the project’s files, review, stage and commit Git changes (with a commit message Claude can draft), and open terminals and the commands an agent runs in the background</li>
+    <li>See the files Claude changed in the side panel, and edit and save them there</li>
+    <li>Workspaces: put several folders together and let an agent work across them all; Git repositories nested in them are found too</li>
+    <li>Refer to other conversations with @ in the input, and copy a session’s ID from an agent’s menu in the sidebar</li>
+    <li>SSH remote projects on macOS hosts</li>
+    <li>Mermaid diagrams in chat and Markdown files drawn as diagrams, offline, and zoomable</li>
+    <li>The agent’s plan shown as a card, and a setting for the width of the chat</li>
+    <li>Copy, cut and paste files in the explorer</li>
+    <li>A background command’s output in the side panel is shown in a real terminal, with the terminal’s font, colors, selection, find and links</li>
+    </ul>
+    <p>Improved</p>
+    <ul>
+    <li>Claude Code’s first-run onboarding is skipped for you, and you’re told when Claude Code can’t be found</li>
+    <li>A file opened again is colored at once, without waiting to be highlighted anew</li>
+    <li>In a narrow window, the sidebar and the side panel give way to whichever was opened last</li>
+    <li>Windows: a new install is for the current user by default, so neither installing nor updating needs administrator rights; installing for all users is still a choice</li>
+    <li>More reliable updates: on Windows, the administrator prompt an update asks for comes up in front; an update that didn’t install is told at the next launch, with the download page and the install log</li>
+    <li>A version you skipped still shows the Update button in the sidebar; it just isn’t offered in a notification</li>
+    <li>Errors, the Windows window log and hang reports are kept in the data folder’s logs folder, to find out what went wrong</li>
+    <li>The interaction panel shows the shortcut to go back</li>
+    </ul>
+    <p>Fixed</p>
+    <ul>
+    <li>With themes such as Dark 2026 and Dark Modern, the program, strings and options of a command in the chat were invisible</li>
+    <li>With light themes, commands and their output in the chat were too faint; they now keep the terminal’s contrast</li>
+    <li>A project icon in cyan or magenta showed no color with some themes</li>
+    <li>Moving the data directory names the files another program holds open, instead of only reporting that copying failed</li>
+    <li>A suggested prompt with a backslash (a Windows path) or a line break turned the input into a grey error box</li>
+    <li>Windows: after a display slept, or a window was resized while hidden, the window’s content froze</li>
+    <li>Windows: a maximized window on a second screen, restored from minimized, didn’t fill the screen or take input</li>
+    <li>The side panel’s rail showed while Customize was open</li>
+    <li>Windows: About showed the wrong version, and not the app’s icon</li>
+    </ul>
+  </section>
+
+  <section class="release" id="v1.0.0">
+    <h2 class="plain"><a href="#v1.0.0">1.0.0</a></h2>
+    <p>The first release of CCCode: a desktop app for Claude Code, with a fast IDE built in. For macOS (Apple silicon and Intel) and Windows.</p>
+    <p>Chat</p>
+    <ul>
+    <li>Steps fold into single lines, and the current task and its progress stay above the input</li>
+    <li>Review what Claude changed, file by file, and keep or undo it; checkpoints never touch your repository’s .git</li>
+    <li>Give Claude a goal with /goal, and it keeps working until the goal is met</li>
+    <li>A rich-text input: paste images, drop in files, and copy code from the editor as a reference to its lines</li>
+    <li>Edit a message you sent, search your conversations, and see your context and plan usage</li>
+    <li>Run several agents side by side, in tabs or in windows of their own</li>
+    <li>Choose how the commits and pull requests Claude writes are credited</li>
+    </ul>
+    <p>SSH remote projects</p>
+    <ul>
+    <li>Open a folder on a Linux host over SSH, as with VS Code’s Remote-SSH: the window stays on your machine, and files, search, Git, terminals, language servers and Claude Code run on the host</li>
+    <li>Pick a host from ~/.ssh/config, or type user@host</li>
+    <li>Claude Code is installed on a host that has none, and your models work there too</li>
+    <li>Reconnects by itself; when a host can’t be reached, you’re told why and can retry</li>
+    </ul>
+    <p>Fast IDE</p>
+    <ul>
+    <li>An editor, a terminal and Source Control with a commit graph and Git blame</li>
+    <li>Your VS Code themes, keybindings and language servers</li>
+    <li>Markdown files open as a preview you can edit in place, Typora’s way</li>
+    <li>Commit messages drafted by Claude Code, for you to edit and commit</li>
+    </ul>
+    <p>Models and extensions</p>
+    <ul>
+    <li>Use other models through Claude Code: Anthropic’s API, OpenAI’s Chat Completions or Responses, with API keys kept in the system keychain</li>
+    <li>Choose the model for each part of Claude Code’s work, and for titles and commit messages</li>
+    <li>Plugins, MCP servers, skills, subagents, rules, commands and hooks in one place, with your skills from claude.ai</li>
+    </ul>
+    <p>Around the app</p>
+    <ul>
+    <li>Notifications, a sound and a count on the app’s icon when an agent needs you; agents keep running in the menu bar or tray when the window is closed</li>
+    <li>Open a folder in CCCode from Finder or Explorer, and keep a window on top of others</li>
+    <li>In English and Chinese</li>
+    <li>Updates itself in the background, and asks before restarting</li>
+    </ul>
+  </section>
+</main>
+
+<script src="/script.js"></script>
+</body>
+</html>

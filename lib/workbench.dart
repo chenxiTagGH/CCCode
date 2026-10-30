@@ -133,7 +133,6 @@ import 'workspace/pin_window_button.dart';
 import 'workspace/project_workspace.dart' show ProjectWorkspace;
 import 'workspace/title_bar_double_click.dart';
 import 'workspace/window_controls.dart';
-import 'workspace/window_header/about_dialog.dart' show showAboutCCCode;
 import 'workspace/window_header/window_header.dart';
 import 'workspace/workspace.dart';
 import 'workspace/workspace_dialog.dart';
@@ -2884,7 +2883,6 @@ class _WorkbenchState extends State<Workbench> implements WindowDelegate {
           ? null
           : () => unawaited(_editSshServer(host: host)),
       onOpenSettings: () => unawaited(openSettings()),
-      onOpenAbout: () => unawaited(showAboutCCCode(context)),
       updates: widget.settings?.updates?.service,
       onUpdate: _restartToUpdate,
       onSearch: () => unawaited(_openPalette()),
@@ -4099,6 +4097,7 @@ class _WorkbenchState extends State<Workbench> implements WindowDelegate {
             ? null
             : (name) => _commandFileOf(thread, name),
         openEditor: openEditor ?? () => _sidePanelEditor(thread),
+        ccApi: widget.settings?.ccApi,
       ),
     );
     if (place.alone || embedded) return chat;
@@ -4163,7 +4162,8 @@ class _WorkbenchState extends State<Workbench> implements WindowDelegate {
       },
       SidePanelSection.terminal ||
       SidePanelSection.browser ||
-      SidePanelSection.plan => null,
+      SidePanelSection.plan ||
+      SidePanelSection.taskPlan => null,
     };
   }
 

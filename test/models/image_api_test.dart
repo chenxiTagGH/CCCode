@@ -20,6 +20,8 @@ void main() {
       for (final id in [
         'gpt-image-1',
         'gpt-image-2',
+        'gpt-image-2.5-sunburst',
+        'gpt-image-2.5-flare',
         'dall-e-3',
         'imagen-4.0-generate-001',
         'doubao-seedream-4-0-250828',
@@ -150,6 +152,14 @@ void main() {
       expect(imageSizeFor('gpt-image-1.5', asked(aspect: '2:3')), '1024x1536');
       expect(imageSizeFor('dall-e-3', asked(aspect: '9:16')), '1024x1792');
       expect(imageSizeFor('gpt-image-2', asked(aspect: '1:1')), '1024x1024');
+      expect(
+        imageSizeFor('gpt-image-2.5-sunburst', asked(aspect: '16:9')),
+        '1536x1024',
+      );
+      expect(
+        imageSizeFor('gpt-image-2.5-flare', asked(aspect: '2:3')),
+        '1024x1536',
+      );
       final wide = parseImageSize(
         imageSizeFor('gpt-image-2', asked(aspect: '16:9')),
       )!;
@@ -167,8 +177,20 @@ void main() {
         aspectRatio: '3:2',
         quality: 'high',
         background: 'transparent',
+        outputFormat: 'webp',
+        outputCompression: 82,
         count: 2,
       );
+      expect(imageGenerationBody('gpt-image-2.5-sunburst', request), {
+        'model': 'gpt-image-2.5-sunburst',
+        'prompt': 'a fox',
+        'size': '1536x1024',
+        'n': 2,
+        'quality': 'high',
+        'background': 'transparent',
+        'output_format': 'webp',
+        'output_compression': 82,
+      });
       expect(imageGenerationBody('gpt-image-1', request), {
         'model': 'gpt-image-1',
         'prompt': 'a fox',

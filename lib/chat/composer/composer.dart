@@ -12,6 +12,7 @@ import '../../kernel/agent_kernel.dart';
 import '../../kernel/kernel_types.dart';
 import '../../keybindings/chat_keybindings.dart';
 import '../../l10n/l10n.dart';
+import '../../models/cc_api_connector.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/workbench_theme.dart' show WorkbenchColors, themeColors;
 import '../chat_keys.dart';
@@ -89,6 +90,7 @@ class ChatComposer extends StatefulWidget {
     this.onSubmit,
     this.onCancel,
     this.tapRegionGroupId,
+    this.ccApi,
     this.draft,
     this.openEditor,
     this.hostFiles,
@@ -110,6 +112,9 @@ class ChatComposer extends StatefulWidget {
   /// Group of a [TapRegion] around this composer: its menus, which open in
   /// the overlay, count as inside it.
   final Object? tapRegionGroupId;
+
+  /// The CC API account whose balance is shown in the model picker.
+  final CcApiConnector? ccApi;
 
   /// Where what is typed is kept while the composer is gone; once saved,
   /// it starts from there rather than [initialText] and [initialImages].
@@ -1941,6 +1946,7 @@ class ChatComposerState extends State<ChatComposer>
                     if (model != null || session.health.noModel)
                       SessionModelPicker(
                         session: session,
+                        ccApi: widget.ccApi,
                         pickerKey: _modelPickerKey,
                         tooltip: _hovers.model,
                         tapRegionGroupId: widget.tapRegionGroupId,

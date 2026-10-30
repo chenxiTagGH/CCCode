@@ -14,6 +14,7 @@ class TaskPlanDrawer extends StatelessWidget {
     this.onResume,
     this.onRetry,
     this.onStop,
+    this.expand = false,
   });
 
   final TaskPlan plan;
@@ -22,6 +23,7 @@ class TaskPlanDrawer extends StatelessWidget {
   final VoidCallback? onResume;
   final VoidCallback? onRetry;
   final VoidCallback? onStop;
+  final bool expand;
 
   @override
   Widget build(BuildContext context) {
@@ -37,10 +39,14 @@ class TaskPlanDrawer extends StatelessWidget {
     return Material(
       elevation: 12,
       color: Theme.of(context).colorScheme.surface,
+      borderRadius: BorderRadius.circular(12),
+      clipBehavior: Clip.antiAlias,
       child: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) => SizedBox(
-            width: math.min(350.0, constraints.maxWidth),
+            width: expand
+                ? constraints.maxWidth
+                : math.min(350.0, constraints.maxWidth),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [

@@ -12,6 +12,7 @@ import '../kernel/kernel_types.dart';
 import '../kernel/claude_code/claude_path_setting.dart' show installLocalClaude;
 import '../keybindings/chat_keybindings.dart';
 import '../l10n/l10n.dart';
+import '../models/cc_api_connector.dart';
 import '../models/model_welcome.dart';
 import '../remote/remote_location.dart';
 import '../remote/remote_status.dart' show ClaudeInstallBanner, SshHostBanner;
@@ -87,6 +88,7 @@ class ChatScreen extends StatefulWidget {
     this.fileMentions,
     this.commandFile,
     this.openEditor,
+    this.ccApi,
   });
 
   final String title;
@@ -175,6 +177,9 @@ class ChatScreen extends StatefulWidget {
   /// The file open in the editor beside it, where there is one: the agent
   /// is told of it with the messages sent (see [ChatSession.send]).
   final OpenEditor? Function()? openEditor;
+
+  /// The CC API account whose balance is shown in the model picker.
+  final CcApiConnector? ccApi;
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -1105,6 +1110,7 @@ class _ChatScreenState extends State<ChatScreen>
           },
           contextPanelOpen: _contextPanelOpen,
           onToggleContextPanel: _toggleContextPanel,
+          ccApi: widget.ccApi,
         ),
         ?widget.below,
       ],

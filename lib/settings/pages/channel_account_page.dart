@@ -161,6 +161,7 @@ class _AccountView extends StatelessWidget {
                 title: l10n.channelAccountDefaultModel,
                 children: [_DefaultModelRow(account: account)],
               ),
+              _ChannelImageModel(account: account),
               _Keys(account: account, onCreate: () => _create(context)),
             ],
           ],
@@ -318,6 +319,55 @@ class _DefaultModelRow extends StatelessWidget {
             ),
         ],
       ),
+    );
+  }
+}
+
+class _ChannelImageModel extends StatelessWidget {
+  const _ChannelImageModel({required this.account});
+
+  final ChannelAccount account;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final models = account.imageModels;
+    final current = account.imageModel;
+    final shown = switch (models) {
+      const [] => l10n.modelsImageNone,
+      _ when current == null => l10n.modelsImageFirst,
+      _ => models.where((model) => model.id == current).firstOrNull?.displayName ??
+          l10n.modelsImageFirst,
+    };
+    void set(String? model) => unawaited(account.setImageModel(model));
+    return SettingsGroup(
+      title: l10n.modelsImage,
+      description: l10n.modelsImageDescription,
+      children: [
+        SettingsRow(
+          label: l10n.modelsImage,
+          description: l10n.modelsImageDescription,
+          trailing: SettingsDropdown(
+            current: shown,
+            semanticLabel: l10n.modelsChoiceLabel(l10n.modelsImage, shown),
+            entries: () => [
+              IdeMenuAction(
+                l10n.modelsImageFirst,
+                checked: current == null,
+                enabled: models.isNotEmpty,
+                onSelected: () => set(null),
+              ),
+              if (models.isNotEmpty) const IdeMenuSeparator(),
+              for (final model in models)
+                IdeMenuAction(
+                  model.displayName,
+                  checked: current == model.id,
+                  onSelected: () => set(model.id),
+                ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

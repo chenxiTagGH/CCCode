@@ -50,6 +50,8 @@ class ComposerPicker extends StatefulWidget {
     this.focusNode,
     this.searchPlaceholder,
     this.footer,
+    this.onOpen,
+    this.groupAside,
   }) : assert(settingsOf == null || submenuOf == null);
 
   final List<KernelOption> options;
@@ -106,6 +108,12 @@ class ComposerPicker extends StatefulWidget {
 
   /// An action under the options (Manage Models…).
   final ComposerPickerFooter? footer;
+
+  /// Called whenever the picker opens, before its menu is shown.
+  final VoidCallback? onOpen;
+
+  /// Text shown at the end of a provider group heading.
+  final String? Function(KernelOptionGroup group)? groupAside;
 
   /// Options from which the search shows.
   static const searchFrom = 10;
@@ -177,8 +185,15 @@ class ComposerPickerState extends State<ComposerPicker> {
   ];
 
   /// Headings only when there is more than one group to tell apart.
-  bool get _grouped =>
-      {for (final option in widget.options) option.group?.id}.length > 1;
+  bool get _grouped {
+    final groupIds = {for (final option in widget.options) option.group?.id};
+    final groups = {
+      for (final option in widget.options)
+        if (option.group case final group?) group,
+    };
+    return groupIds.length > 1 ||
+        groups.any((group) => widget.groupAside?.call(group) != null);
+  }
 
   /// The groups collapsed under their headings, by id: open again as the
   /// menu is, until the picker goes.
@@ -416,6 +431,8 @@ class ComposerPickerState extends State<ComposerPicker> {
     setState(() => _open = open);
     _cancelSwitch();
     if (open) {
+      widget.onOpen?.call();
+
       widget.focusNode?.requestFocus();
       FloatingRegistry.openPopover(this, () {
         if (mounted) _setOpen(false);
@@ -1010,6 +1027,7 @@ class ComposerPickerState extends State<ComposerPicker> {
     first: first,
     matches: _matchesIn(group.label),
     collapsed: _collapses ? _collapsed.contains(group.id) : null,
+    aside: widget.groupAside?.call(group),
     onTap: _collapses ? () => _toggleGroup(group, stuck: stuck) : null,
   );
 
@@ -1162,6 +1180,7 @@ class _GroupHeading extends StatelessWidget {
     required this.first,
     this.matches = const [],
     this.collapsed,
+    this.aside,
     this.onTap,
   });
 
@@ -1171,6 +1190,7 @@ class _GroupHeading extends StatelessWidget {
   /// Where its label has what was searched.
   final List<int> matches;
   final bool? collapsed;
+  final String? aside;
   final VoidCallback? onTap;
 
   /// From its top to its line, but for the first's.
@@ -1235,6 +1255,15 @@ class _GroupHeading extends StatelessWidget {
                     ],
                   ),
                 ),
+                if (aside case final aside?) ...[
+                  const SizedBox(width: 8),
+                  Text(
+                    aside,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(color: color, fontSize: 11),
+                  ),
+                ],
                 // Collapsed, it says so; open, it shows only pointed at.
                 if (collapsed != null && (collapsed || hovered))
                   Icon(

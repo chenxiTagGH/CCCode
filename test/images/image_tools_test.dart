@@ -25,6 +25,22 @@ void main() {
     setUp(() => ClaudeSdkTools.register(ImageTools.tool(const [])));
     tearDown(() => ClaudeSdkTools.unregister(ImageTools.name));
 
+    test('offers GPT Image output controls', () {
+      final schema = ImageTools.tool(const []).inputSchema;
+      final properties = schema['properties']! as Map;
+      expect(properties['output_format'], {
+        'type': 'string',
+        'enum': ['png', 'jpeg', 'webp'],
+        'description': 'GPT Image models only: the returned file format.',
+      });
+      expect(properties['output_compression'], {
+        'type': 'integer',
+        'minimum': 0,
+        'maximum': 100,
+        'description': 'GPT Image models only: JPEG/WebP compression quality.',
+      });
+    });
+
     late Transcript transcript;
     late ClaudeTranslator translator;
     setUp(() {
