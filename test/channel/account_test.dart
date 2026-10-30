@@ -571,6 +571,7 @@ void main() {
         listModels: (_, _) async => const [
           RemoteModel('claude-sonnet-4-5'),
           RemoteModel('claude-haiku-4-5'),
+          RemoteModel('gpt-image-2.5-flare'),
         ],
         providers: () => providers,
         openWindow: () {
@@ -613,6 +614,17 @@ void main() {
     expect(find.text('刷新账户'), findsOneWidget);
     expect(find.text('退出登录'), findsOneWidget);
     expect(find.text('新对话默认模型'), findsWidgets);
+    expect(gate.account!.imageModels.map((model) => model.id), [
+      'gpt-image-2.5-flare',
+    ]);
+    expect(gate.account!.imageModel, isNull);
+    expect(find.text('图片生成模型'), findsOneWidget);
+    await tester.tap(find.byType(SettingsDropdown).last);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('gpt-image-2.5-flare').last);
+    await tester.pumpAndSettle();
+    expect(gate.account!.imageModel, 'gpt-image-2.5-flare');
+    expect(gate.account!.provider!.model('gpt-image-2.5-flare')!.enabled, isTrue);
     expect(find.text('我的 API Key'), findsOneWidget);
     expect(find.text('使用中'), findsOneWidget);
     expect(find.text('创建 Key'), findsOneWidget);

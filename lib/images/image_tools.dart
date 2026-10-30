@@ -123,6 +123,17 @@ abstract final class ImageTools {
         'enum': ['auto', 'opaque', 'transparent'],
         'description': 'GPT Image models only: transparent for cutouts.',
       },
+      'output_format': {
+        'type': 'string',
+        'enum': ['png', 'jpeg', 'webp'],
+        'description': 'GPT Image models only: the returned file format.',
+      },
+      'output_compression': {
+        'type': 'integer',
+        'minimum': 0,
+        'maximum': 100,
+        'description': 'GPT Image models only: JPEG/WebP compression quality.',
+      },
       'count': {
         'type': 'integer',
         'minimum': 1,
@@ -195,6 +206,11 @@ abstract final class ImageTools {
       aspectRatio: _string(input['aspect_ratio']),
       quality: _string(input['quality']),
       background: _string(input['background']),
+      outputFormat: _string(input['output_format']),
+      outputCompression: switch (input['output_compression']) {
+        final num compression => compression.toInt().clamp(0, 100),
+        _ => null,
+      },
       count: switch (input['count']) {
         final num count => count.toInt().clamp(1, 4),
         _ => 1,

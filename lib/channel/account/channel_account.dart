@@ -450,6 +450,46 @@ class ChannelAccount extends ChangeNotifier {
   /// The models the key in use reaches.
   List<ProviderModel> get models => provider?.enabledModels ?? const [];
 
+  /// Image models the key reaches, including ones not enabled for generation
+  /// yet: the channel account page is where they can be turned on.
+  List<ProviderModel> get imageModels => [
+    for (final model in provider?.models ?? const <ProviderModel>[])
+      if (model.kind.generatesImages) model,
+  ];
+
+  /// New conversations' image model, as a local model id.
+  String? get imageModel => switch (parseModelRef(providers.imageModel)) {
+    (provider: providerId, :final model) => model,
+    _ => null,
+  };
+
+  /// Enables [model] and makes it the default image model for this channel;
+  /// null asks for a model in the conversation each time.
+  Future<void> setImageModel(String? model) async {
+    if (model == null) {
+      await providers.setImageModel(null);
+      notifyListeners();
+      return;
+    }
+    final upstream = provider;
+    final image = upstream?.model(model);
+    if (upstream == null || image == null || !image.kind.generatesImages) {
+      return;
+    }
+    if (!image.enabled) {
+      await providers.save(
+        upstream.copyWith(
+          models: [
+            for (final current in upstream.models)
+              current.id == model ? current.copyWith(enabled: true) : current,
+          ],
+        ),
+      );
+    }
+    await providers.setImageModel(modelRef(providerId, model));
+    notifyListeners();
+  }
+
   /// New conversations' model, of [models].
   String? get defaultModel => switch (parseModelRef(providers.defaultModel)) {
     (provider: providerId, :final model) => model,
