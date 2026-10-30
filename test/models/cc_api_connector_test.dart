@@ -163,7 +163,7 @@ void main() {
     expect(provider.id, 'cc-api');
     expect(provider.name, 'CC API');
     expect(provider.protocol, ProviderProtocol.anthropic);
-    expect(provider.baseUrl, 'https://api.cc-hub.vip');
+    expect(provider.baseUrl, 'https://api.ccapitoken.cc');
     expect(fixture.store.session, 'refresh-2');
     expect(fixture.connector.accountBalance, 100);
     expect(fixture.store.state, {
@@ -194,7 +194,7 @@ void main() {
 
     expect(await fixture.connector.connect(), isTrue);
     final provider = fixture.providers.provider('cc-api');
-    expect(provider?.baseUrl, 'https://api.cc-hub.vip');
+    expect(provider?.baseUrl, 'https://api.ccapitoken.cc');
     expect(provider?.models.single.id, 'claude-sonnet-4-5');
     expect(fixture.providers.defaultModel, '@cc-api/claude-sonnet-4-5');
     expect(await fixture.providers.key('cc-api'), 'sk-cccode');
@@ -595,7 +595,7 @@ Future<ConnectorFixture> makeFixture({
         ModelProvider(
           id: 'cc-api',
           name: 'CC API',
-          baseUrl: 'https://api.cc-hub.vip',
+          baseUrl: 'https://api.ccapitoken.cc',
           models: existingModels,
         ),
     ],
@@ -617,7 +617,7 @@ Future<ConnectorFixture> makeFixture({
     openWindow: () => window,
     send: (method, url, {headers = const {}, json}) async {
       expect(method, anyOf('GET', 'POST'));
-      expect(url.host, 'api.cc-hub.vip');
+      expect(url.host, 'api.ccapitoken.cc');
       if (fixture.signedOut) throw const AccountSignedOut();
       if (method == 'POST' && url.path == '/api/v1/auth/refresh') {
         expect(headers, isNot(containsPair('Authorization', anything)));

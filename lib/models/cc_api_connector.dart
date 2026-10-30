@@ -110,7 +110,7 @@ class CcApiConnector {
   static const providerName = 'CC API';
   static final site = ChannelAccountSite(
     type: ChannelAccountType.sub2api,
-    url: Uri.parse('https://api.cc-hub.vip'),
+    url: Uri.parse('https://api.ccapitoken.cc'),
   );
 
   CcApiConnectionStatus _status = CcApiConnectionStatus.disconnected;
