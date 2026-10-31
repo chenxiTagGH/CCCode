@@ -1958,6 +1958,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sidebarCopySessionId => 'Copy session ID';
 
   @override String get taskPlanOpen => 'Open task plan';
+  @override String get taskPlanTitle => 'Task list';
+  @override String get taskPlanEmpty => 'No task plan yet';
   @override String get taskPlanPending => 'Task plan';
   @override String get taskPlanRunning => 'In progress';
   @override String get taskPlanCompleted => 'Completed';

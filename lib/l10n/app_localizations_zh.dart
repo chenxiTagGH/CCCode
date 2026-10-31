@@ -1894,6 +1894,8 @@ class AppLocalizationsZh extends AppLocalizations {
   String get sidebarCopySessionId => '复制会话 ID';
 
   @override String get taskPlanOpen => '打开任务计划';
+  @override String get taskPlanTitle => '任务清单';
+  @override String get taskPlanEmpty => '当前暂无任务清单';
   @override String get taskPlanPending => '任务计划';
   @override String get taskPlanRunning => '执行中';
   @override String get taskPlanCompleted => '已完成';

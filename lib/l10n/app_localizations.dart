@@ -3543,6 +3543,8 @@ abstract class AppLocalizations {
   String get sidebarCopySessionId;
 
   String get taskPlanOpen;
+  String get taskPlanTitle;
+  String get taskPlanEmpty;
   String get taskPlanPending;
   String get taskPlanRunning;
   String get taskPlanCompleted;

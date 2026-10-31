@@ -7554,6 +7554,8 @@
     }
   },
   "taskPlanOpen": "Open task plan",
+  "taskPlanTitle": "Task list",
+  "taskPlanEmpty": "No task plan yet",
   "taskPlanPending": "Task plan",
   "taskPlanRunning": "In progress",
   "taskPlanCompleted": "Completed",

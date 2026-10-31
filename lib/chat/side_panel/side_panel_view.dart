@@ -522,10 +522,7 @@ class AgentSidePanelView extends StatelessWidget {
     ]),
     builder: (context, _) {
       final tabs = panel.tabsOf(session);
-      final shown = tabs.shown == SidePanelSection.taskPlan &&
-              session.taskPlan == null
-          ? SidePanelSection.changes
-          : tabs.shown;
+      final shown = tabs.shown;
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -548,7 +545,7 @@ class AgentSidePanelView extends StatelessWidget {
               ),
               SidePanelSection.plan => _planPage(context, tabs.plan!),
               SidePanelSection.taskPlan => session.taskPlan == null
-                  ? _changesPage(context, tabs)
+                  ? const _EmptyTaskPlan()
                   : _taskPlanPage(),
             },
           ),
@@ -1441,16 +1438,14 @@ class SidePanelRail extends StatelessWidget {
               ],
             ),
           ],
-          if (session?.taskPlan != null) ...[
-            const SizedBox(height: _gap),
-            SidebarIconButton(
-              key: const ValueKey('side-panel-task-plan'),
-              icon: SidePanelSection.taskPlan.icon,
-              tooltip: SidePanelSection.taskPlan.label(context),
-              size: _button,
-              onTap: () => onSelect(SidePanelSection.taskPlan),
-            ),
-          ],
+          const SizedBox(height: _gap),
+          SidebarIconButton(
+            key: const ValueKey('side-panel-task-plan'),
+            icon: SidePanelSection.taskPlan.icon,
+            tooltip: SidePanelSection.taskPlan.label(context),
+            size: _button,
+            onTap: () => onSelect(SidePanelSection.taskPlan),
+          ),
         ],
       ),
     ),
@@ -2030,6 +2025,41 @@ class _EmptySection extends StatelessWidget {
       ),
     ),
   );
+}
+
+class _EmptyTaskPlan extends StatelessWidget {
+  const _EmptyTaskPlan();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              SidePanelSection.taskPlan.icon,
+              size: 24,
+              color: AppColors.textFaint,
+            ),
+            const SizedBox(height: 10),
+            Text(
+              l10n.taskPlanTitle,
+              style: TextStyle(color: AppColors.textMuted, fontSize: 13),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              l10n.taskPlanEmpty,
+              textAlign: TextAlign.center,
+              style: TextStyle(color: AppColors.textFaint, fontSize: 12),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 /// The changes page where Git is not at hand: what the IDE's Source Control

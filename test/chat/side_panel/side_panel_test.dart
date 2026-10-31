@@ -860,6 +860,58 @@ void main() {
     expect(selected, SidePanelSection.taskPlan);
   });
 
+  testWidgets('the task plan rail entry stays visible without a plan', (
+    tester,
+  ) async {
+    final session = ChatSession(historyCount: 0);
+    addTearDown(session.dispose);
+    SidePanelSection? selected;
+    await tester.pumpWidget(
+      _app(
+        SidePanelRail(
+          onSelect: (section) => selected = section,
+          session: session,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final entry = find.byKey(const ValueKey('side-panel-task-plan'));
+    expect(entry, findsOneWidget);
+    await tester.tap(entry);
+    expect(selected, SidePanelSection.taskPlan);
+  });
+
+  testWidgets('the empty task plan section explains that no plan exists', (
+    tester,
+  ) async {
+    final (:panel, :session, files: _) = await _pumpChat(tester);
+    panel.showSection(session, SidePanelSection.taskPlan);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Task list'), findsOneWidget);
+    expect(find.text('No task plan yet'), findsOneWidget);
+  });
+
+  testWidgets('the task plan section updates when a plan arrives', (
+    tester,
+  ) async {
+    final (:panel, :session, files: _) = await _pumpChat(tester);
+    panel.showSection(session, SidePanelSection.taskPlan);
+    await tester.pumpAndSettle();
+    expect(find.text('No task plan yet'), findsOneWidget);
+
+    session.taskPlanController.value = TaskPlan(
+      title: 'Release checklist',
+      steps: const [TaskStep(id: 'one', title: 'Build the release')],
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Release checklist'), findsOneWidget);
+    expect(find.text('Build the release'), findsOneWidget);
+    expect(find.text('No task plan yet'), findsNothing);
+  });
+
   testWidgets('the task plan section renders the current plan and controls', (
     tester,
   ) async {

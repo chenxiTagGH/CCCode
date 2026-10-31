@@ -2946,6 +2946,8 @@
   "stashDeleteOpenIssues": "它们的 issue {issues} 在远端还开着，除非一并关闭。",
   "stashDeleteAndCloseMany": "删除并关闭 {count} 个 issue…",
   "taskPlanOpen": "打开任务计划",
+  "taskPlanTitle": "任务清单",
+  "taskPlanEmpty": "当前暂无任务清单",
   "taskPlanPending": "任务计划",
   "taskPlanRunning": "执行中",
   "taskPlanCompleted": "已完成",
