@@ -28,22 +28,36 @@ class TaskPlanStore {
 
   Future<void> write(String key, TaskPlan? plan, {DateTime? at}) {
     final snapshot = plan?.toJson(at: at);
+    return _update((state) {
+      final previous = state['taskPlans'];
+      final plans = <String, Object?>{
+        if (previous is Map)
+          for (final entry in previous.entries)
+            if (entry.key is String) entry.key as String: entry.value,
+      };
+      if (snapshot == null) {
+        plans.remove(key);
+      } else {
+        plans[key] = snapshot;
+      }
+      return {...state, 'taskPlans': plans};
+    });
+  }
+
+  /// Workspace preferences and task plans share the same file and queue.
+  Future<void> writeWorkspaceState(Map<String, Object?> workspace) => _update(
+    (state) => {
+      ...workspace,
+      'taskPlans': ?state['taskPlans'],
+    },
+  );
+
+  Future<void> _update(
+    Map<String, Object?> Function(Map<String, Object?> state) update,
+  ) {
     final operation = _pending.then((_) async {
       try {
-        final state = Map<String, Object?>.of(await preferences.read());
-        final previous = state['taskPlans'];
-        final plans = <String, Object?>{
-          if (previous is Map)
-            for (final entry in previous.entries)
-              if (entry.key is String) entry.key as String: entry.value,
-        };
-        if (snapshot == null) {
-          plans.remove(key);
-        } else {
-          plans[key] = snapshot;
-        }
-        state['taskPlans'] = plans;
-        await preferences.write(state);
+        await preferences.write(update(await preferences.read()));
       } catch (_) {
         // Persistence is best effort; later saves still get a chance.
       }

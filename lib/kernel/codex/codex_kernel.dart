@@ -226,7 +226,7 @@ class CodexKernel
     final turn = _turn;
     if (turn == null) return;
     _interrupt();
-    _endTurn(turn, interrupted: true);
+    _endTurn(turn, interrupted: true, confirmed: false);
   }
 
   @override
@@ -525,7 +525,11 @@ class CodexKernel
     );
   }
 
-  void _endTurn(String turn, {required bool interrupted}) {
+  void _endTurn(
+    String turn, {
+    required bool interrupted,
+    bool confirmed = true,
+  }) {
     _turn = null;
     for (final id in [..._reasoning.keys]) {
       _itemCompleted({'type': 'reasoning', 'id': id});
@@ -547,6 +551,7 @@ class CodexKernel
         nextSeq,
         turn,
         interrupted: interrupted,
+        confirmed: confirmed,
         worked: switch (_turnStarted) {
           final started? => DateTime.now().difference(started),
           null => null,

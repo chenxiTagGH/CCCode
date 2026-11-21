@@ -30,6 +30,17 @@
   <h1>Changelog</h1>
   <p class="subtitle">What changed in each version of CCCode.</p>
 
+  <section class="release" id="v1.8.5">
+    <h2 class="plain"><a href="#v1.8.5">1.8.5</a></h2>
+    <p>Task lists now follow the agent’s work</p>
+    <ul>
+    <li>The task panel shows Pausing until the agent’s current turn and reported background work have ended.</li>
+    <li>Continue uses the same conversation and waits for the agent to report progress before showing a step as running.</li>
+    <li>CC Code can receive task lists through its own reporting tool. Use Request task list in an empty panel to ask the agent for its steps.</li>
+    <li>Saving workspace settings now preserves task lists.</li>
+    </ul>
+  </section>
+
   <section class="release" id="v1.8.4">
     <h2 class="plain"><a href="#v1.8.4">1.8.4</a></h2>
     <p>Fixed task list access</p>
@@ -39,6 +50,50 @@
     <li>The task list entry is always visible in the right-side panel rail.</li>
     <li>Empty task lists now show a clear state instead of switching back to the changes page.</li>
     <li>When a structured task plan arrives, the panel updates to the live task steps and controls automatically.</li>
+    </ul>
+  </section>
+
+  <section class="release" id="v1.8.3">
+    <h2 class="plain"><a href="#v1.8.3">1.8.3</a></h2>
+    <p>CC API endpoint update</p>
+    <p>This release updates the built-in CC API connection to the ccapitoken.cc service address.</p>
+    <p>Fixed</p>
+    <ul>
+    <li>The built-in CC API now connects to <a href="https://api.ccapitoken.cc">https://api.ccapitoken.cc</a>.</li>
+    <li>Existing CC API model refresh and login flows continue to use the updated endpoint.</li>
+    </ul>
+  </section>
+
+  <section class="release" id="v1.8.2">
+    <h2 class="plain"><a href="#v1.8.2">1.8.2</a></h2>
+    <p>GPT Image 2.5 support</p>
+    <p>This release adds GPT Image 2.5 image generation controls and makes image models easier to use in channel accounts.</p>
+    <p>New</p>
+    <ul>
+    <li>GPT Image 2.5 models now use the supported landscape and portrait sizes automatically.</li>
+    <li>Agents can request PNG, JPEG, or WebP output and set JPEG/WebP compression quality.</li>
+    <li>Channel account settings now include an image generation model picker.</li>
+    </ul>
+    <p>Improved</p>
+    <ul>
+    <li>Choosing a channel image model enables it automatically and remembers it as the default for image generation.</li>
+    </ul>
+  </section>
+
+  <section class="release" id="v1.8.1">
+    <h2 class="plain"><a href="#v1.8.1">1.8.1</a></h2>
+    <p>Task plan window improvements</p>
+    <p>This release makes task progress easier to follow while reducing the amount of chat content covered by the task UI.</p>
+    <p>Improved</p>
+    <ul>
+    <li>The task plan drawer is now a compact top-right window, up to about 360px wide and 420px tall, with rounded corners and its own scrolling list.</li>
+    <li>The task plan no longer covers the full chat area, so the conversation remains visible while checking progress.</li>
+    <li>The right-side tool rail now has a separate task plan entry for opening the steps and controls directly.</li>
+    </ul>
+    <p>Fixed</p>
+    <ul>
+    <li>Task plans are now kept separate from the agent's plan-file page.</li>
+    <li>The side panel safely falls back when a task plan is cleared while it is open.</li>
     </ul>
   </section>
 
@@ -123,7 +178,7 @@
     <li>Settings → SSH Servers: the servers added in the app and the hosts the sidebar has used, to edit, connect, disconnect or remove; the hosts of ~/.ssh/config are listed apart, their file a click away.</li>
     <li>A core for each server: Automatic (the server's Claude Code CLI if it has one, else the built-in core), the built-in core, or the Claude Code CLI (installed there if missing). Remote hosts no longer follow this machine's core setting.</li>
     <li>Passwords on Windows 10: the installer carries a recent OpenSSH, used where the system's is too old or missing.</li>
-    <li>Settings → About: the version, the site, the changelog and the issues, and a way to star CCCode on GitHub. Accounts is now Git Accounts.</li>
+    <li>Settings → About: the version, the website, the changelog and the issues, and a way to star CCCode on GitHub. Accounts is now Git Accounts.</li>
     <li>The browser extension works on Linux, in Chrome, Chromium, Edge, Brave and Vivaldi.</li>
     <li>A file another tool asks CCCode to open as file:line:column (a front-end inspector's Open in Editor, say) opens at that line and column.</li>
     </ul>
@@ -153,7 +208,7 @@
     <p>CCCode runs on Linux now: a package for Ubuntu and other Debian-based distributions, x64 and arm64, that keeps itself up to date like the Mac and Windows apps. And setting up a model the first time is a welcome rather than an error.</p>
     <p>New</p>
     <ul>
-    <li>Linux: download the .deb for your processor from ccapitoken.cc/download (Ubuntu 22.04 or later, and other Debian-based distributions). It opens folders and files with the system's dialogs, has the system's right-click menus, and pastes text, files and pictures. Thanks to qyh1221, whose port this is.</li>
+    <li>Linux: download the .deb for your processor from the website/download (Ubuntu 22.04 or later, and other Debian-based distributions). It opens folders and files with the system's dialogs, has the system's right-click menus, and pastes text, files and pictures. Thanks to qyh1221, whose port this is.</li>
     <li>Linux updates itself: a new version is downloaded and checked as on the other systems, then installed once you enter your password, and CCCode opens again. A copy run from the tarball is pointed to the download page instead.</li>
     <li>Setting up a model: with no model to run on yet (CCCode's own core, before any upstream is added), a welcome explains what an upstream is and adds one in a click, opening its page in Settings → Models. The conversation starts by itself as soon as a model is there, with no retry. Until then, Set Up a Model sits in the model picker's place under the input, and in the command palette.</li>
     <li>From your phone, Start on a plan the agent put to you starts it, as the desktop's button does.</li>
@@ -302,8 +357,8 @@
     <p>A wide-ranging release: import upstreams from a site in one click, manage SSH hosts from the sidebar, undo and drag files in and out of the explorer, get Claude Code downloaded for you on first use, and a batch of long-standing fixes.</p>
     <p>New</p>
     <ul>
-    <li>One-click upstream import: click the import button on a site that offers it and, once you confirm, the upstream is added with your own key (only its name, protocol, address and key are taken). Settings → Models lists the sites officially listed at the top, those you use first; the list follows ccapitoken.cc, with no new release needed.</li>
-    <li>The model picker shows each model's maker logo, and each upstream's heading has an icon. Pick one yourself (a maker's logo, the site's icon, an emoji, a built-in icon or an image you upload); unset, the maker is told from the address, or the site's icon is fetched.</li>
+    <li>One-click upstream import: click the import button on a site that offers it and, once you confirm, the upstream is added with your own key (only its name, protocol, address and key are taken). Settings → Models lists the websites officially listed at the top, those you use first; the list follows the website, with no new release needed.</li>
+    <li>The model picker shows each model's maker logo, and each upstream's heading has an icon. Pick one yourself (a maker's logo, the website's icon, an emoji, a built-in icon or an image you upload); unset, the maker is told from the address, or the website's icon is fetched.</li>
     <li>Queued messages: what you send while the agent works no longer lands in the conversation. It waits above the input, sent in turn, and each can be taken back to edit, sent now (stopping the current task), or removed.</li>
     <li>Open Project in the sidebar, and SSH hosts managed there: switch between this machine and a host, add, rename, disconnect or remove hosts. The new chat's folder menu lists SSH hosts and their projects too, and picks a folder on a host directly.</li>
     <li>SSH password sign-in on Windows (OpenSSH 8.4 or newer).</li>
@@ -456,7 +511,7 @@
     <h2 class="plain"><a href="#v1.0.3">1.0.3</a></h2>
     <p>1.0.2 won't open on Windows?</p>
     <ul>
-    <li>If 1.0.2 quits as soon as it starts, without a window, its built-in update can't run either: download 1.0.3 from <a href="https://ccapitoken.cc/download">https://ccapitoken.cc/download</a> and install it over the old version. Your settings and conversations are kept.</li>
+    <li>If 1.0.2 quits as soon as it starts, without a window, its built-in update can't run either: download 1.0.3 from ./download and install it over the old version. Your settings and conversations are kept.</li>
     </ul>
     <p>Fixed</p>
     <ul>
@@ -469,7 +524,7 @@
     <h2 class="plain"><a href="#v1.0.2">1.0.2</a></h2>
     <p>Update didn’t install?</p>
     <ul>
-    <li>If after Restart to Update the app closed and opened again on the old version (1.0.0 and the first 1.0.1 build may do this), please download 1.0.2 from <a href="https://ccapitoken.cc/download">https://ccapitoken.cc/download</a> and install it over your current version; your settings and conversations are kept.</li>
+    <li>If after Restart to Update the app closed and opened again on the old version (1.0.0 and the first 1.0.1 build may do this), please download 1.0.2 from ./download and install it over your current version; your settings and conversations are kept.</li>
     </ul>
     <p>New</p>
     <ul>
@@ -518,7 +573,7 @@
     <p>To 1.0.0 users</p>
     <ul>
     <li>Our mistake: 1.0.0 can’t install updates. After Restart to Update the app closes, and opens again as 1.0.0. We’re sorry.</li>
-    <li>Please download 1.0.1 from <a href="https://ccapitoken.cc/download">https://ccapitoken.cc/download</a> and install it over your current version; your settings and conversations are kept. From 1.0.1 on, updates install by themselves.</li>
+    <li>Please download 1.0.1 from ./download and install it over your current version; your settings and conversations are kept. From 1.0.1 on, updates install by themselves.</li>
     </ul>
     <p>New</p>
     <ul>

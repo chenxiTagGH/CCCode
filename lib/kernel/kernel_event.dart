@@ -36,12 +36,17 @@ final class TurnEnded extends KernelEvent {
     super.seq,
     this.turnId, {
     this.interrupted = false,
+    this.confirmed = true,
     this.worked,
     this.usage,
   });
 
   final String turnId;
   final bool interrupted;
+
+  /// Whether the runtime has reported the end, rather than the adapter
+  /// ending the conversation display while an interrupt is in flight.
+  final bool confirmed;
 
   /// How long the turn took, when known: kept on the message that began
   /// it, unless it was [interrupted].

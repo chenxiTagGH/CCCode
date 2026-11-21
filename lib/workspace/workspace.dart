@@ -2080,7 +2080,7 @@ class Workspace extends ChangeNotifier implements ColorThemeStorage {
   }
 
   Future<void> _save() async {
-    await _store?.write({
+    await _taskPlanStore?.writeWorkspaceState({
       'kernel': _preferredKernel.id,
       'editor': _preferredEditor.name,
       'layout': _layout.name,

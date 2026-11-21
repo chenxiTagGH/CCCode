@@ -1960,7 +1960,13 @@ class AppLocalizationsEn extends AppLocalizations {
   @override String get taskPlanOpen => 'Open task plan';
   @override String get taskPlanTitle => 'Task list';
   @override String get taskPlanEmpty => 'No task plan yet';
-  @override String get taskPlanPending => 'Task plan';
+  @override
+  String get taskPlanEmptyDetail =>
+      'Steps will appear when the agent reports them.';
+  @override String get taskPlanRequest => 'Request task list';
+  @override String get taskPlanPausing => 'Pausing…';
+  @override String get taskPlanResuming => 'Continuing…';
+  @override String get taskPlanPending => 'Pending';
   @override String get taskPlanRunning => 'In progress';
   @override String get taskPlanCompleted => 'Completed';
   @override String get taskPlanFailed => 'Failed';

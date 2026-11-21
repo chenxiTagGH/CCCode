@@ -32,6 +32,11 @@ void main() {
       expect(zh, contains('<li>二</li>'));
       expect(zh, contains('<li>Ten</li>'));
       expect(zh, contains('<html lang="zh-CN">'));
+      expect(
+        zh,
+        contains('hreflang="en" href="https://ccapitoken.cc/changelog"'),
+      );
+      expect(zh, contains('href="https://github.com/chenxiTagGH/CCCode"'));
     });
   });
 

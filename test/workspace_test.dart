@@ -176,6 +176,19 @@ class _Renames implements ClaudeCodeTransport {
 }
 
 void main() {
+  test('saving workspace settings preserves persisted task lists', () async {
+    final plans = {
+      'agent-1': {'title': 'Existing plan'},
+    };
+    final preferences = MemoryPreferenceStore({'taskPlans': plans});
+    final workspace = Workspace(kernels: [claude], preferences: preferences);
+    addTearDown(workspace.dispose);
+
+    await workspace.storeColorTheme(setting: 'Test theme');
+
+    expect((await preferences.read())['taskPlans'], plans);
+  });
+
   testWidgets('lists the kept sessions; one opens with its history', (
     tester,
   ) async {

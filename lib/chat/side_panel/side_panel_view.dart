@@ -544,9 +544,14 @@ class AgentSidePanelView extends StatelessWidget {
                 key: ValueKey(('page', SidePanelSection.browser)),
               ),
               SidePanelSection.plan => _planPage(context, tabs.plan!),
-              SidePanelSection.taskPlan => session.taskPlan == null
-                  ? const _EmptyTaskPlan()
-                  : _taskPlanPage(),
+              SidePanelSection.taskPlan =>
+                session.taskPlan == null
+                    ? _EmptyTaskPlan(
+                        onRequest: session.canRequestTaskPlan
+                            ? session.requestTaskPlan
+                            : null,
+                      )
+                    : _taskPlanPage(),
             },
           ),
         ],
@@ -962,8 +967,8 @@ class AgentSidePanelView extends StatelessWidget {
     key: const ValueKey(('page', SidePanelSection.taskPlan)),
     plan: session.taskPlan!,
     onClose: panel.hide,
-    onPause: session.pauseTask,
-    onResume: session.resumeTask,
+    onPause: session.canPauseTask ? session.pauseTask : null,
+    onResume: session.canResumeTask ? session.resumeTask : null,
     onRetry: session.retryTask,
     onStop: session.cancelTask,
     expand: true,
@@ -2028,7 +2033,9 @@ class _EmptySection extends StatelessWidget {
 }
 
 class _EmptyTaskPlan extends StatelessWidget {
-  const _EmptyTaskPlan();
+  const _EmptyTaskPlan({this.onRequest});
+
+  final VoidCallback? onRequest;
 
   @override
   Widget build(BuildContext context) {
@@ -2055,6 +2062,14 @@ class _EmptyTaskPlan extends StatelessWidget {
               textAlign: TextAlign.center,
               style: TextStyle(color: AppColors.textFaint, fontSize: 12),
             ),
+            const SizedBox(height: 4),
+            Text(
+              l10n.taskPlanEmptyDetail,
+              textAlign: TextAlign.center,
+              style: TextStyle(color: AppColors.textFaint, fontSize: 12),
+            ),
+            const SizedBox(height: 8),
+            TextButton(onPressed: onRequest, child: Text(l10n.taskPlanRequest)),
           ],
         ),
       ),

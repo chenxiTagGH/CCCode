@@ -1896,7 +1896,11 @@ class AppLocalizationsZh extends AppLocalizations {
   @override String get taskPlanOpen => '打开任务计划';
   @override String get taskPlanTitle => '任务清单';
   @override String get taskPlanEmpty => '当前暂无任务清单';
-  @override String get taskPlanPending => '任务计划';
+  @override String get taskPlanEmptyDetail => 'Agent 上报执行步骤后会在这里显示。';
+  @override String get taskPlanRequest => '请求任务清单';
+  @override String get taskPlanPausing => '正在暂停…';
+  @override String get taskPlanResuming => '正在继续…';
+  @override String get taskPlanPending => '待执行';
   @override String get taskPlanRunning => '执行中';
   @override String get taskPlanCompleted => '已完成';
   @override String get taskPlanFailed => '失败';

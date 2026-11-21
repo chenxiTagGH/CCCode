@@ -76,6 +76,13 @@ class KernelContext {
 
 // --- Capabilities -----------------------------------------------------------
 
+/// An interruption with a separate confirmation that the turn ended.
+abstract interface class InterruptsTurn {
+  /// Requests an interruption for [turnId] and returns true only after the
+  /// runtime reports that this turn has ended.
+  Future<bool> interruptTurn(String turnId);
+}
+
 /// The folders an agent works in besides its directory, those of a
 /// multi-folder workspace, and what it is told of them.
 class KernelWorkspace {

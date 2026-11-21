@@ -139,34 +139,120 @@ class ChatSession extends ChangeNotifier implements ChatFeed {
 
   TaskPlan? get taskPlan => taskPlanController.value;
 
-  /// Requests a pause without interrupting the current kernel turn.
-  void pauseTask() => taskPlanController.pause();
+  bool get _taskAgentIdle =>
+      !isStreaming &&
+      _transcript.queued.isEmpty &&
+      !_transcript.tasks.any(
+        (task) => task.background && task.status == CommandStatus.running,
+      );
 
-  /// Resumes the next incomplete step through the existing agent session.
-  void resumeTask() {
-    final current = taskPlan?.currentStep;
-    final wasRunning = current?.status == TaskStepStatus.running;
-    taskPlanController.resume();
-    if (!wasRunning && taskPlan?.status == TaskPlanStatus.running) {
-      send(const ComposerMessage(
-        text: 'Continue the task plan from the next incomplete step.',
-      ));
+  bool get canPauseTask => switch (taskPlan) {
+    final plan? =>
+      (plan.status == TaskPlanStatus.running ||
+              plan.status == TaskPlanStatus.pending ||
+              plan.resumeRequested) &&
+          !plan.pauseRequested &&
+          !_taskAgentIdle &&
+          (!isStreaming || _kernel is InterruptsTurn),
+    _ => false,
+  };
+
+  bool get canResumeTask => switch (taskPlan) {
+    final plan? =>
+      (plan.status == TaskPlanStatus.paused ||
+              plan.status == TaskPlanStatus.pending) &&
+          !plan.pauseRequested &&
+          !plan.resumeRequested &&
+          _taskAgentIdle,
+    _ => false,
+  };
+
+  ({Object token, bool stopped})? _taskPause;
+
+  Future<void> pauseTask() async {
+    final turn = _transcript.activeTurn;
+    // A queued turn may have begun after the one we already interrupted.
+    if (!canPauseTask &&
+        !(turn != null &&
+            _taskPause?.stopped == true &&
+            _kernel is InterruptsTurn)) {
+      return;
+    }
+    final token = Object();
+    _taskPause = (token: token, stopped: turn == null);
+    taskPlanController.setPauseRequested(true);
+    if (turn != null) {
+      final stopped = await (_kernel as InterruptsTurn).interruptTurn(turn);
+      if (_disposed || _taskPause?.token != token) return;
+      if (!stopped) {
+        _taskPause = null;
+        taskPlanController.setPauseRequested(false);
+        if (_taskAgentIdle) taskPlanController.finishTurn();
+        return;
+      }
+      _taskPause = (token: token, stopped: true);
+    }
+    _settleTaskPause();
+  }
+
+  void _settleTaskPause() {
+    if (taskPlan?.pauseRequested != true) {
+      _taskPause = null;
+    } else if (_taskPause?.stopped == true && _taskAgentIdle) {
+      _taskPause = null;
+      taskPlanController.pause(commandStopped: true);
     }
   }
 
-  /// Retries the failed step through the existing agent session.
+  void resumeTask() {
+    if (!canResumeTask) return;
+    _continueTask(
+      'Continue from the next unfinished step. Keep completed steps '
+      'and update the task list with the task tools as you resume.',
+    );
+  }
+
   void retryTask() {
-    taskPlanController.retryFailed();
-    if (taskPlan?.status == TaskPlanStatus.running) {
-      send(const ComposerMessage(
-        text: 'Retry the failed task plan step, then continue the remaining steps.',
-      ));
+    final plan = taskPlan;
+    if (plan == null ||
+        plan.status != TaskPlanStatus.failed ||
+        plan.resumeRequested ||
+        !_taskAgentIdle) {
+      return;
+    }
+    _continueTask(
+      'Retry the failed step. Update the task list with the task tools '
+      'and keep the steps that are already completed.',
+    );
+  }
+
+  void _continueTask(String instruction) {
+    taskPlanController.requestResume();
+    try {
+      send(ComposerMessage(text: instruction));
+    } finally {
+      if (!isStreaming) taskPlanController.finishTurn();
     }
   }
 
   void cancelTask() {
-    stop();
+    _kernel.cancel();
+    _taskPause = null;
     taskPlanController.cancel();
+  }
+
+  bool get canRequestTaskPlan => taskPlan == null && _taskAgentIdle;
+
+  void requestTaskPlan() {
+    if (!canRequestTaskPlan) return;
+    send(
+      const ComposerMessage(
+        text:
+            'Use mcp__cccode__report_task_list or the available native task '
+            'tools to report a checklist for the current plan or remaining '
+            'work in this conversation, if any. Only update the checklist in this turn.',
+      ),
+    );
   }
 
   /// What is typed in its composer and not sent, while another
@@ -192,6 +278,11 @@ class ChatSession extends ChangeNotifier implements ChatFeed {
   final Map<String, int> _keptPaths = {};
 
   void _connect(KernelDescriptor descriptor) {
+    if (_taskPause != null) {
+      _taskPause = null;
+      taskPlanController.setPauseRequested(false);
+    }
+    if (taskPlan?.resumeRequested == true) taskPlanController.finishTurn();
     _kernel = descriptor.create(kernelContext);
     _subscription = _kernel.events.listen(_apply);
   }
@@ -202,23 +293,31 @@ class ChatSession extends ChangeNotifier implements ChatFeed {
       taskPlanController.storageKey = id;
       unawaited(taskPlanController.restore());
     }
-    if (event is TodosReported) {
-      taskPlanController.reconcile(event.todos);
-    }
-    if (event is TurnEnded && event.interrupted) {
-      taskPlanController.pause(commandStopped: true);
-    }
     if (event case SessionRenamed(:final title)) {
       _renamed = title;
       notifyListeners();
       return;
     }
-    if (event is KernelInfoChanged || _transcript.apply(event)) {
-      _cache.clear();
-      _timeQuiet();
-      _reviewEvent(event);
-      notifyListeners();
+    final activeTurn = _transcript.activeTurn;
+    if (event is! KernelInfoChanged && !_transcript.apply(event)) return;
+    _cache.clear();
+    switch (event) {
+      case TodosReported(:final todos):
+        taskPlanController.reconcile(todos);
+      case TurnEnded(:final turnId, :final interrupted, :final confirmed)
+          when turnId == activeTurn && taskPlan?.pauseRequested != true:
+        if (confirmed && interrupted && _taskAgentIdle) {
+          taskPlanController.pause(commandStopped: true);
+        } else if (confirmed || taskPlan?.resumeRequested == true) {
+          taskPlanController.finishTurn();
+        }
+      default:
+        break;
     }
+    _settleTaskPause();
+    _timeQuiet();
+    _reviewEvent(event);
+    notifyListeners();
   }
 
   // --- The review of its changes ----------------------------------------------
@@ -1145,7 +1244,13 @@ class ChatSession extends ChangeNotifier implements ChatFeed {
     }
   }
 
-  void stop() => _kernel.cancel();
+  void stop() {
+    if (isStreaming && (canPauseTask || _taskPause?.stopped == true)) {
+      unawaited(pauseTask());
+    } else if (taskPlan?.pauseRequested != true) {
+      _kernel.cancel();
+    }
+  }
 
   void answer(InteractionAnswer answer) {
     if (pendingInteraction case final request?) {

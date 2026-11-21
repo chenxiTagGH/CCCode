@@ -89,6 +89,7 @@ class ClaudeCodeKernel
     with KernelEventSource
     implements
         AgentKernel,
+        InterruptsTurn,
         SelectsModel,
         SelectsMode,
         StartsPlans,
@@ -275,6 +276,7 @@ class ClaudeCodeKernel
   /// Turns stopped here: the CLI's word that it took one up (sent just
   /// before, it may not have yet) does not start it again.
   final Set<String> _stoppedTurns = {};
+  ({String turnId, Completer<bool> stopped})? _interruptingTurn;
   final Map<String, _Permission> _permissions = {};
   String? _pendingTitle;
 
@@ -989,6 +991,7 @@ class ClaudeCodeKernel
 
   void _endTurn({
     required bool interrupted,
+    bool confirmed = true,
     Duration? worked,
     TurnUsage? usage,
   }) {
@@ -1024,10 +1027,15 @@ class ClaudeCodeKernel
         nextSeq,
         turn,
         interrupted: interrupted,
+        confirmed: confirmed,
         worked: worked,
         usage: usage,
       ),
     );
+    if (_interruptingTurn case (turnId: final id, :final stopped)
+        when confirmed && id == turn && !stopped.isCompleted) {
+      stopped.complete(true);
+    }
   }
 
   @override
@@ -1036,7 +1044,38 @@ class ClaudeCodeKernel
     if (turn == null) return;
     _stoppedTurns.add(turn);
     _tell('interrupt');
-    _endTurn(interrupted: true);
+    _endTurn(interrupted: true, confirmed: false);
+  }
+
+  @override
+  Future<bool> interruptTurn(String turnId) async {
+    if (_turn != turnId || _interruptingTurn != null) return false;
+    final stopped = Completer<bool>();
+    _interruptingTurn = (turnId: turnId, stopped: stopped);
+    try {
+      // Wait for the user message to be written, even if the process is
+      // still starting. A control response only acknowledges the request.
+      final request = _writes.then<bool>((_) async {
+        final control = _control;
+        if (_turn != turnId ||
+            _interruptingTurn?.stopped != stopped ||
+            control == null) {
+          return false;
+        }
+        await control.request(
+          'interrupt',
+          const {},
+          const Duration(seconds: 10),
+        );
+        return stopped.future;
+      });
+      return await Future.any([stopped.future, request])
+          .timeout(const Duration(seconds: 15), onTimeout: () => false);
+    } on Object {
+      return false;
+    } finally {
+      if (_interruptingTurn?.stopped == stopped) _interruptingTurn = null;
+    }
   }
 
   /// Completes as the turn's calls of the app's own tools are given up
@@ -1757,19 +1796,31 @@ class ClaudeCodeKernel
   /// claude_sdk_tools.dart), answered.
   Future<void> _mcpMessage(String id, Map<String, Object?> request) async {
     final message = (request['message'] as Map?)?.cast<String, Object?>();
+    final control = _control;
     if (request['server_name'] != ClaudeSdkTools.server || message == null) {
-      _control?.refuse(id, 'No such server');
+      control?.refuse(id, 'No such server');
       return;
     }
+    final turn = _turn;
     final response = await ClaudeSdkTools.handle(
       message,
       ClaudeSdkCall(
         cwd: _cwd,
         sessionId: _sessionId,
         cancelled: _sdkCallsCancelled.future,
+        reportTodos: (toolUseId, todos) {
+          if (turn == null ||
+              _turn != turn ||
+              !_translator.acceptsTodoReport(toolUseId)) {
+            throw StateError('The task report is no longer active.');
+          }
+          _translator.reportTodoList(todos);
+        },
       ),
     );
-    _control?.respond(id, {'mcp_response': response});
+    if (identical(_control, control)) {
+      control?.respond(id, {'mcp_response': response});
+    }
   }
 
   /// An MCP server asks the user for input: its form as questions, or a

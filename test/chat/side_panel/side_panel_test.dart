@@ -891,6 +891,11 @@ void main() {
 
     expect(find.text('Task list'), findsOneWidget);
     expect(find.text('No task plan yet'), findsOneWidget);
+    expect(
+      find.text('Steps will appear when the agent reports them.'),
+      findsOneWidget,
+    );
+    expect(find.text('Request task list'), findsOneWidget);
   });
 
   testWidgets('the task plan section updates when a plan arrives', (
@@ -907,8 +912,17 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Release checklist'), findsOneWidget);
-    expect(find.text('Build the release'), findsOneWidget);
+    final section = find.byKey(
+      const ValueKey(('page', SidePanelSection.taskPlan)),
+    );
+    expect(
+      find.descendant(of: section, matching: find.text('Release checklist')),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(of: section, matching: find.text('Build the release')),
+      findsOneWidget,
+    );
     expect(find.text('No task plan yet'), findsNothing);
   });
 
@@ -926,11 +940,18 @@ void main() {
     panel.showSection(session, SidePanelSection.taskPlan);
     await tester.pumpAndSettle();
 
-    expect(find.text('Release checklist'), findsOneWidget);
-    expect(find.text('Build the release'), findsOneWidget);
-    expect(find.text('Publish the release'), findsOneWidget);
-    expect(find.text('Pause'), findsOneWidget);
-    expect(find.text('Stop'), findsOneWidget);
+    final section = find.byKey(
+      const ValueKey(('page', SidePanelSection.taskPlan)),
+    );
+    Finder textInSection(String text) =>
+        find.descendant(of: section, matching: find.text(text));
+
+    expect(textInSection('Release checklist'), findsOneWidget);
+    expect(textInSection('Build the release'), findsOneWidget);
+    expect(textInSection('Publish the release'), findsOneWidget);
+    expect(textInSection('Continue'), findsOneWidget);
+    expect(textInSection('Pause'), findsNothing);
+    expect(textInSection('Stop'), findsOneWidget);
   });
 
   testWidgets('the terminal rail badge counts running background commands', (

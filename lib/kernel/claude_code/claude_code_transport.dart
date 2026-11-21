@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import '../../models/launch_environment.dart';
 import '../commit_attribution.dart';
+import 'claude_sdk_tools.dart';
 
 export 'package:bao_remote/claude.dart'
     show ClaudeFolderGone, ClaudeNoModel, ClaudeUnavailable;
@@ -293,9 +294,19 @@ class ClaudeLaunch {
     },
   ];
 
-  /// What the chat asks of the agent besides Claude Code's own prompt: how
-  /// to cite code and point at files, so the chat can open them.
-  static const appendedSystemPrompt = '$citingCode\n\n$fileLinks';
+  /// Instructions for the workbench's links and structured task progress.
+  static const appendedSystemPrompt =
+      '$citingCode\n\n$fileLinks\n\n$_taskProgress';
+
+  static const _taskProgress =
+      '''
+<task_progress>
+For work the user asks you to carry out in several steps, start by reporting
+the checklist with ${ClaudeSdkTools.taskListToolId}. If that tool is unavailable,
+use TodoWrite or TaskCreate and TaskUpdate. The workbench shows their updates
+in the task list. Mark each step in progress when you start it and completed
+when you finish it. Keep completed steps when resuming interrupted work.
+</task_progress>''';
 
   /// Has the agent cite code as ```` ```12:15:path ```` blocks, which the
   /// chat shows as cards that open the file there (see code_citation.dart).

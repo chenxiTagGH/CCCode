@@ -167,8 +167,8 @@ String _html(_Page page, List<(AppVersion, String?)> releases) {
 <link rel="icon" href="/icon.png">
 <link rel="stylesheet" href="/style.css">
 <script src="/head.js"></script>
-<link rel="alternate" hreflang="en" href=".${_Page.en.url}">
-<link rel="alternate" hreflang="zh" href=".${_Page.zh.url}">
+<link rel="alternate" hreflang="en" href="https://ccapitoken.cc${_Page.en.url}">
+<link rel="alternate" hreflang="zh" href="https://ccapitoken.cc${_Page.zh.url}">
 </head>
 <body>
 <!-- Made by tool/build_changelog.dart from release-notes/: edit those, not this. -->
@@ -181,7 +181,7 @@ String _html(_Page page, List<(AppVersion, String?)> releases) {
   <a class="brand" href="${page.home}"><img src="/icon.png" alt="">CCCode</a>
   <a href="${page.home}download">${page.download}</a>
   <a href="${page.url}" aria-current="page">${page.heading}</a>
-  <a href="."><svg class="ic" aria-hidden="true"><use href="#ic-github"/></svg>GitHub</a>
+  <a href="https://github.com/chenxiTagGH/CCCode"><svg class="ic" aria-hidden="true"><use href="#ic-github"/></svg>GitHub</a>
   <a class="lang" href="${page.other.url}" hreflang="${page.other.language}" lang="${page.other.htmlLang}">${page.other.name}</a>
 </header>
 

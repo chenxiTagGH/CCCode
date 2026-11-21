@@ -113,6 +113,7 @@ class TaskPlan {
     this.startedAt,
     this.finishedAt,
     this.pauseRequested = false,
+    this.resumeRequested = false,
   }) : steps = List.unmodifiable(steps);
 
   final String title;
@@ -121,6 +122,9 @@ class TaskPlan {
   final DateTime? startedAt;
   final DateTime? finishedAt;
   final bool pauseRequested;
+
+  /// A continuation was sent and the agent has yet to report progress.
+  final bool resumeRequested;
 
   TaskStep? get currentStep =>
       steps.where((step) => step.status == TaskStepStatus.running).firstOrNull ??
@@ -143,6 +147,7 @@ class TaskPlan {
     Object? startedAt = _unchanged,
     Object? finishedAt = _unchanged,
     bool? pauseRequested,
+    bool? resumeRequested,
   }) => TaskPlan(
     title: title ?? this.title,
     steps: steps ?? this.steps,
@@ -154,6 +159,7 @@ class TaskPlan {
         ? this.finishedAt
         : finishedAt as DateTime?,
     pauseRequested: pauseRequested ?? this.pauseRequested,
+    resumeRequested: resumeRequested ?? this.resumeRequested,
   );
 
   Map<String, Object?> toJson({DateTime? at}) => {
@@ -175,26 +181,29 @@ class TaskPlan {
     final steps = <TaskStep>[];
     final ids = <String>{};
     final savedAt = _date(json['savedAt']);
+    final status = _enumValue(TaskPlanStatus.values, json['status']) ??
+        TaskPlanStatus.pending;
+    final recoverAsPending = recoverRunning &&
+        (status == TaskPlanStatus.running ||
+            (status == TaskPlanStatus.paused && json['pauseRequested'] == true));
     for (final raw in rawSteps) {
       var step = TaskStep.fromJson(raw);
       if (step == null || !ids.add(step.id)) return null;
-      if (recoverRunning && step.status == TaskStepStatus.running) {
+      if (recoverRunning &&
+          (step.status == TaskStepStatus.running ||
+              (recoverAsPending && step.status == TaskStepStatus.paused))) {
         step = step.copyWith(
-          status: TaskStepStatus.paused,
+          status: TaskStepStatus.pending,
           elapsed: savedAt == null ? step.elapsed : step.elapsedAt(savedAt),
           runningSince: null,
         );
       }
       steps.add(step);
     }
-    final status = _enumValue(TaskPlanStatus.values, json['status']) ??
-        TaskPlanStatus.pending;
     return TaskPlan(
       title: title,
       steps: steps,
-      status: recoverRunning && status == TaskPlanStatus.running
-          ? TaskPlanStatus.paused
-          : status,
+      status: recoverAsPending ? TaskPlanStatus.pending : status,
       startedAt: _date(json['startedAt']),
       finishedAt: _date(json['finishedAt']),
       pauseRequested: !recoverRunning && json['pauseRequested'] == true,

@@ -29,6 +29,11 @@ class TaskPlanDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final status = switch (plan.status) {
+      _
+          when plan.pauseRequested &&
+              (plan.status != TaskPlanStatus.paused || plan.resumeRequested) =>
+        l10n.taskPlanPausing,
+      _ when plan.resumeRequested => l10n.taskPlanResuming,
       TaskPlanStatus.pending => l10n.taskPlanPending,
       TaskPlanStatus.running => l10n.taskPlanRunning,
       TaskPlanStatus.completed => l10n.taskPlanCompleted,
@@ -36,6 +41,8 @@ class TaskPlanDrawer extends StatelessWidget {
       TaskPlanStatus.paused => l10n.taskPlanPaused,
       TaskPlanStatus.cancelled => l10n.taskPlanCancelled,
     };
+    final now = DateTime.now();
+    final elapsed = _TaskStepTile._formatDuration(plan.elapsedAt(now));
     return Material(
       elevation: 12,
       color: Theme.of(context).colorScheme.surface,
@@ -51,38 +58,47 @@ class TaskPlanDrawer extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 ListTile(
-                title: Text(plan.title, maxLines: 2, overflow: TextOverflow.ellipsis),
-                subtitle: Text(
-                  '$status · ${plan.completedCount}/${plan.steps.length} · '
-                  '${l10n.taskPlanElapsed(
-                    _TaskStepTile._formatDuration(plan.elapsedAt(DateTime.now())),
-                  )}',
-                ),
-                trailing: IconButton(
-                  tooltip: l10n.commonClose,
-                  onPressed: onClose,
-                  icon: const Icon(Icons.close),
-                ),
-              ),
-              const Divider(height: 1),
-              Expanded(
-                child: ListView.separated(
-                  padding: const EdgeInsets.all(12),
-                  itemCount: plan.steps.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 8),
-                  itemBuilder: (context, index) => _TaskStepTile(
-                    step: plan.steps[index],
-                    now: DateTime.now(),
+                  title: Text(
+                    plan.title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  subtitle: Text(
+                    '$status · ${plan.completedCount}/${plan.steps.length} · '
+                    '${l10n.taskPlanElapsed(elapsed)}',
+                  ),
+                  trailing: IconButton(
+                    tooltip: l10n.commonClose,
+                    onPressed: onClose,
+                    icon: const Icon(Icons.close),
                   ),
                 ),
-              ),
-              _Controls(
-                plan: plan,
-                onPause: onPause,
-                onResume: onResume,
-                onRetry: onRetry,
-                onStop: onStop,
-              ),
+                const Divider(height: 1),
+                Expanded(
+                  child: ListView.separated(
+                    padding: const EdgeInsets.all(12),
+                    itemCount: plan.steps.length,
+                    separatorBuilder: (_, _) => const SizedBox(height: 8),
+                    itemBuilder: (context, index) {
+                      final step = plan.steps[index];
+                      return _TaskStepTile(
+                        step:
+                            plan.resumeRequested &&
+                                step.status == TaskStepStatus.paused
+                            ? step.copyWith(status: TaskStepStatus.pending)
+                            : step,
+                        now: now,
+                      );
+                    },
+                  ),
+                ),
+                _Controls(
+                  plan: plan,
+                  onPause: onPause,
+                  onResume: onResume,
+                  onRetry: onRetry,
+                  onStop: onStop,
+                ),
               ],
             ),
           ),
@@ -178,14 +194,34 @@ class _Controls extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final canStop = onStop != null &&
+    final pausing =
+        plan.pauseRequested &&
+        (plan.status != TaskPlanStatus.paused || plan.resumeRequested);
+    final canStop =
+        !pausing &&
+        onStop != null &&
         plan.status != TaskPlanStatus.completed &&
         plan.status != TaskPlanStatus.cancelled;
-    final canPause = onPause != null &&
-        (plan.status == TaskPlanStatus.running || plan.status == TaskPlanStatus.pending);
-    final canResume = onResume != null && plan.status == TaskPlanStatus.paused;
-    final canRetry = onRetry != null && plan.status == TaskPlanStatus.failed;
-    if (!canStop && !canPause && !canResume && !canRetry) return const SizedBox(height: 8);
+    final canPause =
+        !pausing &&
+        onPause != null &&
+        (plan.status == TaskPlanStatus.running ||
+            plan.status == TaskPlanStatus.pending ||
+            plan.resumeRequested);
+    final canResume =
+        !pausing &&
+        !plan.resumeRequested &&
+        onResume != null &&
+        (plan.status == TaskPlanStatus.paused ||
+            plan.status == TaskPlanStatus.pending);
+    final canRetry =
+        !pausing &&
+        !plan.resumeRequested &&
+        onRetry != null &&
+        plan.status == TaskPlanStatus.failed;
+    if (!canStop && !canPause && !canResume && !canRetry) {
+      return const SizedBox(height: 8);
+    }
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 4, 12, 12),
       child: Wrap(

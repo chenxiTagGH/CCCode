@@ -43,6 +43,7 @@ import 'kernel/claude_code/claude_code_kernel.dart';
 import 'kernel/claude_code/claude_core_setting.dart';
 import 'kernel/claude_code/claude_onboarding.dart';
 import 'kernel/claude_code/claude_path_setting.dart';
+import 'kernel/claude_code/claude_sdk_tools.dart';
 import 'kernel/claude_code/process_transport.dart';
 import 'kernel/claude_code/turn_stats_stub.dart'
     if (dart.library.io) 'kernel/claude_code/turn_stats_io.dart'
@@ -149,6 +150,7 @@ Future<void> main(List<String> arguments) async {
   unawaited(reapLspProcesses());
   unawaited(reapPtyProcesses());
   WidgetsFlutterBinding.ensureInitialized();
+  ClaudeSdkTools.registerTaskList();
   MemoryBudget.apply();
   if (!kIsWeb) {
     AppEventWatch.start();

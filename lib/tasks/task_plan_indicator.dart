@@ -17,6 +17,11 @@ class TaskPlanIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final status = switch (plan.status) {
+      _
+          when plan.pauseRequested &&
+              (plan.status != TaskPlanStatus.paused || plan.resumeRequested) =>
+        l10n.taskPlanPausing,
+      _ when plan.resumeRequested => l10n.taskPlanResuming,
       TaskPlanStatus.pending => l10n.taskPlanPending,
       TaskPlanStatus.running => l10n.taskPlanRunning,
       TaskPlanStatus.completed => l10n.taskPlanCompleted,

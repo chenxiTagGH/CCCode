@@ -849,12 +849,16 @@ class _ChatScreenState extends State<ChatScreen>
       includeSemantics: false,
       onKeyEvent: (node, event) =>
           ChatKeys.dispatch(event) ?? KeyEventResult.ignored,
-      child: TaskPlanPanel(
-        controller: _session.taskPlanController,
-        onPause: _session.pauseTask,
-        onResume: _session.resumeTask,
-        onRetry: _session.retryTask,
-        onStop: _session.cancelTask,
+      child: ListenableBuilder(
+        listenable: _session,
+        builder: (context, child) => TaskPlanPanel(
+          controller: _session.taskPlanController,
+          onPause: _session.canPauseTask ? _session.pauseTask : null,
+          onResume: _session.canResumeTask ? _session.resumeTask : null,
+          onRetry: _session.retryTask,
+          onStop: _session.cancelTask,
+          child: child!,
+        ),
         child: _buildScaffold(),
       ),
     );

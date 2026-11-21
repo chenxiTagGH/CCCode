@@ -887,13 +887,7 @@ class ClaudeTranslator {
         return;
       case 'TodoWrite':
         if (input['todos'] case final List<Object?> todos) {
-          _todos
-            ..clear()
-            ..addEntries([
-              for (final (i, raw) in todos.indexed)
-                MapEntry('$i', _todo(_map(raw))),
-            ]);
-          _reportTodos();
+          reportTodoList([for (final entry in todos) _todo(_map(entry))]);
         }
       case 'TaskCreate' when input['subject'] != null:
         _todos[id] = TodoEntry(
@@ -1085,6 +1079,7 @@ class ClaudeTranslator {
         status: status,
       ),
       'TodoWrite' ||
+      ClaudeSdkTools.taskListToolId ||
       'TaskCreate' ||
       'TaskUpdate' ||
       'TaskList' ||
@@ -1729,6 +1724,21 @@ class ClaudeTranslator {
   }
 
   void _reportTasks() => emit(TasksReported(nextSeq(), [..._tasks.values]));
+
+  bool acceptsTodoReport(String? toolUseId) {
+    final tool = _tools[toolUseId];
+    return tool == null ||
+        (tool.parent == null && _unanswered.contains(toolUseId));
+  }
+
+  void reportTodoList(List<TodoEntry> todos) {
+    _todos
+      ..clear()
+      ..addEntries([
+        for (final (index, todo) in todos.indexed) MapEntry('$index', todo),
+      ]);
+    _reportTodos();
+  }
 
   void _reportTodos() => emit(TodosReported(nextSeq(), [..._todos.values]));
 

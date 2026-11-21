@@ -8,6 +8,7 @@
 import 'dart:async';
 
 import '../../chat/chat_models.dart' show ToolCallItem, ToolKind;
+import '../kernel_types.dart' show TodoEntry, TodoStatus;
 
 /// Where a tool is called from: the agent's working directory (its
 /// project's path, as the workspace has it) and its session.
@@ -17,6 +18,7 @@ class ClaudeSdkCall {
     this.sessionId,
     this.cancelled,
     this.toolUseId,
+    this.reportTodos,
   });
 
   final String cwd;
@@ -30,6 +32,9 @@ class ClaudeSdkCall {
   /// Completes once the call is given up: the turn stopped, or the agent
   /// cancelled it. A tool that waits long (on the user, say) stops then.
   final Future<void>? cancelled;
+
+  /// Publishes the ordered steps to the conversation the call came from.
+  final void Function(String? toolUseId, List<TodoEntry> todos)? reportTodos;
 }
 
 /// One tool: its name, what it does and the JSON schema of its input, for
@@ -88,6 +93,8 @@ Map<String, Object?> claudeSdkText(String text) => {
 abstract final class ClaudeSdkTools {
   /// The server's name: its tools are `mcp__cccode__<name>` to the agent.
   static const server = 'cccode';
+  static const taskListTool = 'report_task_list';
+  static const taskListToolId = 'mcp__${server}__$taskListTool';
 
   static final Map<String, ClaudeSdkTool> _tools = {};
 
@@ -98,6 +105,72 @@ abstract final class ClaudeSdkTools {
   static void register(ClaudeSdkTool tool) => _tools[tool.name] = tool;
 
   static void unregister(String name) => _tools.remove(name);
+
+  static void registerTaskList() {
+    register(
+      ClaudeSdkTool(
+        name: taskListTool,
+        description:
+            'Publishes the complete ordered checklist to the CC Code '
+            'task panel. Keep the list current as you start and finish work.',
+        alwaysLoad: true,
+        inputSchema: const {
+          'type': 'object',
+          'properties': {
+            'todos': {
+              'type': 'array',
+              'items': {
+                'type': 'object',
+                'properties': {
+                  'content': {'type': 'string', 'minLength': 1},
+                  'status': {
+                    'type': 'string',
+                    'enum': ['pending', 'in_progress', 'completed'],
+                  },
+                },
+                'required': ['content', 'status'],
+                'additionalProperties': false,
+              },
+            },
+          },
+          'required': ['todos'],
+          'additionalProperties': false,
+        },
+        run: (input, call) async {
+          final report = call.reportTodos;
+          if (report == null) throw StateError('There is no active turn.');
+          final entries = input['todos'];
+          if (entries is! List) {
+            throw const FormatException('Expected a todo list.');
+          }
+          final todos = <TodoEntry>[];
+          for (final entry in entries) {
+            if (entry
+                case {
+                  'content': final String title,
+                  'status': final String status,
+                }
+                when title.trim().isNotEmpty) {
+              todos.add(
+                TodoEntry(title.trim(), switch (status) {
+                  'pending' => TodoStatus.pending,
+                  'in_progress' => TodoStatus.inProgress,
+                  'completed' => TodoStatus.completed,
+                  _ => throw const FormatException('Invalid task status.'),
+                }),
+              );
+            } else {
+              throw const FormatException(
+                'Each task needs a title and status.',
+              );
+            }
+          }
+          report(call.toolUseId, todos);
+          return 'Task list updated.';
+        },
+      ),
+    );
+  }
 
   /// What each feature tells the agent of its tools, by feature: the
   /// server's instructions, in the agent's system prompt.
@@ -185,6 +258,7 @@ abstract final class ClaudeSdkTools {
               cwd: call.cwd,
               sessionId: call.sessionId,
               cancelled: cancel.future,
+              reportTodos: call.reportTodos,
               toolUseId: switch (params['_meta']) {
                 {'claudecode/toolUseId': final String id} => id,
                 _ => null,

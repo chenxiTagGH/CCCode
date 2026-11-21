@@ -106,7 +106,9 @@ class TaskPlanController extends ValueNotifier<TaskPlan?> {
         .firstOrNull;
     if (step == null ||
         step.status == TaskStepStatus.completed ||
-        step.status == TaskStepStatus.cancelled) return;
+        step.status == TaskStepStatus.cancelled) {
+      return;
+    }
     final now = _now();
     final steps = [
       for (final item in plan.steps)
@@ -140,7 +142,9 @@ class TaskPlanController extends ValueNotifier<TaskPlan?> {
     final target = stepId ?? plan.currentStep?.id;
     if (!plan.steps.any((step) => step.id == target &&
         step.status != TaskStepStatus.completed &&
-        step.status != TaskStepStatus.cancelled)) return;
+        step.status != TaskStepStatus.cancelled)) {
+      return;
+    }
     final now = _now();
     _set(plan.copyWith(
       status: TaskPlanStatus.failed,
@@ -161,36 +165,78 @@ class TaskPlanController extends ValueNotifier<TaskPlan?> {
     ));
   }
 
-  /// Running work is allowed to finish; the next step remains blocked.
+  void setPauseRequested(bool requested) {
+    final plan = value;
+    if (plan == null || plan.pauseRequested == requested) return;
+    _set(plan.copyWith(pauseRequested: requested));
+  }
+
+  void requestResume() {
+    if (value case final plan?) _set(plan.copyWith(resumeRequested: true));
+  }
+
+  /// An ended turn leaves any unfinished progress waiting to be continued.
+  void finishTurn() {
+    final plan = value;
+    if (plan == null || plan.pauseRequested) return;
+    final running = plan.status == TaskPlanStatus.running;
+    if (!running && !plan.resumeRequested) return;
+    _set(
+      plan.copyWith(
+        status: running ? TaskPlanStatus.pending : plan.status,
+        steps: running
+            ? _settledSteps(plan, TaskStepStatus.pending)
+            : plan.steps,
+        resumeRequested: false,
+      ),
+    );
+  }
+
+  List<TaskStep> _settledSteps(TaskPlan plan, TaskStepStatus status) {
+    final now = _now();
+    return [
+      for (final step in plan.steps)
+        if (step.status == TaskStepStatus.running)
+          step.copyWith(
+            status: status,
+            elapsed: step.elapsedAt(now),
+            runningSince: null,
+          )
+        else
+          step,
+    ];
+  }
+
+  /// With a stopped command the agent is already idle. For a local plan,
+  /// the step under way finishes before its next step is released.
   void pause({bool commandStopped = false}) {
     final plan = value;
     if (plan == null ||
         plan.status == TaskPlanStatus.completed ||
         plan.status == TaskPlanStatus.cancelled ||
-        plan.status == TaskPlanStatus.failed) return;
-    final now = _now();
-    final running = plan.steps.any((step) => step.status == TaskStepStatus.running);
-    if (commandStopped && running) {
-      _set(plan.copyWith(
-        status: TaskPlanStatus.paused,
-        pauseRequested: false,
-        steps: [
-          for (final step in plan.steps)
-            step.status == TaskStepStatus.running
-                ? step.copyWith(
-                    status: TaskStepStatus.paused,
-                    elapsed: step.elapsedAt(now),
-                    runningSince: null,
-                  )
-                : step,
-        ],
-      ));
+        (plan.status == TaskPlanStatus.failed && !plan.resumeRequested)) {
       return;
     }
-    _set(plan.copyWith(
-      status: running ? TaskPlanStatus.running : TaskPlanStatus.paused,
-      pauseRequested: running,
-    ));
+    if (commandStopped) {
+      _set(
+        plan.copyWith(
+          status: TaskPlanStatus.paused,
+          pauseRequested: false,
+          resumeRequested: false,
+          steps: _settledSteps(plan, TaskStepStatus.paused),
+        ),
+      );
+      return;
+    }
+    final running = plan.steps.any(
+      (step) => step.status == TaskStepStatus.running,
+    );
+    _set(
+      plan.copyWith(
+        status: running ? TaskPlanStatus.running : TaskPlanStatus.paused,
+        pauseRequested: running,
+      ),
+    );
   }
 
   void resume() {
@@ -198,7 +244,9 @@ class TaskPlanController extends ValueNotifier<TaskPlan?> {
     if (plan == null ||
         plan.status == TaskPlanStatus.cancelled ||
         plan.status == TaskPlanStatus.completed ||
-        plan.status == TaskPlanStatus.failed) return;
+        plan.status == TaskPlanStatus.failed) {
+      return;
+    }
     final hasRunningStep = plan.steps.any(
       (step) => step.status == TaskStepStatus.running,
     );
@@ -220,25 +268,30 @@ class TaskPlanController extends ValueNotifier<TaskPlan?> {
     final plan = value;
     if (plan == null ||
         plan.status == TaskPlanStatus.completed ||
-        plan.status == TaskPlanStatus.cancelled) return;
+        plan.status == TaskPlanStatus.cancelled) {
+      return;
+    }
     final now = _now();
-    _set(plan.copyWith(
-      status: TaskPlanStatus.cancelled,
-      pauseRequested: false,
-      finishedAt: now,
-      steps: [
-        for (final step in plan.steps)
-          if (step.status != TaskStepStatus.completed)
-            step.copyWith(
-              status: TaskStepStatus.cancelled,
-              elapsed: step.elapsedAt(now),
-              runningSince: null,
-              finishedAt: now,
-            )
-          else
-            step,
-      ],
-    ));
+    _set(
+      plan.copyWith(
+        status: TaskPlanStatus.cancelled,
+        pauseRequested: false,
+        resumeRequested: false,
+        finishedAt: now,
+        steps: [
+          for (final step in plan.steps)
+            if (step.status != TaskStepStatus.completed)
+              step.copyWith(
+                status: TaskStepStatus.cancelled,
+                elapsed: step.elapsedAt(now),
+                runningSince: null,
+                finishedAt: now,
+              )
+            else
+              step,
+        ],
+      ),
+    );
   }
 
   void retryFailed() {
@@ -311,37 +364,26 @@ class TaskPlanController extends ValueNotifier<TaskPlan?> {
     final allCompleted = steps.every(
       (step) => step.status == TaskStepStatus.completed,
     );
-    final projectedStatus = allCompleted
-        ? TaskPlanStatus.completed
-        : previous?.pauseRequested == true
-            ? TaskPlanStatus.paused
-            : active == null
-                ? TaskPlanStatus.pending
-                : TaskPlanStatus.running;
-    if (previous == null) {
-      create(title: title ?? 'Task plan', steps: steps);
-      if (value != null && allCompleted) {
-        _set(value!.copyWith(
-          status: TaskPlanStatus.completed,
-          finishedAt: _now(),
-        ));
-      } else if (value != null && active != null) {
-        _set(value!.copyWith(
-          status: TaskPlanStatus.running,
-          startedAt: value!.startedAt ?? steps[active.$1].startedAt ?? _now(),
-        ));
-      } else if (active == null) {
-        start();
-      }
-    } else {
-      _set(previous.copyWith(
-        title: title,
+    final status = switch ((allCompleted, active != null, previous?.status)) {
+      (true, _, _) => TaskPlanStatus.completed,
+      (_, true, _) => TaskPlanStatus.running,
+      (_, _, TaskPlanStatus.paused) => TaskPlanStatus.paused,
+      _ => TaskPlanStatus.pending,
+    };
+    _set(
+      TaskPlan(
+        title: title ?? previous?.title ?? 'Task plan',
         steps: steps,
-        status: projectedStatus,
-        pauseRequested: previous?.pauseRequested ?? false,
+        status: status,
+        startedAt: previous?.startedAt ?? (active == null ? null : _now()),
         finishedAt: allCompleted ? _now() : null,
-      ));
-    }
+        pauseRequested: !allCompleted && previous?.pauseRequested == true,
+        resumeRequested:
+            !allCompleted &&
+            active == null &&
+            previous?.resumeRequested == true,
+      ),
+    );
   }
 
   @override

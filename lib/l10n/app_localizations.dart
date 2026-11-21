@@ -3545,6 +3545,10 @@ abstract class AppLocalizations {
   String get taskPlanOpen;
   String get taskPlanTitle;
   String get taskPlanEmpty;
+  String get taskPlanEmptyDetail;
+  String get taskPlanRequest;
+  String get taskPlanPausing;
+  String get taskPlanResuming;
   String get taskPlanPending;
   String get taskPlanRunning;
   String get taskPlanCompleted;

@@ -87,16 +87,31 @@ void main() {
     expect(controller.value!.steps[1].status, TaskStepStatus.cancelled);
   });
 
-  test('round trips JSON and recovers running work as paused', () {
+  test('recovers unfinished work without claiming it was paused', () {
     controller.create(steps: [step('one')]);
     controller.start();
     now = now.add(const Duration(seconds: 5));
     final json = controller.value!.toJson(at: now);
     final restored = TaskPlan.fromJson(json, recoverRunning: true);
 
-    expect(restored!.status, TaskPlanStatus.paused);
-    expect(restored.steps.single.status, TaskStepStatus.paused);
+    expect(restored!.status, TaskPlanStatus.pending);
+    expect(restored.steps.single.status, TaskStepStatus.pending);
     expect(restored.steps.single.elapsed, const Duration(seconds: 5));
+  });
+
+  test('recovers an older unconfirmed pause as pending', () {
+    final prior = TaskPlan(
+      title: 'Ship',
+      steps: [step('one').copyWith(status: TaskStepStatus.paused)],
+      status: TaskPlanStatus.paused,
+      pauseRequested: true,
+    );
+
+    final restored = TaskPlan.fromJson(prior.toJson(), recoverRunning: true);
+
+    expect(restored!.status, TaskPlanStatus.pending);
+    expect(restored.steps.single.status, TaskStepStatus.pending);
+    expect(restored.pauseRequested, isFalse);
   });
 
   test('reconcile projects only agent todo events', () {
@@ -105,7 +120,8 @@ void main() {
       const TodoEntry('Test', TodoStatus.pending),
     ]);
 
-    expect(controller.value!.steps.single.status, TaskStepStatus.running);
+    expect(controller.value!.steps[0].status, TaskStepStatus.running);
+    expect(controller.value!.steps[1].status, TaskStepStatus.pending);
     controller.reconcile([
       const TodoEntry('Install', TodoStatus.completed),
       const TodoEntry('Test', TodoStatus.inProgress),

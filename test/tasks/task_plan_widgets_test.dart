@@ -9,20 +9,34 @@ import 'package:baocode/tasks/task_plan_indicator.dart';
 import 'package:baocode/tasks/task_plan_panel.dart';
 
 void main() {
-  TaskPlan plan({TaskPlanStatus status = TaskPlanStatus.running}) => TaskPlan(
-        title: 'Prepare release',
-        status: status,
-        steps: [
-          const TaskStep(id: 'one', title: 'Build', status: TaskStepStatus.completed),
-          const TaskStep(id: 'two', title: 'Verify', status: TaskStepStatus.running),
-          const TaskStep(
-            id: 'three',
-            title: 'Publish',
-            estimateMin: Duration(seconds: 30),
-            estimateMax: Duration(minutes: 1),
-          ),
-        ],
-      );
+  TaskPlan plan({
+    TaskPlanStatus status = TaskPlanStatus.running,
+    bool pauseRequested = false,
+    bool resumeRequested = false,
+  }) => TaskPlan(
+    title: 'Prepare release',
+    status: status,
+    pauseRequested: pauseRequested,
+    resumeRequested: resumeRequested,
+    steps: [
+      const TaskStep(
+        id: 'one',
+        title: 'Build',
+        status: TaskStepStatus.completed,
+      ),
+      const TaskStep(
+        id: 'two',
+        title: 'Verify',
+        status: TaskStepStatus.running,
+      ),
+      const TaskStep(
+        id: 'three',
+        title: 'Publish',
+        estimateMin: Duration(seconds: 30),
+        estimateMax: Duration(minutes: 1),
+      ),
+    ],
+  );
 
   Widget app(Widget child) => MaterialApp(
         localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -33,11 +47,31 @@ void main() {
   testWidgets('indicator exposes status and completion count', (tester) async {
     await tester.pumpWidget(app(TaskPlanIndicator(plan: plan(), onTap: () {})));
     expect(find.text('In progress · 1/3'), findsOneWidget);
-    expect(find.bySemanticsLabel('In progress, 1/3'), findsOneWidget);
+    expect(find.bySemanticsLabel(RegExp(r'In progress, 1/3')), findsOneWidget);
+  });
+
+  testWidgets('the indicator shows the pending control action', (tester) async {
+    await tester.pumpWidget(
+      app(TaskPlanIndicator(plan: plan(pauseRequested: true), onTap: () {})),
+    );
+    expect(find.text('Pausing… · 1/3'), findsOneWidget);
+
+    await tester.pumpWidget(
+      app(
+        TaskPlanIndicator(
+          plan: plan(status: TaskPlanStatus.paused, resumeRequested: true),
+          onTap: () {},
+        ),
+      ),
+    );
+    expect(find.text('Continuing… · 1/3'), findsOneWidget);
+    expect(find.text('Paused · 1/3'), findsNothing);
   });
 
   testWidgets('drawer shows estimates and controls', (tester) async {
-    await tester.pumpWidget(app(TaskPlanDrawer(plan: plan(), onClose: () {})));
+    await tester.pumpWidget(
+      app(TaskPlanDrawer(plan: plan(), onClose: () {}, onPause: () {})),
+    );
     expect(find.text('Prepare release'), findsOneWidget);
     expect(find.text('Estimated 30s–1m'), findsOneWidget);
     expect(find.text('Pause'), findsOneWidget);
@@ -55,6 +89,9 @@ void main() {
   });
 
   testWidgets('panel drawer stays compact at the top right', (tester) async {
+    tester.view.physicalSize = const Size(1200, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
     final controller = TaskPlanController()..value = plan();
     await tester.pumpWidget(
       app(

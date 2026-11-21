@@ -44,6 +44,24 @@ void main() {
     expect((await store.read('agent-1'))!.title, 'Newer');
   });
 
+  test(
+    'workspace saves and task updates keep both parts of the state',
+    () async {
+      final preferences = MemoryPreferenceStore();
+      final store = TaskPlanStore(preferences);
+
+      await Future.wait([
+        store.write('agent-1', plan()),
+        store.writeWorkspaceState({'layout': 'ide'}),
+        store.write('agent-2', plan().copyWith(title: 'Verify')),
+      ]);
+
+      expect((await preferences.read())['layout'], 'ide');
+      expect((await store.read('agent-1'))!.title, 'Ship');
+      expect((await store.read('agent-2'))!.title, 'Verify');
+    },
+  );
+
   test('a persistence failure is best effort', () async {
     final store = TaskPlanStore(_FailingStore());
     await expectLater(store.write('agent-1', plan()), completes);
